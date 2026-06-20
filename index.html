@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>认识一下 👋</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* 毛玻璃浮动装饰 - 苹果风格 */
+        .glass-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.5;
+            z-index: 0;
+            animation: blobFloat 8s ease-in-out infinite;
+        }
+
+        .glass-blob-1 {
+            width: 300px;
+            height: 300px;
+            background: #a78bfa;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .glass-blob-2 {
+            width: 400px;
+            height: 400px;
+            background: #818cf8;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -3s;
+        }
+
+        .glass-blob-3 {
+            width: 200px;
+            height: 200px;
+            background: #c4b5fd;
+            top: 50%;
+            left: 10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes blobFloat {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 20px) scale(0.95);
+            }
+        }
+
+        /* 雪花 - 优化性能 */
+        .snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .snow span {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+            animation: snowFall linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes snowFall {
+            0% {
+                transform: translateY(-10vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% { opacity: 0.7; }
+            50% {
+                transform: translateY(50vh) translateX(40px) rotate(180deg);
+            }
+            90% { opacity: 0.7; }
+            100% {
+                transform: translateY(110vh) translateX(-20px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .card {
+            position: relative;
+            z-index: 1;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-radius: 24px;
+            padding: 48px 56px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 头像区 */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .avatar {
+            width: 96px;
+            height: 96px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #666;
+        }
+
+        .wave {
+            display: inline-block;
+            animation: wave 2.5s ease-in-out infinite;
+            transform-origin: 70% 70%;
+        }
+
+        @keyframes wave {
+            0%, 60%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            40% { transform: rotate(10deg); }
+            50% { transform: rotate(-4deg); }
+        }
+
+        /* 简介 */
+        .bio {
+            text-align: center;
+            color: #444;
+            font-size: 14px;
+            line-height: 2;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            margin-bottom: 28px;
+            font-weight: 500;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* 标签 */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .tag {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #333;
+            border-radius: 20px;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .tag:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 社交区 */
+        .section-title {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 8px;
+        }
+
+        .icon-btn {
+            width: 52px;
+            height: 52px;
+            border: none;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50%;
+            font-size: 22px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px) scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .icon-btn.active {
+            background: rgba(255, 255, 255, 0.5);
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 联系方式展开区 */
+        .contact-panel {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .contact-content {
+            margin-top: 20px;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .contact-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .contact-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .contact-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 12px;
+        }
+
+        .contact-link {
+            display: inline-block;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 13px;
+            transition: all 0.2s ease;
+        }
+
+        .contact-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .contact-tip {
+            font-size: 12px;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        .qrcode-placeholder {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .qrcode-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .reward-qrcodes {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-bottom: 12px;
+        }
+
+        .reward-item {
+            text-align: center;
+        }
+
+        .reward-item .qrcode-placeholder {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 8px;
+        }
+
+        .reward-item .reward-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .qrcode-placeholder {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .qrcode-placeholder:hover {
+            transform: scale(1.05);
+        }
+
+        /* 图片弹窗 */
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .image-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .image-modal.show img {
+            transform: scale(1);
+        }
+
+        .image-modal .close-tip {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        /* 横屏适配 */
+        @media (min-width: 900px) {
+            .card {
+                max-width: 600px;
+                padding: 56px 64px;
+            }
+
+            .social-icons {
+                gap: 24px;
+            }
+
+            .icon-btn {
+                width: 56px;
+                height: 56px;
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 36px 28px;
+                border-radius: 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .avatar {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+
+            .social-icons {
+                gap: 12px;
+            }
+
+            .icon-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="glass-blob glass-blob-1"></div>
+    <div class="glass-blob glass-blob-2"></div>
+    <div class="glass-blob glass-blob-3"></div>
+    <div class="snow" id="snow"></div>
+
+    <div class="card">
+        <div class="header">
+            <div class="avatar">
+                <img src="images/avatar.jpg" alt="头像">
+            </div>
+            <h1>你好呀 <span class="wave">👋</span></h1>
+            <p class="subtitle">我是悦悦</p>
+        </div>
+
+        <div class="bio">
+            ✨ 一个不热爱生活的i人 ✨<br><br>
+            🤍 雷点很少，很好相处<br>
+            🍜 人生信条：吃吃吃玩玩玩<br>
+            🧋 奶茶续命：喜茶、瑞幸、古茗<br>
+            🎮 蛋仔派对（id：古茗店员）<br>
+            🔫 PUBG Mobile（id：古茗店员）<br>
+            菜菜的，但爱玩 🥬
+        </div>
+
+        <div class="tags">
+            <span class="tag">📸 喜欢拍照</span>
+            <span class="tag">📱 数码人</span>
+            <span class="tag">✨ 二次元</span>
+            <span class="tag">🧋 奶茶续命</span>
+            <span class="tag">🍵 抹茶重度爱好者</span>
+            <span class="tag">🐧 QQ重度使用</span>
+            <span class="tag">🐶 线条小狗重度依赖</span>
+        </div>
+
+        <p class="section-title">关于我 ↓</p>
+        
+        <div class="social-icons">
+            <button class="icon-btn" data-type="wechat" title="微信">
+                <span>💬</span>
+            </button>
+            <button class="icon-btn" data-type="qq" title="QQ">
+                <span>🐧</span>
+            </button>
+            <button class="icon-btn" data-type="douyin" title="抖音">
+                <span>🎵</span>
+            </button>
+            <button class="icon-btn" data-type="email" title="邮箱">
+                <span>📧</span>
+            </button>
+            <button class="icon-btn" data-type="reward" title="打赏">
+                <span>🧧</span>
+            </button>
+        </div>
+
+        <div class="contact-panel" id="contactPanel">
+            <div class="contact-content" id="contactContent">
+                <!-- 动态内容 -->
+            </div>
+        </div>
+
+        <div class="footer">
+            ✨ 谢谢你来看我呀 ✨<br>
+            祝你天天开心
+        </div>
+    </div>
+
+    <div class="image-modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImage" src="" alt="二维码大图">
+        <div class="close-tip">点击任意位置关闭</div>
+    </div>
+
+    <script>
+        // 生成雪花 - 优化飘落效果
+        const snowContainer = document.getElementById('snow');
+        const snowChars = ['❄', '❅', '✻'];
+        
+        for (let i = 0; i < 35; i++) {
+            const s = document.createElement('span');
+            s.innerHTML = snowChars[i % 3];
+            s.style.left = Math.random() * 100 + '%';
+            s.style.animationDuration = (Math.random() * 10 + 15) + 's'; // 15-25秒
+            s.style.animationDelay = (Math.random() * 15) + 's';
+            s.style.fontSize = (Math.random() * 8 + 10) + 'px';
+            s.style.opacity = Math.random() * 0.4 + 0.4;
+            snowContainer.appendChild(s);
+        }
+
+        // 联系方式数据
+        const contacts = {
+            wechat: {
+                label: '微信号',
+                value: 'furryhk',
+                qrcode: true,
+                qrcodeImg: 'https://aka.doubaocdn.com/s/Af7S1wdUYX',
+                tip: '点击二维码可放大查看'
+            },
+            qq: {
+                label: 'QQ',
+                value: '扫码加我好友',
+                qrcode: true,
+                qrcodeImg: 'https://aka.doubaocdn.com/s/91aU1wdUHp',
+                link: 'https://qm.qq.com/q/n51fppV6nK',
+                linkText: '快捷跳转',
+                tip: '点击二维码可放大查看'
+            },
+            douyin: {
+                label: '抖音号',
+                value: 'furryhk',
+                qrcode: true,
+                link: 'https://v.douyin.com/T7s9JgT9Ags/',
+                linkText: '去我主页',
+                tip: '点击跳转抖音主页'
+            },
+            email: {
+                label: '邮箱',
+                value: '',
+                isEmail: true,
+                tip: '两个邮箱都可以用哦'
+            },
+            reward: {
+                label: '请我喝杯奶茶吧 🧋',
+                value: '',
+                isReward: true,
+                tip: '点击二维码可放大查看'
+            }
+        };
+
+        const panel = document.getElementById('contactPanel');
+        const content = document.getElementById('contactContent');
+        const buttons = document.querySelectorAll('.icon-btn');
+        let currentType = null;
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const type = btn.dataset.type;
+                
+                // 点击同一个就关闭
+                if (currentType === type) {
+                    content.classList.remove('show'); // 先淡出内容
+                    setTimeout(() => {
+                        panel.style.height = '0px'; // 再收起高度
+                    }, 150);
+                    btn.classList.remove('active');
+                    currentType = null;
+                    return;
+                }
+
+                // 清除其他激活状态
+                buttons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // 生成内容
+                const data = contacts[type];
+                let html = '';
+                
+                if (data.isReward) {
+                    // 打赏双二维码
+                    html += `<div class="contact-label">${data.label}</div>`;
+                    html += '<div class="reward-qrcodes">';
+                    html += '<div class="reward-item">';
+                    html += '<div class="qrcode-placeholder" onclick="openModal(\'https://aka.doubaocdn.com/s/p5Bm1wdU3B\')"><img src="https://aka.doubaocdn.com/s/p5Bm1wdU3B" alt="支付宝收款码"></div>';
+                    html += '<div class="reward-label">支付宝</div>';
+                    html += '</div>';
+                    html += '<div class="reward-item">';
+                    html += '<div class="qrcode-placeholder" onclick="openModal(\'https://aka.doubaocdn.com/s/TWKG1wdU3B\')"><img src="https://aka.doubaocdn.com/s/TWKG1wdU3B" alt="微信收款码"></div>';
+                    html += '<div class="reward-label">微信</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '<div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">';
+                    html += '<a href="https://qr.alipay.com/2m615317eyo37denaqpqi57" class="contact-link" target="_blank" style="padding: 6px 16px; font-size: 12px;">支付宝打赏</a>';
+                    html += '<a href="https://payapp.wechatpay.cn/sjt/qr/AQFyYNFUThdZuSq-cts4FRF8" class="contact-link" target="_blank" style="padding: 6px 16px; font-size: 12px;">微信打赏</a>';
+                    html += '</div>';
+                } else if (data.isEmail) {
+                    // 两个邮箱
+                    html += `<div class="contact-label">${data.label}</div>`;
+                    html += '<div style="margin: 12px 0;">';
+                    html += '<div style="margin-bottom: 10px;">';
+                    html += '<div style="font-size: 12px; color: #999; margin-bottom: 4px;">网易邮箱</div>';
+                    html += '<div style="font-size: 16px; font-weight: 600; color: #333;">furryyueyue@163.com</div>';
+                    html += '</div>';
+                    html += '<div style="margin-bottom: 16px;">';
+                    html += '<div style="font-size: 12px; color: #999; margin-bottom: 4px;">谷歌邮箱</div>';
+                    html += '<div style="font-size: 16px; font-weight: 600; color: #333;">furryyueyue@gmail.com</div>';
+                    html += '</div>';
+                    html += '</div>';
+                    html += '<a href="mailto:furryyueyue@163.com" class="contact-link">给我发邮件</a>';
+                } else if (data.qrcode) {
+                    if (data.qrcodeImg) {
+                        html += `<div class="qrcode-placeholder" onclick="openModal('${data.qrcodeImg}')"><img src="${data.qrcodeImg}" alt="二维码"></div>`;
+                    } else {
+                        html += '<div class="qrcode-placeholder">📱</div>';
+                    }
+                    html += `<div class="contact-label">${data.label}</div>`;
+                    if (data.value) {
+                        html += `<div class="contact-value">${data.value}</div>`;
+                    }
+                } else {
+                    html += `<div class="contact-label">${data.label}</div>`;
+                    html += `<div class="contact-value">${data.value}</div>`;
+                }
+                
+                if (data.link) {
+                    html += `<a href="${data.link}" class="contact-link" target="_blank">${data.linkText}</a>`;
+                }
+                
+                if (data.tip) {
+                    html += `<div class="contact-tip">${data.tip}</div>`;
+                }
+
+                // 切换显示
+                if (currentType) {
+                    // 已经展开，先淡出内容
+                    content.classList.remove('show');
+                    setTimeout(() => {
+                        content.innerHTML = html;
+                        // 动态调整高度
+                        setTimeout(() => {
+                            const contentHeight = content.offsetHeight + 20;
+                            panel.style.height = contentHeight + 'px';
+                            // 高度变化后再淡入
+                            setTimeout(() => {
+                                content.classList.add('show');
+                            }, 150);
+                        }, 10);
+                    }, 200);
+                } else {
+                    // 第一次展开
+                    content.innerHTML = html;
+                    // 先计算高度
+                    setTimeout(() => {
+                        const contentHeight = content.offsetHeight + 20;
+                        panel.style.height = contentHeight + 'px';
+                        // 高度开始变化后，内容淡入
+                        setTimeout(() => {
+                            content.classList.add('show');
+                        }, 100);
+                    }, 10);
+                }
+
+                currentType = type;
+            });
+        });
+
+        // 图片弹窗
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const img = document.getElementById('modalImage');
+            img.src = src;
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+        }
+    </script>
+</body>
+</html>
