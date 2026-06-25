@@ -139,6 +139,7 @@
             overflow: hidden;
             box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
             animation: float 3s ease-in-out infinite;
+            cursor: pointer;
         }
         .avatar img {
             width: 100%;
@@ -152,7 +153,7 @@
         h1 {
             font-size: 28px;
             font-weight: 600;
-            color: #1a1a1;
+            color: #1a1a1a;
             margin-bottom: 6px;
         }
         .subtitle {
@@ -491,7 +492,7 @@
     <div class="snow" id="snow"></div>
     <div class="card">
         <div class="header">
-            <div class="avatar">
+            <div class="avatar" onclick="openModal('mmexport1726063520349.jpeg')">
                 <img src="mmexport1726063520349.jpeg" alt="头像">
             </div>
             <h1>你好呀 <span class="wave">👋</span></h1>
@@ -515,7 +516,7 @@
             <span class="tag">🐧 QQ重度使用</span>
             <span class="tag">🐶 线条小狗重度依赖</span>
         </div>
-        <p class="section-title">关于我 ↓</p>
+        <p class="section-title">关于联系↓</p>
         
         <div class="social-icons">
             <button class="icon-btn" data-type="wechat" title="微信">
@@ -566,7 +567,7 @@
         </div>
     </div>
     <div class="image-modal" id="imageModal" onclick="closeModal()">
-        <img id="modalImage" src="" alt="二维码大图">
+        <img id="modalImage" src="" alt="大图">
         <div class="close-tip">点击任意位置关闭</div>
     </div>
     <script>
@@ -737,7 +738,7 @@
             });
         });
         // 图片弹窗
-        function openModal() {
+        function openModal(src) {
             const modal = document.getElementById('imageModal');
             const img = document.getElementById('modalImage');
             img.src = src;
