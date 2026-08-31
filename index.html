@@ -41,47 +41,6 @@
         .glass-blob-2 {
             width: 400px;
             height: 400px;
-        <!-- 新增4：稿件定制区域 -->
-        <div class="module-box">
-            <h4>🎨 稿件定制</h4>
-            <p style="font-size:14px; color:#333; margin-bottom:10px; font-weight:500;">定制头像 / Q版 / 插画</p>
-            <p>接稿中，风格可谈，支持修改，欢迎咨询</p>
-            <button class="module-btn" id="commissionBtn">立即约稿</button>
-            <div class="contact-panel" id="commissionPanel">
-                <div class="contact-content" id="commissionContent">
-                    <!-- 动态内容 -->
-                </div>
-            </div>
-                // 稿件定制：立即约稿展开
-        const commissionBtn = document.getElementById('commissionBtn');
-        const commissionPanel = document.getElementById('commissionPanel');
-        const commissionContent = document.getElementById('commissionContent');
-        let commissionOpen = false;
-        if (commissionBtn) {
-            commissionBtn.addEventListener('click', () => {
-                if (commissionOpen) {
-                    commissionContent.classList.remove('show');
-                    setTimeout(() => { commissionPanel.style.height = '0px'; }, 150);
-                    commissionBtn.classList.remove('active');
-                    commissionOpen = false;
-                    return;
-                }
-                commissionContent.innerHTML = `
-                    <div class="qrcode-placeholder" onclick="openModal('yuegao.png')"><img src="yuegao.png" alt="约稿二维码"></div>
-                    <div class="contact-label">约稿联系</div>
-                    <div class="contact-value">扫码添加约稿</div>
-                    <div class="contact-tip">点击二维码可放大查看</div>
-                `;
-                commissionBtn.classList.add('active');
-                setTimeout(() => {
-                    const h = commissionContent.offsetHeight + 20;
-                    commissionPanel.style.height = h + 'px';
-                    setTimeout(() => { commissionContent.classList.add('show'); }, 100);
-                }, 10);
-                commissionOpen = true;
-            });
-        }
-                    </div>
             background: #818cf8;
             bottom: -150px;
             right: -150px;
@@ -590,6 +549,19 @@
             <a href="https://furryhk-mail.furryhk.cn" target="_blank" class="module-btn">查看邮箱使用条款</a>
         </div>
 
+        <!-- 新增4：稿件定制区域 -->
+        <div class="module-box">
+            <h4>🎨 稿件定制</h4>
+            <p style="font-size:14px; color:#333; margin-bottom:10px; font-weight:500;">定制头像 / Q版 / 插画</p>
+            <p>接稿中，风格可谈，支持修改，欢迎咨询</p>
+            <button class="module-btn" id="commissionBtn">立即约稿</button>
+            <div class="contact-panel" id="commissionPanel">
+                <div class="contact-content" id="commissionContent">
+                    <!-- 动态内容 -->
+                </div>
+            </div>
+        </div>
+
         <!-- 新增2：二级域名待开发区域 -->
         <div class="module-box">
             <h4>🌐 自定义二级域名服务</h4>
@@ -778,6 +750,35 @@
                 currentType = type;
             });
         });
+        // 稿件定制：立即约稿展开
+        const commissionBtn = document.getElementById('commissionBtn');
+        const commissionPanel = document.getElementById('commissionPanel');
+        const commissionContent = document.getElementById('commissionContent');
+        let commissionOpen = false;
+        if (commissionBtn) {
+            commissionBtn.addEventListener('click', () => {
+                if (commissionOpen) {
+                    commissionContent.classList.remove('show');
+                    setTimeout(() => { commissionPanel.style.height = '0px'; }, 150);
+                    commissionBtn.classList.remove('active');
+                    commissionOpen = false;
+                    return;
+                }
+                commissionContent.innerHTML = `
+                    <div class="qrcode-placeholder" onclick="openModal('yuegao.png')"><img src="yuegao.png" alt="约稿二维码"></div>
+                    <div class="contact-label">约稿联系</div>
+                    <div class="contact-value">扫码添加约稿</div>
+                    <div class="contact-tip">点击二维码可放大查看</div>
+                `;
+                commissionBtn.classList.add('active');
+                setTimeout(() => {
+                    const h = commissionContent.offsetHeight + 20;
+                    commissionPanel.style.height = h + 'px';
+                    setTimeout(() => { commissionContent.classList.add('show'); }, 100);
+                }, 10);
+                commissionOpen = true;
+            });
+        }
         // 图片弹窗
         function openModal(src) {
             const modal = document.getElementById('imageModal');
