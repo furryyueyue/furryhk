@@ -259,7 +259,7 @@
             display: block;
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.36s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: max-height 0.48s cubic-bezier(0.22, 1, 0.36, 1);
             position: relative;
             z-index: 1;
         }
@@ -278,7 +278,7 @@
             text-align: center;
             opacity: 0;
             transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
+            transition: opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1), transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
             border: 1px solid rgba(255, 255, 0.3);
         }
         .contact-content.show {
@@ -781,10 +781,19 @@
         const buttons = document.querySelectorAll('.icon-btn');
         let currentType = null;
         let contactTransition = 0;
+        let contactSwapTimeout = 0;
+        let contactSwapEnd = null;
+        const cancelContactSwap = () => {
+            if (contactSwapTimeout) clearTimeout(contactSwapTimeout);
+            contactSwapTimeout = 0;
+            if (contactSwapEnd) panel.removeEventListener('transitionend', contactSwapEnd);
+            contactSwapEnd = null;
+        };
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const type = btn.dataset.type;
                 const transitionId = ++contactTransition;
+                cancelContactSwap();
                 
                 // 点击同一个就关闭
                 if (currentType === type) {
@@ -792,9 +801,6 @@
                     content.classList.remove('show');
                     panel.classList.remove('open');
                     btn.classList.remove('active');
-                    return;
-                    btn.classList.remove('active');
-                    currentType = null;
                     return;
                 }
                 // 清除其他激活状态
@@ -865,14 +871,23 @@
                     // 已经展开，先淡出内容
                     content.classList.remove('show');
                     panel.classList.remove('open');
-                    setTimeout(() => {
-                        if (transitionId !== contactTransition) return;
+                    let swapFinished = false;
+                    const finishSwap = () => {
+                        if (swapFinished) return;
+                        swapFinished = true;
+                        cancelContactSwap();
+                        if (transitionId !== contactTransition || currentType !== type) return;
                         content.innerHTML = html;
                         panel.classList.add('open');
                         requestAnimationFrame(() => {
-                            if (transitionId === contactTransition) content.classList.add('show');
+                            if (transitionId === contactTransition && currentType === type) content.classList.add('show');
                         });
-                    }, 360);
+                    };
+                    contactSwapEnd = event => {
+                        if (event.target === panel && event.propertyName === 'max-height') finishSwap();
+                    };
+                    panel.addEventListener('transitionend', contactSwapEnd);
+                    contactSwapTimeout = setTimeout(finishSwap, 620);
                 } else {
                     // 第一次展开
                     content.innerHTML = html;
