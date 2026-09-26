@@ -862,22 +862,7 @@
         const ringPercent = document.getElementById('ringPercent');
         const securityRing = document.querySelector('.security-ring');
         const securityStatus = document.getElementById('securityStatus');
-        // 页面开场期间并行预热头像与联系方式二维码，减少主页中的图片等待。
-        const warmImageUrls = [
-            'mmexport1726063520349.jpeg',
-            'wechat.png',
-            'qq.png',
-            'alipay.png',
-            'wechatpay.png'
-        ];
-        const warmImages = warmImageUrls.map(src => {
-            const img = new Image();
-            img.decoding = 'async';
-            img.src = src;
-            return img.decode ? img.decode().catch(() => undefined) : new Promise(resolve => {
-                img.onload = img.onerror = resolve;
-            });
-        });
+        // 圆环匀速填充，留出成功勾与淡出动画时间。
         const checkStartedAt = performance.now();
         const preparationDuration = 2000 + Math.random() * 2500;
         const successAndExitDuration = 1200;
@@ -897,25 +882,11 @@
             if (ringPercent) ringPercent.textContent = '100%';
             if (securityRing) securityRing.classList.add('complete');
             if (securityStatus) securityStatus.textContent = '页面已就绪';
-            // 勾动画完成并短暂停留后淡出，开场总时长落在 2–4.5 秒。
             setTimeout(() => {
                 if (!pageLoader) return;
                 pageLoader.classList.add('done');
                 setTimeout(() => pageLoader.remove(), 750);
             }, 550);
-        };
-        requestAnimationFrame(animateSecurityCheck);
-                return;
-            }
-            checkComplete = true;
-            if (ringPercent) ringPercent.textContent = '100%';
-            if (securityRing) securityRing.classList.add('complete');
-            if (securityStatus) securityStatus.textContent = '页面已就绪';
-            setTimeout(() => {
-                if (!pageLoader) return;
-                pageLoader.classList.add('done');
-                setTimeout(() => pageLoader.remove(), 750);
-            }, 650);
         };
         requestAnimationFrame(animateSecurityCheck);
         const avatar = document.querySelector('.avatar');
