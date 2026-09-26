@@ -539,6 +539,16 @@
         .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
         .contact-panel{will-change:height}
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+        /* 进度完成后以柔和弹性呈现成功圆勾 */
+        .security-ring::before{content:"";position:absolute;left:50%;top:50%;width:58px;height:58px;border-radius:50%;background:#4fbe8c;opacity:0;transform:translate(-50%,-50%) scale(.48);z-index:0;box-shadow:0 8px 24px rgba(52,174,122,.22);transition:opacity .22s ease,transform .52s cubic-bezier(.18,1.65,.4,1)}
+        .security-ring>svg:first-child{z-index:1}
+        .ring-progress{transition:stroke .38s ease}
+        .ring-percent{position:relative;z-index:2}
+        .success-mark{z-index:3}
+        .success-mark path{stroke:#fff}
+        .security-ring.complete{transform:scale(1.035);transition:transform .52s cubic-bezier(.18,1.65,.4,1)}
+        .security-ring.complete::before{opacity:1;transform:translate(-50%,-50%) scale(1)}
+        .security-ring.complete .ring-progress{stroke:#4fbe8c}
         /* 入场采用慢速、柔和的滑动节奏 */
         .card > .header,.card > .bio,.card > .tags,.card > .section-title,
         .card > .social-icons,.card > .contact-panel,.card > .module-box,
@@ -561,7 +571,7 @@
 <body>
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
         <div class="loader-content security-demo">
-            <div class="security-label">SECURITY CHECK · 演示</div>
+            <div class="security-label">正在加载</div>
             <div class="security-ring" role="img" aria-label="安全验证进度">
                 <svg viewBox="0 0 88 88" aria-hidden="true">
                     <circle class="ring-track" cx="44" cy="44" r="38"></circle>
@@ -572,8 +582,7 @@
                     <path d="M11 24.5 20 33l17-19"></path>
                 </svg>
             </div>
-            <p class="security-status" id="securityStatus">正在进行演示检查…</p>
-            <p class="security-caption">页面状态验证 · 不进行真实安全扫描</p>
+            <p class="security-status" id="securityStatus">马上就好…</p>
         </div>
     </div>
     <div class="glass-blob glass-blob-1"></div>
@@ -864,7 +873,7 @@
             checkComplete = true;
             if (ringPercent) ringPercent.textContent = '100%';
             if (securityRing) securityRing.classList.add('complete');
-            if (securityStatus) securityStatus.textContent = '验证完成';
+            if (securityStatus) securityStatus.textContent = '完成';
             setTimeout(() => {
                 if (!pageLoader) return;
                 pageLoader.classList.add('done');
