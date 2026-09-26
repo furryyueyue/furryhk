@@ -512,7 +512,11 @@
         .card > .tip-box,.card > .footer { animation-delay: .8s; }
         @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         /* 灵动的加载与入场效果 */
-        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.96),rgba(247,242,255,.94) 48%,rgba(231,239,255,.98));opacity:1;visibility:visible;transition:opacity .65s cubic-bezier(.2,.8,.2,1),visibility .65s}
+        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;overflow:hidden;background:#f2f1f8;opacity:1;visibility:visible;isolation:isolate;transition:opacity .65s cubic-bezier(.2,.8,.2,1),visibility .65s}
+        .page-loader::before,.page-loader::after{content:"";position:absolute;width:min(72vw,560px);aspect-ratio:1;border-radius:50%;filter:blur(72px);opacity:.52;z-index:-1;pointer-events:none}
+        .page-loader::before{background:radial-gradient(circle,#d9d2ff 0%,rgba(217,210,255,0) 70%);left:-18%;top:-24%;animation:mistDrift 8s ease-in-out infinite alternate}
+        .page-loader::after{background:radial-gradient(circle,#c9e7ff 0%,rgba(201,231,255,0) 70%);right:-18%;bottom:-28%;animation:mistDrift 10s ease-in-out infinite alternate-reverse}
+        @keyframes mistDrift{to{transform:translate3d(7vw,4vh,0) scale(1.12)}}
         .page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
         .loader-content{text-align:center;color:#51427f}
         .security-demo{animation:securityFloat 2.8s ease-in-out infinite}
@@ -571,7 +575,7 @@
 <body>
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
         <div class="loader-content security-demo">
-            <div class="security-label">正在加载</div>
+            <div class="security-label">安全检查演示</div>
             <div class="security-ring" role="img" aria-label="安全验证进度">
                 <svg viewBox="0 0 88 88" aria-hidden="true">
                     <circle class="ring-track" cx="44" cy="44" r="38"></circle>
@@ -582,7 +586,8 @@
                     <path d="M11 24.5 20 33l17-19"></path>
                 </svg>
             </div>
-            <p class="security-status" id="securityStatus">马上就好…</p>
+            <p class="security-status" id="securityStatus">正在模拟检查…</p>
+            <p class="security-caption">此页面为动画演示，不执行真实安全检测</p>
         </div>
     </div>
     <div class="glass-blob glass-blob-1"></div>
@@ -873,7 +878,7 @@
             checkComplete = true;
             if (ringPercent) ringPercent.textContent = '100%';
             if (securityRing) securityRing.classList.add('complete');
-            if (securityStatus) securityStatus.textContent = '完成';
+            if (securityStatus) securityStatus.textContent = '演示完成';
             setTimeout(() => {
                 if (!pageLoader) return;
                 pageLoader.classList.add('done');
