@@ -11,7 +11,7 @@
             box-sizing: border-box;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', Roboto, 'Helvetica Neue', Arial, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
@@ -256,12 +256,16 @@
         }
         /* 联系方式展开区 */
         .contact-panel {
-            height: 0;
+            display: grid;
+            grid-template-rows: 0fr;
             overflow: hidden;
-            transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
+        .contact-panel.open { grid-template-rows: 1fr; }
         .contact-content {
+            min-height: 0;
             margin-top: 20px;
+            pointer-events: none;
             padding: 24px;
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(20px);
@@ -276,6 +280,7 @@
         .contact-content.show {
             opacity: 1;
             transform: translateY(0);
+            pointer-events: auto;
         }
         .contact-label {
             font-size: 12px;
@@ -541,7 +546,6 @@
         .tag,.icon-btn,.module-btn,.contact-link,.back-btn{-webkit-tap-highlight-color:transparent}
         .tag:active,.icon-btn:active,.module-btn:active,.contact-link:active{transform:scale(.96)}
         .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
-        .contact-panel{will-change:height}
         .contact-panel{border-radius:24px;overflow:hidden}
         .contact-content{box-sizing:border-box;margin-top:20px;border-radius:24px!important;overflow:hidden;border-color:rgba(255,255,255,.72)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 14px 36px rgba(70,58,125,.12)!important}
         .qrcode-placeholder{border-radius:16px;overflow:hidden}
@@ -755,10 +759,11 @@
                 
                 // 点击同一个就关闭
                 if (currentType === type) {
-                    content.classList.remove('show'); // 先淡出内容
-                    setTimeout(() => {
-                        if (transitionId === contactTransition && currentType === null) panel.style.height = '0px';
-                    }, 150);
+                    currentType = null;
+                    content.classList.remove('show');
+                    panel.classList.remove('open');
+                    btn.classList.remove('active');
+                    return;
                     btn.classList.remove('active');
                     currentType = null;
                     return;
@@ -830,27 +835,21 @@
                 if (currentType) {
                     // 已经展开，先淡出内容
                     content.classList.remove('show');
+                    panel.classList.remove('open');
                     setTimeout(() => {
                         if (transitionId !== contactTransition) return;
                         content.innerHTML = html;
+                        panel.classList.add('open');
                         requestAnimationFrame(() => {
-                            if (transitionId !== contactTransition) return;
-                            panel.style.height = (content.scrollHeight + 20) + 'px';
-                            setTimeout(() => {
-                                if (transitionId === contactTransition) content.classList.add('show');
-                            }, 120);
+                            if (transitionId === contactTransition) content.classList.add('show');
                         });
-                    }, 200);
+                    }, 180);
                 } else {
                     // 第一次展开
                     content.innerHTML = html;
-                    // 先计算高度
+                    panel.classList.add('open');
                     requestAnimationFrame(() => {
-                        if (transitionId !== contactTransition) return;
-                        panel.style.height = (content.scrollHeight + 20) + 'px';
-                        setTimeout(() => {
-                            if (transitionId === contactTransition) content.classList.add('show');
-                        }, 100);
+                        if (transitionId === contactTransition) content.classList.add('show');
                     });
                 }
                 currentType = type;
