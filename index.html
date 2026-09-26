@@ -616,7 +616,20 @@
         .ring-progress { transition-property:stroke,stroke-dashoffset !important; transition-duration:.38s,var(--ring-duration,2s) !important; transition-timing-function:ease,linear !important; filter:none !important; }
         .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer { animation-duration:.95s !important; animation-timing-function:cubic-bezier(.2,.8,.2,1) !important; }
         @keyframes sectionIn { from { opacity:0; transform:translate3d(0,20px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-    </style>>
+        .notice-modal{position:fixed;inset:0;z-index:1800;display:grid;place-items:center;padding:24px;background:rgba(31,25,57,.28);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease}
+        .notice-modal.show{opacity:1;visibility:visible;pointer-events:auto}
+        .notice-dialog{width:min(100%,390px);padding:28px 24px 22px;border:1px solid rgba(255,255,255,.76);border-radius:28px;background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(247,245,255,.94));box-shadow:0 24px 72px rgba(38,28,82,.2),inset 0 1px 0 #fff;text-align:center;transform:translateY(14px) scale(.97);transition:transform .42s cubic-bezier(.18,1.25,.35,1)}
+        .notice-modal.show .notice-dialog{transform:translateY(0) scale(1)}
+        .notice-mark{width:48px;height:48px;margin:0 auto 14px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#eee9ff,#e6f0ff);color:#7963c9;font-size:25px;box-shadow:inset 0 1px 0 #fff}
+        .notice-eyebrow{margin-bottom:6px;color:#80749d;font-size:12px;font-weight:600;letter-spacing:.12em}
+        .notice-title{margin:0 0 10px;color:#29233d;font-size:21px;font-weight:650}
+        .notice-message{margin:0 auto 22px;max-width:290px;color:#676174;font-size:14px;line-height:1.8}
+        .notice-ok{width:100%;min-height:50px;border:0;border-radius:17px;background:linear-gradient(135deg,#7665d7,#8b70d5);box-shadow:0 8px 20px rgba(112,90,199,.24);color:#fff;font:600 15px inherit;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+        .notice-ok:hover{transform:translateY(-1px);box-shadow:0 11px 24px rgba(112,90,199,.3)}
+        .notice-ok:active{transform:scale(.98)}
+        .notice-ok:focus-visible{outline:3px solid rgba(102,126,234,.48);outline-offset:3px}
+        @media(prefers-reduced-motion:reduce){.notice-modal,.notice-dialog,.notice-ok{transition-duration:.01ms!important}}
+    </style>
 </head>
 <body>
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
@@ -719,6 +732,15 @@
     <div class="image-modal" id="imageModal" onclick="closeModal()">
         <img id="modalImage" src="" alt="大图">
         <div class="close-tip">点击任意位置关闭</div>
+    </div>
+    <div class="notice-modal" id="noticeModal" role="dialog" aria-modal="true" aria-labelledby="noticeTitle" aria-describedby="noticeMessage" aria-hidden="true">
+        <div class="notice-dialog">
+            <div class="notice-mark" aria-hidden="true">✦</div>
+            <p class="notice-eyebrow">小提示</p>
+            <h2 class="notice-title" id="noticeTitle">页面已加载</h2>
+            <p class="notice-message" id="noticeMessage">如遇到未加载出来的内容，请刷新重试，谢谢。</p>
+            <button class="notice-ok" id="noticeOk" type="button">OK</button>
+        </div>
     </div>
     <script>
         // 生成雪花 - 优化飘落效果
@@ -968,7 +990,28 @@
                 if (!pageLoader) return;
                 document.documentElement.classList.remove('intro-active');
                 pageLoader.classList.add('done');
-                setTimeout(() => pageLoader.remove(), 750);
+                setTimeout(() => {
+                    pageLoader.remove();
+                    const noticeModal = document.getElementById('noticeModal');
+                    const noticeOk = document.getElementById('noticeOk');
+                    if (!noticeModal || !noticeOk) return;
+                    noticeModal.classList.add('show');
+                    noticeModal.setAttribute('aria-hidden', 'false');
+                    document.body.style.overflow = 'hidden';
+                    noticeOk.focus({ preventScroll: true });
+                    const closeNotice = () => {
+                        noticeModal.classList.remove('show');
+                        noticeModal.setAttribute('aria-hidden', 'true');
+                        document.body.style.overflow = '';
+                    };
+                    noticeOk.addEventListener('click', closeNotice, { once: true });
+                    document.addEventListener('keydown', event => {
+                        if (event.key === 'Escape' && noticeModal.classList.contains('show')) {
+                            closeNotice();
+                            noticeOk.blur();
+                        }
+                    }, { once: true });
+                }, 750);
             }, 550);
         };
         setTimeout(updateSecurityProgress, 40);
