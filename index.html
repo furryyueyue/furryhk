@@ -512,12 +512,24 @@
         .card > .tip-box,.card > .footer { animation-delay: .8s; }
         @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         /* 灵动的加载与入场效果 */
-        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:linear-gradient(135deg,#eef0ff 0%,#f7edff 52%,#e9f6ff 100%);opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 42%,rgba(255,255,255,.96),rgba(247,242,255,.94) 48%,rgba(231,239,255,.98));opacity:1;visibility:visible;transition:opacity .65s cubic-bezier(.2,.8,.2,1),visibility .65s}
         .page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
-        .loader-content{text-align:center;color:#51427f;animation:loaderBob 1.35s ease-in-out infinite}
-        .loader-orbit{width:58px;height:58px;margin:0 auto 15px;border:4px solid rgba(118,75,162,.16);border-top-color:#8061d5;border-right-color:#a98bea;border-radius:50%;animation:loaderSpin .9s cubic-bezier(.5,.1,.5,.9) infinite}
-        .loader-content p{font-size:14px;letter-spacing:.08em}
-        @keyframes loaderSpin{to{transform:rotate(360deg)}} @keyframes loaderBob{50%{transform:translateY(-4px) scale(1.025)}}
+        .loader-content{text-align:center;color:#51427f}
+        .security-demo{animation:securityFloat 2.8s ease-in-out infinite}
+        .security-label{margin-bottom:22px;font-size:11px;font-weight:700;letter-spacing:.19em;color:#76649f}
+        .security-ring{position:relative;width:104px;height:104px;margin:0 auto 20px;display:grid;place-items:center}
+        .security-ring>svg:first-child{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
+        .ring-track,.ring-progress{fill:none;stroke-width:5}
+        .ring-track{stroke:rgba(111,91,163,.12)}
+        .ring-progress{stroke:url(#unused);stroke:#8265d5;stroke-linecap:round;stroke-dasharray:238.76;stroke-dashoffset:238.76;filter:drop-shadow(0 1px 4px rgba(126,94,207,.28))}
+        .ring-percent{font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.04em;color:#51427f;transition:opacity .22s ease,transform .35s cubic-bezier(.2,1.5,.4,1)}
+        .security-ring.complete .ring-percent{opacity:0;transform:scale(.72)}
+        .success-mark{position:absolute;width:47px;height:47px;overflow:visible}
+        .success-mark path{fill:none;stroke:#45b987;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:42;stroke-dashoffset:42;opacity:0;transform:scale(.72);transform-origin:50% 50%;transition:stroke-dashoffset .62s cubic-bezier(.2,.8,.2,1),opacity .22s ease,transform .52s cubic-bezier(.18,1.65,.4,1)}
+        .security-ring.complete .success-mark path{stroke-dashoffset:0;opacity:1;transform:scale(1)}
+        .security-status{font-size:15px;font-weight:600;letter-spacing:.04em;color:#51427f;transition:opacity .22s ease,transform .22s ease}
+        .security-caption{margin-top:8px;font-size:11px;letter-spacing:.04em;color:#948ba9}
+        @keyframes securityFloat{50%{transform:translateY(-3px)}}
         .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer{animation:sectionIn .72s cubic-bezier(.18,.85,.25,1) both}
         .card>.header{animation-delay:.05s}.card>.bio{animation-delay:.13s}.card>.tags{animation-delay:.2s}.card>.section-title,.card>.social-icons{animation-delay:.27s}
         .card>.module-box:nth-child(7){animation-delay:.34s}.card>.module-box:nth-child(8){animation-delay:.41s}.card>.tip-box,.card>.footer{animation-delay:.48s}
@@ -547,7 +559,23 @@
     </style>
 </head>
 <body>
-    <div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="loader-content"><div class="loader-orbit" aria-hidden="true"></div><p>正在准备一份小小的见面礼…</p></div></div>
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
+        <div class="loader-content security-demo">
+            <div class="security-label">SECURITY CHECK · 演示</div>
+            <div class="security-ring" role="img" aria-label="安全验证进度">
+                <svg viewBox="0 0 88 88" aria-hidden="true">
+                    <circle class="ring-track" cx="44" cy="44" r="38"></circle>
+                    <circle class="ring-progress" id="ringProgress" cx="44" cy="44" r="38"></circle>
+                </svg>
+                <span class="ring-percent" id="ringPercent">0%</span>
+                <svg class="success-mark" id="successMark" viewBox="0 0 48 48" aria-hidden="true">
+                    <path d="M11 24.5 20 33l17-19"></path>
+                </svg>
+            </div>
+            <p class="security-status" id="securityStatus">正在进行演示检查…</p>
+            <p class="security-caption">页面状态验证 · 不进行真实安全扫描</p>
+        </div>
+    </div>
     <div class="glass-blob glass-blob-1"></div>
     <div class="glass-blob glass-blob-2"></div>
     <div class="glass-blob glass-blob-3"></div>
@@ -816,13 +844,34 @@
             if (event.key === 'Escape') closeModal();
         });
         const pageLoader = document.getElementById('pageLoader');
-        const hideLoader = () => {
-            if (!pageLoader || pageLoader.classList.contains('done')) return;
-            pageLoader.classList.add('done');
-            setTimeout(() => pageLoader.remove(), 700);
+        const ring = document.getElementById('ringProgress');
+        const ringPercent = document.getElementById('ringPercent');
+        const securityRing = document.querySelector('.security-ring');
+        const securityStatus = document.getElementById('securityStatus');
+        const checkStartedAt = performance.now();
+        const checkDuration = 5000;
+        const ringLength = 2 * Math.PI * 38;
+        let checkComplete = false;
+        const animateSecurityCheck = now => {
+            if (checkComplete) return;
+            const progress = Math.min(1, (now - checkStartedAt) / checkDuration);
+            if (ring) ring.style.strokeDashoffset = String(ringLength * (1 - progress));
+            if (ringPercent) ringPercent.textContent = Math.floor(progress * 100) + '%';
+            if (progress < 1) {
+                requestAnimationFrame(animateSecurityCheck);
+                return;
+            }
+            checkComplete = true;
+            if (ringPercent) ringPercent.textContent = '100%';
+            if (securityRing) securityRing.classList.add('complete');
+            if (securityStatus) securityStatus.textContent = '验证完成';
+            setTimeout(() => {
+                if (!pageLoader) return;
+                pageLoader.classList.add('done');
+                setTimeout(() => pageLoader.remove(), 750);
+            }, 650);
         };
-        window.addEventListener('load', hideLoader, { once: true });
-        setTimeout(hideLoader, 2400);
+        requestAnimationFrame(animateSecurityCheck);
         const avatar = document.querySelector('.avatar');
         if (avatar) {
             avatar.addEventListener('contextmenu', event => event.preventDefault());
