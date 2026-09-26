@@ -256,12 +256,16 @@
         }
         /* 联系方式展开区 */
         .contact-panel {
-            display: grid;
-            grid-template-rows: 0fr;
+            display: block;
+            max-height: 0;
             overflow: hidden;
-            transition: grid-template-rows 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transition: max-height 0.36s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            z-index: 1;
         }
-        .contact-panel.open { grid-template-rows: 1fr; }
+        .contact-panel.open { max-height: 520px; }
+        .section-title { position: relative; z-index: 3; }
+        .social-icons { position: relative; z-index: 2; }
         .contact-content {
             min-height: 0;
             margin-top: 20px;
@@ -843,7 +847,7 @@
                         requestAnimationFrame(() => {
                             if (transitionId === contactTransition) content.classList.add('show');
                         });
-                    }, 180);
+                    }, 360);
                 } else {
                     // 第一次展开
                     content.innerHTML = html;
