@@ -548,6 +548,31 @@
         .card>.module-box:nth-child(7){animation-delay:.34s}.card>.module-box:nth-child(8){animation-delay:.41s}.card>.tip-box,.card>.footer{animation-delay:.48s}
         @keyframes sectionIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
         .tag,.icon-btn,.module-btn,.contact-link,.back-btn{-webkit-tap-highlight-color:transparent}
+        /* 低负载渲染：用静态渐变保留玻璃观感，避免大面积实时模糊反复合成 */
+        .card,.bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content,.qrcode-placeholder,.image-modal {
+            -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
+        }
+        .card { background-color:rgba(255,255,255,.62)!important; }
+        .glass-blob { filter:none!important;animation:none!important;opacity:1; }
+        .glass-blob-1 { background:radial-gradient(circle,rgba(199,174,255,.5),rgba(199,174,255,0) 72%); }
+        .glass-blob-2 { background:radial-gradient(circle,rgba(134,170,255,.44),rgba(134,170,255,0) 72%); }
+        .glass-blob-3 { background:radial-gradient(circle,rgba(225,190,255,.38),rgba(225,190,255,0) 72%); }
+        .page-loader::before,.page-loader::after { filter:none!important; }
+        .snow span { will-change:auto; }
+        .avatar,.wave,.security-demo { animation:none!important; }
+        .image-modal { background:rgba(20,16,40,.84); }
+        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer {
+            animation-duration:.68s!important;
+        }
+        @media(max-width:768px) {
+            .snow { display:none!important; }
+            .card { -webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
+            .glass-blob { opacity:.7; }
+            .page-loader::before,.page-loader::after { opacity:.38; }
+        }
+        @media(prefers-reduced-motion:reduce) {
+            .card,.card>* ,.glass-blob,.snow span,.avatar,.wave,.security-demo { animation:none!important; }
+        }
         .tag:active,.icon-btn:active,.module-btn:active,.contact-link:active{transform:scale(.96)}
         .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
         .contact-panel{border-radius:24px;overflow:hidden}
@@ -701,7 +726,7 @@
         const snowContainer = document.getElementById('snow');
         const snowChars = ['2744', '2747', '2744'];
         
-        const flakeCount = window.matchMedia('(max-width: 600px)').matches ? 8 : 16;
+        const flakeCount = window.matchMedia('(max-width: 768px)').matches ? 0 : 6;
         for (let i = 0; i < flakeCount; i++) {
             const s = document.createElement('span');
             s.innerHTML = '<img class="emoji" src="assets/noto-emoji/emoji_u' + snowChars[i % snowChars.length] + '.svg" alt="">';
