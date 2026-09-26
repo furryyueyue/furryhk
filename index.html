@@ -575,7 +575,7 @@
 <body>
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
         <div class="loader-content security-demo">
-            <div class="security-label">安全检查演示</div>
+            <div class="security-label">正在准备页面</div>
             <div class="security-ring" role="img" aria-label="安全验证进度">
                 <svg viewBox="0 0 88 88" aria-hidden="true">
                     <circle class="ring-track" cx="44" cy="44" r="38"></circle>
@@ -586,8 +586,8 @@
                     <path d="M11 24.5 20 33l17-19"></path>
                 </svg>
             </div>
-            <p class="security-status" id="securityStatus">正在模拟检查…</p>
-            <p class="security-caption">此页面为动画演示，不执行真实安全检测</p>
+            <p class="security-status" id="securityStatus">页面加载中…</p>
+            <p class="security-caption">加载完成后将自动进入主页</p>
         </div>
     </div>
     <div class="glass-blob glass-blob-1"></div>
@@ -878,7 +878,7 @@
             checkComplete = true;
             if (ringPercent) ringPercent.textContent = '100%';
             if (securityRing) securityRing.classList.add('complete');
-            if (securityStatus) securityStatus.textContent = '演示完成';
+            if (securityStatus) securityStatus.textContent = '页面已就绪';
             setTimeout(() => {
                 if (!pageLoader) return;
                 pageLoader.classList.add('done');
