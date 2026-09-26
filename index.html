@@ -483,9 +483,26 @@
                 font-size: 20px;
             }
         }
+        /* 灵动的加载与入场效果 */
+        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;background:linear-gradient(135deg,#eef0ff 0%,#f7edff 52%,#e9f6ff 100%);opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+        .page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
+        .loader-content{text-align:center;color:#51427f;animation:loaderBob 1.35s ease-in-out infinite}
+        .loader-orbit{width:58px;height:58px;margin:0 auto 15px;border:4px solid rgba(118,75,162,.16);border-top-color:#8061d5;border-right-color:#a98bea;border-radius:50%;animation:loaderSpin .9s cubic-bezier(.5,.1,.5,.9) infinite}
+        .loader-content p{font-size:14px;letter-spacing:.08em}
+        @keyframes loaderSpin{to{transform:rotate(360deg)}} @keyframes loaderBob{50%{transform:translateY(-4px) scale(1.025)}}
+        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer{animation:sectionIn .72s cubic-bezier(.18,.85,.25,1) both}
+        .card>.header{animation-delay:.05s}.card>.bio{animation-delay:.13s}.card>.tags{animation-delay:.2s}.card>.section-title,.card>.social-icons{animation-delay:.27s}
+        .card>.module-box:nth-of-type(11){animation-delay:.34s}.card>.module-box:nth-of-type(12){animation-delay:.41s}.card>.tip-box,.card>.footer{animation-delay:.48s}
+        @keyframes sectionIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+        .tag,.icon-btn,.module-btn,.contact-link,.back-btn{-webkit-tap-highlight-color:transparent}
+        .tag:active,.icon-btn:active,.module-btn:active,.contact-link:active{transform:scale(.96)}
+        .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
+        .contact-panel{will-change:height}
+        @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
     </style>
 </head>
 <body>
+    <div class="page-loader" id="pageLoader" role="status" aria-live="polite"><div class="loader-content"><div class="loader-orbit" aria-hidden="true"></div><p>正在准备一份小小的见面礼…</p></div></div>
     <div class="glass-blob glass-blob-1"></div>
     <div class="glass-blob glass-blob-2"></div>
     <div class="glass-blob glass-blob-3"></div>
@@ -628,15 +645,17 @@
         const content = document.getElementById('contactContent');
         const buttons = document.querySelectorAll('.icon-btn');
         let currentType = null;
+        let contactTransition = 0;
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const type = btn.dataset.type;
+                const transitionId = ++contactTransition;
                 
                 // 点击同一个就关闭
                 if (currentType === type) {
                     content.classList.remove('show'); // 先淡出内容
                     setTimeout(() => {
-                        panel.style.height = '0px'; // 再收起高度
+                        if (transitionId === contactTransition && currentType === null) panel.style.height = '0px';
                     }, 150);
                     btn.classList.remove('active');
                     currentType = null;
@@ -710,29 +729,27 @@
                     // 已经展开，先淡出内容
                     content.classList.remove('show');
                     setTimeout(() => {
+                        if (transitionId !== contactTransition) return;
                         content.innerHTML = html;
-                        // 动态调整高度
-                        setTimeout(() => {
-                            const contentHeight = content.offsetHeight + 20;
-                            panel.style.height = contentHeight + 'px';
-                            // 高度变化后再淡入
+                        requestAnimationFrame(() => {
+                            if (transitionId !== contactTransition) return;
+                            panel.style.height = content.scrollHeight + 'px';
                             setTimeout(() => {
-                                content.classList.add('show');
-                            }, 150);
-                        }, 10);
+                                if (transitionId === contactTransition) content.classList.add('show');
+                            }, 120);
+                        });
                     }, 200);
                 } else {
                     // 第一次展开
                     content.innerHTML = html;
                     // 先计算高度
-                    setTimeout(() => {
-                        const contentHeight = content.offsetHeight + 20;
-                        panel.style.height = contentHeight + 'px';
-                        // 高度开始变化后，内容淡入
+                    requestAnimationFrame(() => {
+                        if (transitionId !== contactTransition) return;
+                        panel.style.height = content.scrollHeight + 'px';
                         setTimeout(() => {
-                            content.classList.add('show');
+                            if (transitionId === contactTransition) content.classList.add('show');
                         }, 100);
-                    }, 10);
+                    });
                 }
                 currentType = type;
             });
@@ -743,11 +760,30 @@
             const img = document.getElementById('modalImage');
             img.src = src;
             modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
         }
         function closeModal() {
             const modal = document.getElementById('imageModal');
             modal.classList.remove('show');
+            document.body.style.overflow = '';
         }
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape') closeModal();
+        });
+        const pageLoader = document.getElementById('pageLoader');
+        const hideLoader = () => {
+            if (!pageLoader || pageLoader.classList.contains('done')) return;
+            pageLoader.classList.add('done');
+            setTimeout(() => pageLoader.remove(), 700);
+        };
+        window.addEventListener('load', hideLoader, { once: true });
+        setTimeout(hideLoader, 2400);
+        document.querySelectorAll('img').forEach(img => {
+            img.addEventListener('error', () => {
+                img.dataset.failed = 'true';
+                if (img.closest('.avatar')) img.closest('.avatar').classList.add('image-missing');
+            }, { once: true });
+        });
     </script>
 </body>
 </html>
