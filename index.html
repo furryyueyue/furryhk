@@ -257,13 +257,12 @@
         /* 联系方式展开区 */
         .contact-panel {
             display: block;
-            max-height: 0;
+            height: 0;
             overflow: hidden;
-            transition: max-height 0.48s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: height 0.48s cubic-bezier(0.22, 1, 0.36, 1);
             position: relative;
             z-index: 1;
         }
-        .contact-panel.open { max-height: 520px; }
         .section-title { position: relative; z-index: 3; }
         .social-icons { position: relative; z-index: 2; }
         .contact-content {
@@ -789,6 +788,21 @@
             if (contactSwapEnd) panel.removeEventListener('transitionend', contactSwapEnd);
             contactSwapEnd = null;
         };
+        const closeContactPanel = () => {
+            panel.style.height = panel.getBoundingClientRect().height + 'px';
+            void panel.offsetHeight;
+            panel.classList.remove('open');
+            panel.style.height = '0px';
+        };
+        const openContactPanel = () => {
+            panel.classList.add('open');
+            panel.style.height = (content.scrollHeight + 20) + 'px';
+        };
+        panel.addEventListener('transitionend', event => {
+            if (event.target === panel && event.propertyName === 'height' && panel.classList.contains('open')) {
+                panel.style.height = 'auto';
+            }
+        });
         buttons.forEach(btn => {
             btn.addEventListener('click', () => {
                 const type = btn.dataset.type;
@@ -799,7 +813,7 @@
                 if (currentType === type) {
                     currentType = null;
                     content.classList.remove('show');
-                    panel.classList.remove('open');
+                    closeContactPanel();
                     btn.classList.remove('active');
                     return;
                 }
@@ -870,7 +884,7 @@
                 if (panel.classList.contains('open')) {
                     // 已展开的面板先完整收起，再替换内容
                     content.classList.remove('show');
-                    panel.classList.remove('open');
+                    closeContactPanel();
                     let swapFinished = false;
                     const finishSwap = () => {
                         if (swapFinished) return;
@@ -878,20 +892,20 @@
                         cancelContactSwap();
                         if (transitionId !== contactTransition || currentType !== type) return;
                         content.innerHTML = html;
-                        panel.classList.add('open');
+                        openContactPanel();
                         requestAnimationFrame(() => {
                             if (transitionId === contactTransition && currentType === type) content.classList.add('show');
                         });
                     };
                     contactSwapEnd = event => {
-                        if (event.target === panel && event.propertyName === 'max-height') finishSwap();
+                        if (event.target === panel && event.propertyName === 'height') finishSwap();
                     };
                     panel.addEventListener('transitionend', contactSwapEnd);
-                    contactSwapTimeout = setTimeout(finishSwap, 620);
+                    contactSwapTimeout = setTimeout(finishSwap, 650);
                 } else {
                     // 第一次展开
                     content.innerHTML = html;
-                    panel.classList.add('open');
+                    openContactPanel();
                     requestAnimationFrame(() => {
                         if (transitionId === contactTransition) content.classList.add('show');
                     });
