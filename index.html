@@ -570,7 +570,14 @@
         .card > .module-box:nth-child(8) { animation-delay: .68s; }
         .card > .tip-box,.card > .footer { animation-delay: .8s; }
         @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-    </style>
+        /* 减少动画合成和重绘，保留轻盈入场 */
+        html.intro-active .card,html.intro-active .card *,html.intro-active .glass-blob,html.intro-active .snow span { animation-play-state:paused !important; }
+        .page-loader::before,.page-loader::after { animation:none !important; }
+        .bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
+        .ring-progress { transition-property:stroke,stroke-dashoffset !important; transition-duration:.38s,var(--ring-duration,2s) !important; transition-timing-function:ease,linear !important; filter:none !important; }
+        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer { animation-duration:.95s !important; animation-timing-function:cubic-bezier(.2,.8,.2,1) !important; }
+        @keyframes sectionIn { from { opacity:0; transform:translate3d(0,20px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
+    </style>>
 </head>
 <body>
     <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
@@ -662,7 +669,7 @@
 
         <!-- 新增3：更多功能待开发提示 -->
         <div class="tip-box">
-            网站更多配套功能持续开发中，请敬请期待
+            更多功能开发中，请敬请期待
         </div>
 
         <div class="footer">
@@ -679,9 +686,10 @@
         const snowContainer = document.getElementById('snow');
         const snowChars = ['❄', '❅', '✻'];
         
-        for (let i = 0; i < 35; i++) {
+        const flakeCount = window.matchMedia('(max-width: 600px)').matches ? 8 : 16;
+        for (let i = 0; i < flakeCount; i++) {
             const s = document.createElement('span');
-            s.innerHTML = snowChars[i % 3];
+            s.textContent = snowChars[i % 3];
             s.style.left = Math.random() * 100 + '%';
             s.style.animationDuration = (Math.random() * 10 + 15) + 's'; // 15-25秒
             s.style.animationDelay = (Math.random() * 15) + 's';
@@ -862,20 +870,30 @@
         const ringPercent = document.getElementById('ringPercent');
         const securityRing = document.querySelector('.security-ring');
         const securityStatus = document.getElementById('securityStatus');
-        // 圆环匀速填充，留出成功勾与淡出动画时间。
+        document.documentElement.classList.add('intro-active');
+        // 圆环交给 CSS 原生过渡绘制，脚本只低频更新百分比数字。
         const checkStartedAt = performance.now();
         const preparationDuration = 2000 + Math.random() * 2500;
         const successAndExitDuration = 1200;
         const checkDuration = preparationDuration - successAndExitDuration;
-        const ringLength = 2 * Math.PI * 38;
         let checkComplete = false;
-        const animateSecurityCheck = now => {
+        let lastPercent = -1;
+        if (ring) {
+            ring.style.setProperty('--ring-duration', checkDuration + 'ms');
+            ring.style.transition = 'stroke .38s ease, stroke-dashoffset ' + checkDuration + 'ms linear';
+            void ring.getBoundingClientRect();
+            requestAnimationFrame(() => { ring.style.strokeDashoffset = '0'; });
+        }
+        const updateSecurityProgress = () => {
             if (checkComplete) return;
-            const progress = Math.min(1, (now - checkStartedAt) / checkDuration);
-            if (ring) ring.style.strokeDashoffset = String(ringLength * (1 - progress));
-            if (ringPercent) ringPercent.textContent = Math.floor(progress * 100) + '%';
+            const progress = Math.min(1, (performance.now() - checkStartedAt) / checkDuration);
+            const percent = Math.floor(progress * 100);
+            if (percent !== lastPercent && ringPercent) {
+                ringPercent.textContent = percent + '%';
+                lastPercent = percent;
+            }
             if (progress < 1) {
-                requestAnimationFrame(animateSecurityCheck);
+                setTimeout(updateSecurityProgress, 40);
                 return;
             }
             checkComplete = true;
@@ -884,11 +902,12 @@
             if (securityStatus) securityStatus.textContent = '页面已就绪';
             setTimeout(() => {
                 if (!pageLoader) return;
+                document.documentElement.classList.remove('intro-active');
                 pageLoader.classList.add('done');
                 setTimeout(() => pageLoader.remove(), 750);
             }, 550);
         };
-        requestAnimationFrame(animateSecurityCheck);
+        setTimeout(updateSecurityProgress, 40);
         const avatar = document.querySelector('.avatar');
         if (avatar) {
             avatar.addEventListener('contextmenu', event => event.preventDefault());
