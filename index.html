@@ -11,7 +11,7 @@
 html{background:#f2eef4;color:#393343;background:light-dark(#f2eef4,#17141c);color:light-dark(#393343,#eee9f4);color-scheme:light dark}
 body{margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
 button,a{font-family:inherit}
-body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 3px 8px #30203755);transform-origin:center;user-select:none;-webkit-user-drag:none}
+body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 5px #30203733);transform-origin:center;user-select:none;-webkit-user-drag:none}
 </style>
 </head>
 <body>
@@ -249,7 +249,6 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
       let previousMinHeight = '';
       let closingDialog = false;
       let openingDialog = false;
-      let imageRequest = 0;
       let lastHaptic = 0;
       const feedbackTimers = new WeakMap();
       const tapHaptic = () => {
@@ -287,10 +286,9 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
         const flight = animateMotion(dialog,[{transform:start === 'none' ? 'translate3d(0,0,0) scale(1)' : start,opacity},{transform:'translate3d(0,5px,0) scale(.97)',opacity:0}],{duration:180,easing:'ease-in',fill:'forwards'});
         flight.finished.then(finishClose).catch(finishClose);
       };
-      const openImage = async image => {
+      const openImage = image => {
         if (!dialog.hidden || openingDialog) return;
         openingDialog = true;
-        const request = ++imageRequest;
         originImage = image;
         dialogImage.src = image.src;
         dialogImage.alt = '放大的' + image.alt;
@@ -301,15 +299,14 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
         dialogTitle.textContent = image.alt;
         const captions = {'wechat.png':'打开微信，扫码添加好友','qq.png':'打开 QQ，扫码添加好友','alipay.png':'请使用支付宝扫码打赏','wechatpay.png':'请使用微信扫码打赏'};
         dialogCaption.textContent = captions[image.dataset.filename] || '扫描二维码';
-        try { if (dialogImage.decode) await dialogImage.decode(); } catch (_) {}
-        if (request !== imageRequest || !image.isConnected || image.closest('[inert]')) { openingDialog = false;return; }
+        if (!image.isConnected || image.closest('[inert]')) { openingDialog = false;return; }
         const source = image.getBoundingClientRect();
         const bounds = page.getBoundingClientRect();
         previousMinHeight = page.style.minHeight;
         dialog.hidden = false;
         dialog.setAttribute('aria-hidden','false');
         const top = Math.max(16,source.top - bounds.top - page.clientTop - 32);
-        dialog.style.left = Math.max(16,(page.clientWidth - dialog.offsetWidth) / 2) + 'px';
+        dialog.style.left = Math.max(16,(page.clientWidth - Math.min(340,page.clientWidth - 32)) / 2) + 'px';
         dialog.style.top = top + 'px';
         page.style.minHeight = Math.max(page.offsetHeight,top + dialog.offsetHeight + 24) + 'px';
         shade.hidden = false;
@@ -319,9 +316,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
         root.querySelector('#yy-dialog-close').focus({preventScroll:true});
         requestAnimationFrame(() => { if (!dialog.hidden && !closingDialog) shade.classList.add('is-open'); });
         if (reduceMotion.matches) return;
-        animateMotion(dialog,[{opacity:0,transform:'translate3d(0,7px,0) scale(.95)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:240,easing:'cubic-bezier(.16,1,.3,1)'});
-        const chrome = [root.querySelector('.yy-dialog-head'),root.querySelector('.yy-dialog-caption')];
-        chrome.forEach(element => animateMotion(element,[{opacity:0,transform:'translate3d(0,3px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:180,delay:110,easing:'ease-out',fill:'backwards'}));
+        animateMotion(dialog,[{opacity:0,transform:'translate3d(0,6px,0) scale(.985)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
       };
       root.querySelector('#yy-dialog-close').addEventListener('click',closeImage);
       shade.addEventListener('click',() => { tapHaptic();closeImage(); });
@@ -338,15 +333,15 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
         const control = event.target.closest('button,a');
         if (!control || !root.contains(control)) return;
         tapHaptic();
-        if (!qrButton) {
-          if (!reduceMotion.matches) {
-            control.getAnimations().forEach(animation => animation.cancel());
-            animateMotion(control,[{transform:'scale(.985)'},{transform:'scale(1.003)',offset:.7},{transform:'scale(1)'}],{duration:230,easing:'cubic-bezier(.2,.8,.2,1)'});
-          }
+        if (qrButton || control.closest('.yy-qr-dialog')) return;
+        if (!reduceMotion.matches) {
+          control.getAnimations().forEach(animation => animation.cancel());
+          animateMotion(control,[{transform:'scale(.993)'},{transform:'scale(1)'}],{duration:170,easing:'ease-out'});
         }
         control.classList.add('yy-feedback-host','yy-touched');
         clearTimeout(feedbackTimers.get(control));
-        feedbackTimers.set(control,setTimeout(() => control.classList.remove('yy-touched'),260));
+        feedbackTimers.set(control,setTimeout(() => control.classList.remove('yy-touched'),200));
+        if (!control.matches('.yy-tag,.yy-mini')) return;
         const emoji = control.querySelector('.yy-emoji') || sparkle;
         const sticker = emoji.cloneNode(true);
         sticker.className = 'yy-click-spark';
@@ -356,18 +351,18 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-f
         const bounds = control.getBoundingClientRect();
         const x = event.detail ? event.clientX : bounds.left + bounds.width / 2;
         const y = event.detail ? event.clientY : bounds.top + bounds.height / 2;
-        sticker.style.left = Math.max(10,Math.min(window.innerWidth - 44,x + 8)) + 'px';
-        sticker.style.top = Math.max(10,Math.min(window.innerHeight - 44,y - 38)) + 'px';
+        sticker.style.left = Math.max(10,Math.min(window.innerWidth - 36,x + 6)) + 'px';
+        sticker.style.top = Math.max(10,Math.min(window.innerHeight - 36,y - 29)) + 'px';
         document.body.append(sticker);
         const stickers = document.querySelectorAll('body>.yy-click-spark');
         if (stickers.length > 8) stickers[0].remove();
         if (!reduceMotion.matches) animateMotion(sticker,[
-          {opacity:0,transform:'translate3d(0,10px,0) scale(.72)',offset:0},
-          {opacity:1,transform:'translate3d(0,0,0) scale(1.13)',offset:.14},
-          {opacity:1,transform:'translate3d(0,-5px,0) scale(1.08)',offset:.7},
-          {opacity:0,transform:'translate3d(0,-34px,0) scale(.98)',offset:1}
-        ],{duration:950,easing:'cubic-bezier(.2,.8,.25,1)',fill:'forwards'});
-        setTimeout(() => sticker.remove(),reduceMotion.matches ? 800 : 1000);
+          {opacity:0,transform:'translate3d(0,5px,0)',offset:0},
+          {opacity:1,transform:'translate3d(0,0,0)',offset:.18},
+          {opacity:1,transform:'translate3d(0,-3px,0)',offset:.7},
+          {opacity:0,transform:'translate3d(0,-15px,0)',offset:1}
+        ],{duration:900,easing:'ease-out',fill:'forwards'});
+        setTimeout(() => sticker.remove(),reduceMotion.matches ? 800 : 950);
       });
       const reveal = (element, open) => {
         const currentHeight = element.getBoundingClientRect().height;
