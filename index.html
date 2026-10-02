@@ -138,7 +138,14 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     #yueyue-preview button,#yueyue-preview a{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     #yueyue-preview .yy-service{min-width:0;flex-wrap:wrap}
     #yueyue-preview .yy-qr-dialog{max-height:calc(100svh - 32px);overflow:auto;overscroll-behavior:contain}
-    #yueyue-preview .yy-dialog-image{max-height:max(100px,calc(100svh - 200px))}
+    #yueyue-preview .yy-qr-dialog{background:transparent;border-color:transparent;box-shadow:none}
+    #yueyue-preview .yy-qr-dialog::before{content:"";position:absolute;inset:0;border:1px solid light-dark(#e8dced,#584461);border-radius:inherit;background:light-dark(#faf7fc,#2e2535);box-shadow:0 16px 45px light-dark(#36203d28,#00000050);opacity:0;pointer-events:none;transition:opacity .22s ease}
+    #yueyue-preview .yy-qr-dialog.yy-present::before{opacity:1}
+    #yueyue-preview .yy-dialog-head,#yueyue-preview .yy-dialog-caption,#yueyue-preview .yy-dialog-stage{position:relative;z-index:1}
+    #yueyue-preview .yy-dialog-head,#yueyue-preview .yy-dialog-caption{opacity:0;transition:opacity .18s ease}
+    #yueyue-preview .yy-qr-dialog.yy-present .yy-dialog-head,#yueyue-preview .yy-qr-dialog.yy-present .yy-dialog-caption{opacity:1}
+    #yueyue-preview .yy-dialog-image{max-height:max(100px,calc(100svh - 200px));margin:0;transform-origin:top left}
+    #yueyue-preview .yy-qr-slot{display:block;margin:0 auto 6px;max-width:100%}
     #yueyue-preview .yy-dialog-caption{overflow-wrap:anywhere}
     @media(prefers-reduced-motion:reduce){#yueyue-preview *,#yueyue-preview *::before,#yueyue-preview *::after{transition:none!important;transform:none!important}}
     @media(max-width:360px){#yueyue-preview{padding:8px 0}#yueyue-preview .yy-page{padding:18px}#yueyue-preview .yy-hero{gap:13px}#yueyue-preview h1{font-size:26px}#yueyue-preview .yy-contact{padding:12px 10px;gap:8px}#yueyue-preview .yy-mini{padding:14px 12px}}
@@ -164,7 +171,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     <section class="yy-section"><h2>我在折腾的小东西 <img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""></h2><a class="yy-service" href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer" aria-label="FurryHK 免费个人邮箱服务，查看使用条款"><div><h3>FurryHK 免费个人邮箱</h3><p>专属 @furryhk.cn 邮箱<br>人工审核开通</p></div><span class="yy-service-more">使用条款 ↗</span></a><div class="yy-pending"><div class="yy-pending-heading"><img class="yy-emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true">待开发项目</div><p>二级域名服务 · 筹备中<br>更多功能 · 开发中</p></div></section>
     <section class="yy-section"><button type="button" id="yy-reward" class="yy-support cursor-interaction" aria-expanded="false" aria-controls="yy-reward-detail">请我喝杯奶茶 <img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt=""></button><div class="yy-reveal" id="yy-reward-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
     <footer class="yy-footer"><span>谢谢你来看我呀，祝你天天开心。</span></footer>
-    <div class="yy-shade" id="yy-shade" aria-hidden="true" hidden></div><div class="yy-qr-dialog" id="yy-qr-dialog" role="dialog" aria-modal="true" aria-labelledby="yy-dialog-title" aria-hidden="true" hidden><div class="yy-dialog-head"><span id="yy-dialog-title">二维码</span><button class="yy-dialog-close cursor-interaction" type="button" id="yy-dialog-close">关闭</button></div><img class="yy-dialog-image" id="yy-dialog-image" alt="放大的二维码"><p class="yy-dialog-caption">扫码就能找到我啦</p></div>
+    <div class="yy-shade" id="yy-shade" aria-hidden="true" hidden></div><div class="yy-qr-dialog" id="yy-qr-dialog" role="dialog" aria-modal="true" aria-labelledby="yy-dialog-title" aria-hidden="true" hidden><div class="yy-dialog-head"><span id="yy-dialog-title">二维码</span><button class="yy-dialog-close cursor-interaction" type="button" id="yy-dialog-close">关闭</button></div><div class="yy-dialog-stage" id="yy-dialog-stage"></div><p class="yy-dialog-caption">扫码就能找到我啦</p></div>
   </main>
   <template id="yy-wechat-template"><div class="yy-contact-info"><img class="yy-qr" src="wechat.png" data-filename="wechat.png" width="140" height="140" alt="微信二维码"><p>微信号：<strong>furryhk</strong></p></div></template>
   <template id="yy-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="qq.png" data-filename="qq.png" width="140" height="140" alt="QQ二维码"><p>扫码加我好友</p><div class="yy-links"><a href="https://qm.qq.com/q/n51fppV6nK" target="_blank" rel="noopener noreferrer">快捷跳转 ↗</a></div></div></template>
@@ -239,12 +246,14 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       supportArrow.textContent = '↗';
       rewardButton.replaceChildren(rewardEmoji,rewardLabel,supportArrow);
       const dialog = root.querySelector('#yy-qr-dialog');
-      const dialogImage = root.querySelector('#yy-dialog-image');
+      const stage = root.querySelector('#yy-dialog-stage');
       const dialogTitle = root.querySelector('#yy-dialog-title');
       const dialogCaption = root.querySelector('.yy-dialog-caption');
       const page = root.querySelector('.yy-page');
       const shade = root.querySelector('#yy-shade');
       let originImage = null;
+      let imageSlot = null;
+      let imageFlight = null;
       let inertStates = [];
       let previousMinHeight = '';
       let closingDialog = false;
@@ -260,12 +269,17 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         }
       };
       const finishClose = () => {
+        if (imageFlight) { imageFlight.cancel();imageFlight = null; }
+        if (originImage && imageSlot) {
+          originImage.classList.remove('yy-dialog-image');
+          imageSlot.replaceWith(originImage);
+          imageSlot = null;
+        }
         dialog.hidden = true;
         dialog.setAttribute('aria-hidden','true');
+        dialog.classList.remove('yy-present');
         shade.hidden = true;
         shade.classList.remove('is-open');
-        dialogImage.getAnimations().forEach(animation => animation.cancel());
-        dialog.getAnimations().forEach(animation => animation.cancel());
         page.style.minHeight = previousMinHeight;
         inertStates.forEach(([element,inert]) => { element.inert = inert; });
         inertStates = [];
@@ -279,44 +293,62 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         if (dialog.hidden || closingDialog) return;
         closingDialog = true;
         shade.classList.remove('is-open');
+        dialog.classList.remove('yy-present');
         if (reduceMotion.matches) { finishClose(); return; }
-        const start = getComputedStyle(dialog).transform;
-        const opacity = getComputedStyle(dialog).opacity;
-        dialog.getAnimations().forEach(animation => animation.cancel());
-        const flight = animateMotion(dialog,[{transform:start === 'none' ? 'translate3d(0,0,0) scale(1)' : start,opacity},{transform:'translate3d(0,5px,0) scale(.97)',opacity:0}],{duration:180,easing:'ease-in',fill:'forwards'});
-        flight.finished.then(finishClose).catch(finishClose);
+        const start = getComputedStyle(originImage).transform;
+        if (imageFlight) { imageFlight.cancel();imageFlight = null; }
+        const expanded = originImage.getBoundingClientRect();
+        const target = imageSlot.getBoundingClientRect();
+        const dx = target.left - expanded.left;
+        const dy = target.top - expanded.top;
+        const sx = target.width / Math.max(1,expanded.width);
+        const sy = target.height / Math.max(1,expanded.height);
+        imageFlight = animateMotion(originImage,[
+          {transform:start === 'none' ? 'translate3d(0,0,0) scale(1)' : start},
+          {transform:`translate3d(${dx}px,${dy}px,0) scale(${sx},${sy})`}
+        ],{duration:300,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+        imageFlight.finished.then(finishClose,finishClose);
       };
       const openImage = image => {
         if (!dialog.hidden || openingDialog) return;
+        if (!image.isConnected || image.closest('[inert]')) return;
         openingDialog = true;
         originImage = image;
-        dialogImage.src = image.src;
-        dialogImage.alt = '放大的' + image.alt;
-        if (image.naturalWidth && image.naturalHeight) {
-          dialogImage.width = image.naturalWidth;
-          dialogImage.height = image.naturalHeight;
-        }
         dialogTitle.textContent = image.alt;
         const captions = {'wechat.png':'打开微信，扫码添加好友','qq.png':'打开 QQ，扫码添加好友','alipay.png':'请使用支付宝扫码打赏','wechatpay.png':'请使用微信扫码打赏'};
         dialogCaption.textContent = captions[image.dataset.filename] || '扫描二维码';
-        if (!image.isConnected || image.closest('[inert]')) { openingDialog = false;return; }
         const source = image.getBoundingClientRect();
         const bounds = page.getBoundingClientRect();
         previousMinHeight = page.style.minHeight;
+        imageSlot = document.createElement('span');
+        imageSlot.className = 'yy-qr-slot';
+        imageSlot.style.width = source.width + 'px';
+        imageSlot.style.height = source.height + 'px';
+        image.before(imageSlot);
+        image.classList.add('yy-dialog-image');
+        stage.append(image);
         dialog.hidden = false;
         dialog.setAttribute('aria-hidden','false');
         const top = Math.max(16,source.top - bounds.top - page.clientTop - 32);
         dialog.style.left = Math.max(16,(page.clientWidth - Math.min(340,page.clientWidth - 32)) / 2) + 'px';
         dialog.style.top = top + 'px';
         page.style.minHeight = Math.max(page.offsetHeight,top + dialog.offsetHeight + 24) + 'px';
+        const expanded = image.getBoundingClientRect();
+        const dx = source.left - expanded.left;
+        const dy = source.top - expanded.top;
+        const sx = source.width / Math.max(1,expanded.width);
+        const sy = source.height / Math.max(1,expanded.height);
         shade.hidden = false;
         inertStates = [...page.children].filter(element => element !== dialog && element !== shade).map(element => [element,element.inert]);
         inertStates.forEach(([element]) => { element.inert = true; });
         openingDialog = false;
         root.querySelector('#yy-dialog-close').focus({preventScroll:true});
-        requestAnimationFrame(() => { if (!dialog.hidden && !closingDialog) shade.classList.add('is-open'); });
-        if (reduceMotion.matches) return;
-        animateMotion(dialog,[{opacity:0,transform:'translate3d(0,6px,0) scale(.985)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:220,easing:'cubic-bezier(.2,.8,.2,1)'});
+        if (reduceMotion.matches) { shade.classList.add('is-open');dialog.classList.add('yy-present');return; }
+        imageFlight = animateMotion(image,[
+          {transform:`translate3d(${dx}px,${dy}px,0) scale(${sx},${sy})`},
+          {transform:'translate3d(0,0,0) scale(1)'}
+        ],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+        requestAnimationFrame(() => { if (!dialog.hidden && !closingDialog) { shade.classList.add('is-open');dialog.classList.add('yy-present'); } });
       };
       root.querySelector('#yy-dialog-close').addEventListener('click',closeImage);
       shade.addEventListener('click',() => { tapHaptic();closeImage(); });
