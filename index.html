@@ -1,889 +1,474 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>认识一下悦悦</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: flex-start;
-            justify-content: center;
-            padding: 40px 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-        /* 毛玻璃浮动装饰 - 苹果风格 */
-        .glass-blob {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.5;
-            z-index: 0;
-            animation: blobFloat 8s ease-in-out infinite;
-        }
-        .glass-blob-1 {
-            width: 300px;
-            height: 300px;
-            background: #a78bfa;
-            top: -100px;
-            left: -100px;
-            animation-delay: 0s;
-        }
-        .glass-blob-2 {
-            width: 400px;
-            height: 400px;
-            background: #818cf8;
-            bottom: -150px;
-            right: -150px;
-            animation-delay: -3s;
-        }
-        .glass-blob-3 {
-            width: 200px;
-            height: 200px;
-            background: #c4b5fd;
-            top: 50%;
-            left: 10%;
-            animation-delay: -5s;
-        }
-        @keyframes blobFloat {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -30px) scale(1.1);
-            }
-            66% {
-                transform: translate(-20px, 20px) scale(0.95);
-            }
-        }
-        /* 雪花 - 优化性能 */
-        .snow {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-        .snow span {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 12px;
-            animation: snowFall linear infinite;
-            will-change: transform;
-        }
-        @keyframes snowFall {
-            0% {
-                transform: translateY(-10vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            10% { opacity: 0.7; }
-            50% {
-                transform: translateY(50vh) translateX(40px) rotate(180deg);
-            }
-            90% { opacity: 0.7; }
-            100% {
-                transform: translateY(110vh) translateX(-20px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        .card {
-            position: relative;
-            z-index: 1;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-radius: 24px;
-            padding: 48px 56px;
-            width: 100%;
-            max-width: 520px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            animation: cardIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform;
-        }
-        @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        /* 头像区 */
-        .header {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-        .avatar {
-            width: 96px;
-            height: 96px;
-            margin: 0 auto 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
-            animation: float 3s ease-in-out infinite;
-            cursor: pointer;
-        }
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: 600;
-            color: #1a1a1a;
-            margin-bottom: 6px;
-        }
-        .subtitle {
-            font-size: 15px;
-            color: #666;
-        }
-        .wave {
-            display: inline-block;
-            animation: wave 2.5s ease-in-out infinite;
-            transform-origin: 70% 70%;
-        }
-        @keyframes wave {
-            0%, 60%, 100% { transform: rotate(0deg); }
-            10%, 30% { transform: rotate(14deg); }
-            20% { transform: rotate(-8deg); }
-            40% { transform: rotate(10deg); }
-            50% { transform: rotate(-4deg); }
-        }
-        /* 简介 */
-        .bio {
-            text-align: center;
-            color: #444;
-            font-size: 14px;
-            line-height: 2;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 12px;
-            margin-bottom: 28px;
-            font-weight: 500;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        /* 标签 */
-        .tags {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 32px;
-        }
-        .tag {
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            color: #333;
-            border-radius: 20px;
-            font-size: 13px;
-            transition: all 0.2s ease;
-            font-weight: 500;
-            letter-spacing: 0.3px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .tag:hover {
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-        /* 社交区 */
-        .section-title {
-            text-align: center;
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 16px;
-            font-weight: 500;
-        }
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            margin-bottom: 8px;
-        }
-        .icon-btn {
-            width: 52px;
-            height: 52px;
-            border: none;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 50%;
-            font-size: 22px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .icon-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-            transform: translateY(-3px) scale(1.08);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-        .icon-btn.active {
-            background: rgba(255, 255, 255, 0.5);
-            transform: scale(1.08);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-        }
-        /* 联系方式展开区 */
-        .contact-panel {
-            display: block;
-            height: 0;
-            overflow: hidden;
-            transition: height 0.48s cubic-bezier(0.22, 1, 0.36, 1);
-            position: relative;
-            z-index: 1;
-        }
-        .section-title { position: relative; z-index: 3; }
-        .social-icons { position: relative; z-index: 2; }
-        .contact-content {
-            min-height: 0;
-            margin-top: 20px;
-            pointer-events: none;
-            padding: 24px;
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 16px;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.36s cubic-bezier(0.22, 1, 0.36, 1), transform 0.48s cubic-bezier(0.22, 1, 0.36, 1);
-            border: 1px solid rgba(255, 255, 0.3);
-        }
-        .contact-content.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-        .contact-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 8px;
-        }
-        .contact-value {
-            font-size: 18px;
-            font-weight: 600;
-            color: #222;
-            margin-bottom: 12px;
-        }
-        .contact-link {
-            display: inline-block;
-            padding: 8px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            text-decoration: none;
-            border-radius: 20px;
-            font-size: 13px;
-            transition: all 0.2s ease;
-        }
-        .contact-link:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        .contact-tip {
-            font-size: 12px;
-            color: #777;
-            margin-top: 10px;
-        }
-        .qrcode-placeholder {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 10px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        .qrcode-placeholder img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .reward-qrcodes {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin-bottom: 12px;
-        }
-        .reward-item {
-            text-align: center;
-        }
-        .reward-item .qrcode-placeholder {
-            width: 100px;
-            height: 100px;
-            margin-bottom: 8px;
-        }
-        .reward-item .reward-label {
-            font-size: 12px;
-            color: #666;
-        }
-        .qrcode-placeholder {
-            cursor: pointer;
-            transition: transform 0.2s ease;
-        }
-        .qrcode-placeholder:hover {
-            transform: scale(1.05);
-        }
-        /* 图片弹窗 */
-        .image-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-        .image-modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-        .image-modal img {
-            max-width: 90%;
-            max-height: 90%;
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transform: scale(0.9);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .image-modal.show img {
-            transform: scale(1);
-        }
-        .image-modal .close-tip {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-        }
-        /* 新增模块通用样式 */
-        .module-box {
-            margin-top: 32px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            text-align: center;
-        }
-        .module-box h4 {
-            color: #222;
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-        .module-box p {
-            color: #555;
-            font-size: 13px;
-            margin-bottom: 16px;
-        }
-        .module-btn {
-            padding: 9px 22px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border: none;
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-        .module-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        .tip-box {
-            margin-top: 20px;
-            padding: 14px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.22);
-            border-radius: 10px;
-            font-size: 13px;
-            color: #444;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        /* 页脚 */
-        .footer {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 12px;
-            color: #888;
-        }
-        /* 横屏适配 */
-        @media (min-width: 900px) {
-            .card {
-                max-width: 600px;
-                padding: 56px 64px;
-            }
-            .social-icons {
-                gap: 24px;
-            }
-            .icon-btn {
-                width: 56px;
-                height: 56px;
-                font-size: 24px;
-            }
-        }
-        @media (max-width: 480px) {
-            .card {
-                padding: 36px 28px;
-                border-radius: 20px;
-            }
-            h1 {
-                font-size: 24px;
-            }
-            .avatar {
-                width: 80px;
-                height: 80px;
-                font-size: 32px;
-            }
-            .social-icons {
-                gap: 12px;
-            }
-            .icon-btn {
-                width: 48px;
-                height: 48px;
-                font-size: 20px;
-            }
-        }
-        /* 通透的液态玻璃层次与舒缓滑入 */
-        .card {
-            background-image: radial-gradient(ellipse at 18% 0%, rgba(255,255,255,.82), transparent 42%), linear-gradient(145deg, rgba(255,255,255,.58), rgba(255,255,255,.34));
-            border: 1px solid rgba(255,255,255,.64);
-            box-shadow: 0 28px 80px rgba(48,38,105,.2), 0 8px 24px rgba(75,61,130,.1), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(255,255,255,.2);
-            animation: cardIn 1.45s cubic-bezier(.16,1,.3,1) both;
-        }
-        .bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content {
-            background-image: linear-gradient(145deg, rgba(255,255,255,.54), rgba(255,255,255,.17) 55%, rgba(255,255,255,.28));
-            border-color: rgba(255,255,255,.58);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,.72), 0 8px 24px rgba(70,58,125,.055);
-        }
-        .avatar { cursor: default; user-select: none; -webkit-user-select: none; }
-        .avatar img { pointer-events: none; -webkit-user-drag: none; }
-        .card > .header,.card > .bio,.card > .tags,.card > .section-title,
-        .card > .social-icons,.card > .contact-panel,.card > .module-box,
-        .card > .tip-box,.card > .footer {
-            animation: sectionIn 1.3s cubic-bezier(.16,1,.3,1) both;
-        }
-        .card > .header { animation-delay: .12s; }
-        .card > .bio { animation-delay: .24s; }
-        .card > .tags { animation-delay: .36s; }
-        .card > .section-title,.card > .social-icons { animation-delay: .46s; }
-        .card > .module-box:nth-child(7) { animation-delay: .56s; }
-        .card > .module-box:nth-child(8) { animation-delay: .68s; }
-        .card > .tip-box,.card > .footer { animation-delay: .8s; }
-        @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer{animation:sectionIn .72s cubic-bezier(.18,.85,.25,1) both}
-        .card>.header{animation-delay:.05s}.card>.bio{animation-delay:.13s}.card>.tags{animation-delay:.2s}.card>.section-title,.card>.social-icons{animation-delay:.27s}
-        .card>.module-box:nth-child(7){animation-delay:.34s}.card>.module-box:nth-child(8){animation-delay:.41s}.card>.tip-box,.card>.footer{animation-delay:.48s}
-        @keyframes sectionIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
-        .tag,.icon-btn,.module-btn,.contact-link,.back-btn{-webkit-tap-highlight-color:transparent}
-        /* 低负载渲染：用静态渐变保留玻璃观感，避免大面积实时模糊反复合成 */
-        .card,.bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content,.qrcode-placeholder,.image-modal {
-            -webkit-backdrop-filter:none!important;backdrop-filter:none!important;
-        }
-        .card { background-color:rgba(255,255,255,.62)!important; }
-        .glass-blob { filter:none!important;animation:none!important;opacity:1; }
-        .glass-blob-1 { background:radial-gradient(circle,rgba(199,174,255,.5),rgba(199,174,255,0) 72%); }
-        .glass-blob-2 { background:radial-gradient(circle,rgba(134,170,255,.44),rgba(134,170,255,0) 72%); }
-        .glass-blob-3 { background:radial-gradient(circle,rgba(225,190,255,.38),rgba(225,190,255,0) 72%); }
-        .snow span { will-change:auto; }
-        .avatar,.wave { animation:none!important; }
-        .image-modal { background:rgba(20,16,40,.84); }
-        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer {
-            animation-duration:.68s!important;
-        }
-        @media(max-width:768px) {
-            .snow { display:none!important; }
-            .card { -webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
-            .glass-blob { opacity:.7; }
-        }
-        @media(prefers-reduced-motion:reduce) {
-            .card,.card>* ,.glass-blob,.snow span,.avatar,.wave { animation:none!important; }
-        }
-        .tag:active,.icon-btn:active,.module-btn:active,.contact-link:active{transform:scale(.96)}
-        .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
-        .contact-panel{border-radius:24px;overflow:hidden}
-        .contact-content{box-sizing:border-box;margin-top:20px;border-radius:24px!important;overflow:hidden;border-color:rgba(255,255,255,.72)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.86),0 14px 36px rgba(70,58,125,.12)!important}
-        .qrcode-placeholder{border-radius:16px;overflow:hidden}
-        .qrcode-placeholder img{border-radius:14px}
-        .emoji{display:inline-block;width:1.16em;height:1.16em;object-fit:contain;vertical-align:-.23em;flex:none}
-        .icon-btn .emoji{width:1.35em;height:1.35em;vertical-align:middle}
-        .snow .emoji{width:1em;height:1em;vertical-align:middle}
-        @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-        /* 入场采用慢速、柔和的滑动节奏 */
-        .card > .header,.card > .bio,.card > .tags,.card > .section-title,
-        .card > .social-icons,.card > .contact-panel,.card > .module-box,
-        .card > .tip-box,.card > .footer {
-            animation-name: sectionIn;
-            animation-duration: 1.3s;
-            animation-timing-function: cubic-bezier(.16,1,.3,1);
-            animation-fill-mode: both;
-        }
-        .card > .header { animation-delay: .12s; }
-        .card > .bio { animation-delay: .24s; }
-        .card > .tags { animation-delay: .36s; }
-        .card > .section-title,.card > .social-icons { animation-delay: .46s; }
-        .card > .module-box:nth-child(7) { animation-delay: .56s; }
-        .card > .module-box:nth-child(8) { animation-delay: .68s; }
-        .card > .tip-box,.card > .footer { animation-delay: .8s; }
-        @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-        /* 减少动画合成和重绘，保留轻盈入场 */
-        .bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
-        .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer { animation-duration:.95s !important; animation-timing-function:cubic-bezier(.2,.8,.2,1) !important; }
-        @keyframes sectionIn { from { opacity:0; transform:translate3d(0,20px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="悦悦的扩条：Furry、数码人、喜欢摄影。来找我玩，也看看我的小偏爱。">
+<meta name="color-scheme" content="light dark">
+<title>悦悦的扩条 · FurryHK</title>
+<link rel="icon" type="image/jpeg" href="mmexport1726063520349.jpeg">
+<style>
+html{background:#f2eef4;color:#393343;background:light-dark(#f2eef4,#17141c);color:light-dark(#393343,#eee9f4);color-scheme:light dark}
+body{margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
+button,a{font-family:inherit}
+</style>
 </head>
 <body>
-    <div class="glass-blob glass-blob-1"></div>
-    <div class="glass-blob glass-blob-2"></div>
-    <div class="glass-blob glass-blob-3"></div>
-    <div class="snow" id="snow"></div>
-    <div class="card">
-        <div class="header">
-            <div class="avatar" aria-label="悦悦的头像">
-                <img src="mmexport1726063520349.jpeg" alt="头像" draggable="false">
-            </div>
-            <h1>你好呀 <span class="wave"><img class="emoji" src="assets/noto-emoji/emoji_u1f44b.svg" alt="" aria-hidden="true" draggable="false"></span></h1>
-            <p class="subtitle">我是悦悦</p>
-        </div>
-        <div class="bio">
-            <img class="emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true" draggable="false"> 一个不热爱生活的i人 <img class="emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true" draggable="false"><br><br>
-            <img class="emoji" src="assets/noto-emoji/emoji_u1f90d.svg" alt="" aria-hidden="true" draggable="false"> 雷点很少，很好相处<br>
-            <img class="emoji" src="assets/noto-emoji/emoji_u1f35c.svg" alt="" aria-hidden="true" draggable="false"> 人生信条：吃吃吃玩玩玩<br>
-            <img class="emoji" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="" aria-hidden="true" draggable="false"> 奶茶续命：喜茶、瑞幸、古茗<br>
-            <img class="emoji" src="assets/noto-emoji/emoji_u1f3ae.svg" alt="" aria-hidden="true" draggable="false"> 蛋仔派对（id：古茗店员）<br>
-            <img class="emoji" src="assets/noto-emoji/emoji_u1f52b.svg" alt="" aria-hidden="true" draggable="false"> PUBG Mobile（id：古茗店员）<br>
-            菜菜的，但爱玩 <img class="emoji" src="assets/noto-emoji/emoji_u1f96c.svg" alt="" aria-hidden="true" draggable="false">
-        </div>
-        <div class="tags">
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f4f8.svg" alt="" aria-hidden="true" draggable="false"> 喜欢拍照</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f4f1.svg" alt="" aria-hidden="true" draggable="false"> 数码人</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true" draggable="false"> 二次元</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="" aria-hidden="true" draggable="false"> 奶茶续命</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f375.svg" alt="" aria-hidden="true" draggable="false"> 抹茶重度爱好者</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f427.svg" alt="" aria-hidden="true" draggable="false"> QQ重度使用</span>
-            <span class="tag"><img class="emoji" src="assets/noto-emoji/emoji_u1f436.svg" alt="" aria-hidden="true" draggable="false"> 线条小狗重度依赖</span>
-        </div>
-        <p class="section-title">关于联系↓</p>
-        
-        <div class="social-icons">
-            <button class="icon-btn" data-type="wechat" title="微信">
-                <span><img class="emoji" src="assets/noto-emoji/emoji_u1f4ac.svg" alt="" aria-hidden="true" draggable="false"></span>
-            </button>
-            <button class="icon-btn" data-type="qq" title="QQ">
-                <span><img class="emoji" src="assets/noto-emoji/emoji_u1f427.svg" alt="" aria-hidden="true" draggable="false"></span>
-            </button>
-            <button class="icon-btn" data-type="douyin" title="抖音">
-                <span><img class="emoji" src="assets/noto-emoji/emoji_u1f3b5.svg" alt="" aria-hidden="true" draggable="false"></span>
-            </button>
-            <button class="icon-btn" data-type="email" title="邮箱">
-                <span><img class="emoji" src="assets/noto-emoji/emoji_u1f4e7.svg" alt="" aria-hidden="true" draggable="false"></span>
-            </button>
-            <button class="icon-btn" data-type="reward" title="打赏">
-                <span><img class="emoji" src="assets/noto-emoji/emoji_u1f9e7.svg" alt="" aria-hidden="true" draggable="false"></span>
-            </button>
-        </div>
-        <div class="contact-panel" id="contactPanel">
-            <div class="contact-content" id="contactContent">
-                <!-- 动态内容 -->
-            </div>
-        </div>
-
-        <!-- 新增1：免费个人邮箱区域 -->
-        <div class="module-box">
-            <h4><img class="emoji" src="assets/noto-emoji/emoji_u1f4e7.svg" alt="" aria-hidden="true" draggable="false"> FurryHK 免费个人邮箱服务</h4>
-            <p style="font-size:14px; color:#333; margin-bottom:10px; font-weight:500;">客服邮箱：furryhk@furryhk.cn</p>
-            <p>专属 @furryhk.cn 域名邮箱，人工审核开通，使用前请阅读完整服务条款</p>
-            <a href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer" class="module-btn">查看邮箱使用条款</a>
-        </div>
-
-        <!-- 新增2：二级域名待开发区域 -->
-        <div class="module-box">
-            <h4><img class="emoji" src="assets/noto-emoji/emoji_u1f310.svg" alt="" aria-hidden="true" draggable="false"> 自定义二级域名服务</h4>
-            <p>furryhk.cn 二级域名分发正在搭建中......</p>
-            <span style="font-size:12px;color:#666;">敬请等待上线</span>
-        </div>
-
-        <!-- 新增3：更多功能待开发提示 -->
-        <div class="tip-box">
-            更多功能开发中，请敬请期待
-        </div>
-
-        <div class="footer">
-            <img class="emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true" draggable="false"> 谢谢你来看我呀 <img class="emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true" draggable="false"><br>
-            祝你天天开心
-        </div>
-    </div>
-    <div class="image-modal" id="imageModal" onclick="closeModal()">
-        <img id="modalImage" src="" alt="大图">
-        <div class="close-tip">点击任意位置关闭</div>
-    </div>
-    <script>
-        // 生成雪花 - 优化飘落效果
-        const snowContainer = document.getElementById('snow');
-        const snowChars = ['2744', '2747', '2744'];
-        
-        const flakeCount = window.matchMedia('(max-width: 768px)').matches ? 0 : 6;
-        for (let i = 0; i < flakeCount; i++) {
-            const s = document.createElement('span');
-            s.innerHTML = '<img class="emoji" src="assets/noto-emoji/emoji_u' + snowChars[i % snowChars.length] + '.svg" alt="">';
-            s.style.left = Math.random() * 100 + '%';
-            s.style.animationDuration = (Math.random() * 10 + 15) + 's'; // 15-25秒
-            s.style.animationDelay = (Math.random() * 15) + 's';
-            s.style.fontSize = (Math.random() * 8 + 10) + 'px';
-            s.style.opacity = Math.random() * 0.4 + 0.4;
-            snowContainer.appendChild(s);
+<div id="yueyue-preview" class="yy-site">
+  <style>
+    #yueyue-preview{padding:18px 10px;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color-scheme:light dark}
+    #yueyue-preview *{box-sizing:border-box}
+    #yueyue-preview .yy-page{max-width:440px;margin:auto;padding:24px;background:light-dark(#f7f5f0,#201f26);color:light-dark(#393343,#eee9f4);border:1px solid light-dark(#e8e3ed,#39333f);border-radius:24px;box-shadow:0 18px 60px light-dark(#44305414,#00000030)}
+    #yueyue-preview .yy-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:30px;font-size:12px;color:light-dark(#78707f,#b6acbf);letter-spacing:.08em}
+    #yueyue-preview .yy-brand{font-weight:650;color:light-dark(#59486e,#d2bfe9)}
+    #yueyue-preview .yy-hero{display:flex;align-items:center;gap:18px;padding-bottom:24px}
+    #yueyue-preview .yy-avatar{width:80px;height:80px;border-radius:26px;object-fit:cover;flex:none;user-select:none;-webkit-user-drag:none}
+    #yueyue-preview .yy-hello{font-size:12px;margin:0 0 7px;color:light-dark(#86758f,#c0aaca)}
+    #yueyue-preview h1{font-size:30px;line-height:1.2;font-weight:650;letter-spacing:-.04em;margin:0}
+    #yueyue-preview .yy-handle{font-size:12px;color:light-dark(#827787,#b6adbd);margin:8px 0 0}
+    #yueyue-preview .yy-intro{font-size:15px;line-height:1.9;margin:0 0 20px;color:light-dark(#615969,#cbc1d1)}
+    #yueyue-preview .yy-tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}
+    #yueyue-preview .yy-tag{font-size:12px;background:light-dark(#eee8f2,#37303f);color:light-dark(#706078,#d4c3df);border-radius:8px;padding:6px 10px}
+    #yueyue-preview button.yy-tag{border:0;font-family:inherit;font-weight:400;line-height:inherit;text-align:center;position:relative;transition:transform .15s ease}
+    #yueyue-preview button.yy-tag:active{transform:scale(.97)}
+    #yueyue-preview button.yy-tag:focus-visible{outline:2px solid light-dark(#ad8bc6,#b58acf);outline-offset:3px}
+    #yueyue-preview button.yy-tag .yy-click-spark{right:7px;top:2px;width:18px;height:18px}
+    #yueyue-preview h2{font-size:15px;font-weight:600;letter-spacing:.02em;margin:0 0 14px}
+    #yueyue-preview .yy-section{margin-bottom:28px}
+    #yueyue-preview .yy-social{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    #yueyue-preview .yy-contact{font:inherit;font-size:14px;min-height:54px;display:flex;align-items:center;gap:12px;padding:13px 15px;background:light-dark(#fffefa,#2b2831);color:inherit;border:1px solid light-dark(#e8e1eb,#453a4e);border-radius:14px;text-align:left}
+    #yueyue-preview .yy-contact i{color:light-dark(#8d709d,#cba8e1)}
+    #yueyue-preview .yy-contact span{flex:1}
+    #yueyue-preview .yy-contact[aria-pressed="true"]{background:light-dark(#ece2f3,#473453);border-color:light-dark(#cbb8d5,#876398)}
+    #yueyue-preview .yy-contact:hover{background:light-dark(#f1eaf5,#382f40)}
+    #yueyue-preview .yy-contact:focus-visible{outline:3px solid light-dark(#ad8bc6,#b58acf);outline-offset:3px}
+    #yueyue-preview .yy-detail{padding:16px;margin-top:10px;background:light-dark(#eee7f2,#352c3e);border-radius:14px;font-size:13px;line-height:1.9;overflow-wrap:anywhere}
+    #yueyue-preview .yy-reveal{height:0;overflow:hidden;transition:height .26s cubic-bezier(.2,.8,.2,1);pointer-events:none}
+    #yueyue-preview .yy-reveal.is-open{pointer-events:auto}
+    #yueyue-preview .yy-reveal-inner{overflow:hidden;opacity:0;transform:translateY(3px);transition:opacity .15s ease,transform .18s ease}
+    #yueyue-preview .yy-reveal.is-open .yy-reveal-inner{opacity:1;transform:translateY(0)}
+    #yueyue-preview .yy-reveal{contain:layout style}
+    #yueyue-preview #yy-contact-detail{transition:height .44s cubic-bezier(.22,1,.36,1)}
+    #yueyue-preview #yy-contact-detail .yy-reveal-inner{transition:opacity .3s ease,transform .42s cubic-bezier(.22,1,.36,1)}
+    #yueyue-preview .yy-life{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    #yueyue-preview .yy-mini{padding:17px 14px;background:light-dark(#efede6,#2d2b2f);border-radius:15px;min-width:0}
+    #yueyue-preview .yy-mini-head{display:flex;align-items:center;gap:8px;margin-bottom:9px;font-size:13px;font-weight:600}
+    #yueyue-preview .yy-mini p{font-size:12px;line-height:1.85;margin:0;color:light-dark(#766e78,#bdb2c4)}
+    #yueyue-preview .yy-game{margin-top:10px;background:light-dark(#eae9f2,#302b3e)}
+    #yueyue-preview .yy-service{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:18px;background:light-dark(#e9deed,#3c2c45);border-radius:16px}
+    #yueyue-preview .yy-service h3{font-size:14px;margin:0 0 6px;font-weight:600}
+    #yueyue-preview .yy-service p{font-size:12px;line-height:1.7;margin:0;color:light-dark(#796481,#c6afd0)}
+    #yueyue-preview .yy-service button{border:0;background:transparent;color:inherit;flex:none;padding:10px 0;font:inherit;font-size:12px}
+    #yueyue-preview .yy-pending{font-size:12px;color:light-dark(#8b818e,#b5a8be);padding:13px 1px 0;display:flex;gap:8px;align-items:center}
+    #yueyue-preview .yy-footer{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding-top:8px;font-size:11px;color:light-dark(#938999,#b4a8bb)}
+    #yueyue-preview .yy-footer button{border:0;background:transparent;color:inherit;padding:8px 0;font:inherit;font-size:11px}
+    #yueyue-preview .yy-page{background:radial-gradient(ellipse at 100% 0%,light-dark(#eee5f5,#32273c),transparent 45%),light-dark(#f9f7f2,#201f26);box-shadow:0 24px 70px light-dark(#49335d1b,#00000040),inset 0 1px 0 light-dark(#ffffff,#51415e)}
+    #yueyue-preview .yy-avatar{box-shadow:0 7px 20px light-dark(#69507820,#00000035);border:3px solid light-dark(#fffefa,#463b51)}
+    #yueyue-preview .yy-contact{background:linear-gradient(135deg,light-dark(#fffefa,#332d3a),light-dark(#f7f2f9,#2b2831));box-shadow:inset 0 1px 0 light-dark(#ffffff,#51435b);transition:transform .15s ease,border-color .15s ease}
+    #yueyue-preview .yy-contact:active{transform:scale(.985)}
+    #yueyue-preview .yy-contact .yy-contact-arrow{transition:transform .2s ease}
+    #yueyue-preview .yy-contact[aria-pressed="true"] .yy-contact-arrow{transform:rotate(90deg)}
+    #yueyue-preview .yy-mini{background:linear-gradient(145deg,light-dark(#f0eee8,#302d32),light-dark(#eae8e2,#29262b));box-shadow:inset 0 1px 0 light-dark(#ffffffb0,#504852)}
+    #yueyue-preview .yy-game{background:linear-gradient(145deg,light-dark(#eeebf5,#352e43),light-dark(#e7e3ed,#2e2939))}
+    #yueyue-preview .yy-service{background:linear-gradient(130deg,light-dark(#f0e5f1,#46334e),light-dark(#e6d9ed,#34263f));box-shadow:inset 0 1px 0 light-dark(#ffffffb0,#5d4569),0 7px 18px light-dark(#8163900d,#00000020)}
+    #yueyue-preview .yy-service button,#yueyue-preview .yy-service a,#yueyue-preview .yy-footer button{transition:transform .15s ease;min-height:44px}
+    #yueyue-preview .yy-service a{display:inline-flex;align-items:center;font-size:12px;color:inherit;text-decoration:none;white-space:nowrap}
+    #yueyue-preview .yy-service button:active,#yueyue-preview .yy-footer button:active{transform:scale(.94)}
+    #yueyue-preview .yy-emoji{width:22px;height:22px;object-fit:contain;vertical-align:-.2em;flex:none}
+    #yueyue-preview .yy-contact .yy-emoji{flex:0 0 auto}
+    #yueyue-preview .yy-mini-head .yy-emoji{width:19px;height:19px}
+    #yueyue-preview .yy-tag{background:linear-gradient(140deg,light-dark(#f2eaf6,#3b3045),light-dark(#ece4f1,#32293d))}
+    #yueyue-preview .yy-tag .yy-emoji,#yueyue-preview .yy-hello .yy-emoji{width:16px;height:16px}
+    #yueyue-preview .yy-qr{display:block;width:140px;height:140px;object-fit:contain;margin:0 auto 12px;background:#fff;border-radius:12px;padding:6px}
+    #yueyue-preview .yy-contact-info{text-align:center}
+    #yueyue-preview .yy-contact-info p{margin:0 0 8px}
+    #yueyue-preview .yy-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:12px}
+    #yueyue-preview .yy-links a{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 16px;border-radius:12px;background:light-dark(#806291,#aa88be);color:light-dark(#fff,#24172e);font-size:12px;text-decoration:none}
+    #yueyue-preview .yy-payments{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
+    #yueyue-preview .yy-payments .yy-qr{width:100%;height:auto;aspect-ratio:1;max-width:140px;margin-bottom:6px}
+    #yueyue-preview .yy-payments p{margin:0;font-size:12px}
+    #yueyue-preview .yy-detail{padding:16px;background:light-dark(#eee7f2,#352c3e)}
+    #yueyue-preview .yy-mini{display:block;width:100%;border:1px solid transparent;font:inherit;color:inherit;text-align:left;position:relative;overflow:hidden;transition:transform .16s ease,border-color .18s ease;cursor:inherit}
+    #yueyue-preview .yy-mini:active{transform:scale(.985)}
+    #yueyue-preview .yy-mini:focus-visible{outline:3px solid light-dark(#ad8bc6,#b58acf);outline-offset:3px}
+    #yueyue-preview .yy-mini-copy{display:block;font-size:12px;line-height:1.85;color:light-dark(#766e78,#bdb2c4)}
+    #yueyue-preview .yy-mini.yy-touched{border-color:light-dark(#ba9cc9,#ad84c2)}
+    #yueyue-preview .yy-feedback-host{position:relative}
+    #yueyue-preview .yy-click-spark{position:absolute;right:12px;top:7px;width:21px;height:21px;pointer-events:none;object-fit:contain}
+    #yueyue-preview .yy-qr-trigger{display:block;width:fit-content;max-width:100%;padding:0;margin:0 auto 10px;border:0;background:transparent;color:inherit;font:inherit;border-radius:12px;transition:transform .16s ease}
+    #yueyue-preview .yy-qr-trigger .yy-qr{margin:0 auto 6px;max-width:100%}
+    #yueyue-preview .yy-payments .yy-qr-trigger{width:100%;max-width:140px}
+    #yueyue-preview .yy-qr-trigger:active{transform:scale(.98)}
+    #yueyue-preview .yy-zoom-tip{display:flex;align-items:center;justify-content:center;gap:5px;font-size:11px;color:light-dark(#7e688d,#c5afd3);min-height:28px}
+    #yueyue-preview .yy-zoom-tip .yy-emoji{width:14px;height:14px}
+    #yueyue-preview .yy-support{display:flex;align-items:center;gap:14px;width:100%;min-height:78px;padding:17px 18px;border:1px solid light-dark(#e8e1eb,#453a4e);border-radius:16px;text-align:left;font:inherit;background:linear-gradient(135deg,light-dark(#fffefa,#332d3a),light-dark(#f7f2f9,#2b2831));color:inherit;box-shadow:inset 0 1px 0 light-dark(#ffffff,#51435b);transition:transform .16s ease,border-color .18s ease}
+    #yueyue-preview .yy-support>.yy-emoji{width:30px;height:30px}
+    #yueyue-preview .yy-support:active{transform:scale(.985)}
+    #yueyue-preview .yy-support[aria-expanded="true"]{border-color:light-dark(#cbb8d5,#876398)}
+    #yueyue-preview .yy-support-arrow{margin-left:auto;color:light-dark(#917a9b,#bb9ece);font-size:19px;transition:transform .22s ease}
+    #yueyue-preview .yy-support[aria-expanded="true"] .yy-support-arrow{transform:rotate(90deg)}
+    #yueyue-preview .yy-reward-label{display:flex;flex-direction:column;gap:4px;font-size:14px}
+    #yueyue-preview .yy-footer{justify-content:center;text-align:center;padding-top:0}
+    #yueyue-preview .yy-reward-hint{font-size:11px;color:light-dark(#90749f,#b79ac8)}
+    #yueyue-preview .yy-surprise{font-size:13px;text-align:center;margin:0 0 13px;color:light-dark(#856292,#c8a5da)}
+    #yueyue-preview .yy-links a,#yueyue-preview .yy-service a{transition:transform .16s ease}
+    #yueyue-preview .yy-links a:active,#yueyue-preview .yy-service a:active{transform:scale(.98)}
+    #yueyue-preview .yy-qr-dialog{width:calc(100% - 32px);max-width:340px;margin:auto;padding:20px;border:1px solid light-dark(#e8dced,#584461);border-radius:22px;background:light-dark(#faf7fc,#2e2535);color:light-dark(#49364f,#eadbf1);box-shadow:0 16px 45px light-dark(#36203d28,#00000050)}
+    #yueyue-preview .yy-qr-dialog::backdrop{background:light-dark(#28193188,#120d17b0);opacity:0;transition:opacity .22s ease}
+    #yueyue-preview .yy-qr-dialog.yy-present::backdrop{opacity:1}
+    #yueyue-preview .yy-qr-dialog{overflow:hidden;transform-origin:center;max-height:calc(100dvh - 32px)}
+    #yueyue-preview .yy-dialog-image{position:relative;z-index:1}
+    #yueyue-preview .yy-feedback-host::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(135deg,light-dark(#ffffff60,#dcc7ff18),transparent 70%);opacity:0;pointer-events:none;transition:opacity .16s ease}
+    #yueyue-preview .yy-feedback-host.yy-touched::after{opacity:1}
+    #yueyue-preview .yy-dialog-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;font-size:14px}
+    #yueyue-preview .yy-dialog-close{min-width:44px;min-height:44px;padding:0 12px;font:inherit;border:0;border-radius:11px;background:light-dark(#eee2f2,#493354);color:inherit}
+    #yueyue-preview .yy-dialog-image{display:block;width:100%;height:auto;max-height:min(360px,60dvh);object-fit:contain;border-radius:12px;background:#fff;padding:8px}
+    #yueyue-preview a.yy-service{display:flex;align-items:center;justify-content:space-between;gap:14px;color:inherit;text-decoration:none;white-space:normal;font-size:14px}
+    #yueyue-preview .yy-service-more{flex:none;font-size:12px;color:light-dark(#796481,#c6afd0)}
+    #yueyue-preview .yy-pending{display:block;margin-top:11px;padding:15px 17px;border-radius:14px;background:light-dark(#efede8,#2b272e);font-size:12px;line-height:1.8}
+    #yueyue-preview .yy-pending-heading{display:flex;align-items:center;gap:8px;color:light-dark(#706375,#cbb9d3);margin-bottom:5px}
+    #yueyue-preview .yy-pending p{margin:0;color:light-dark(#8b818e,#b5a8be)}
+    #yueyue-preview .yy-page{position:relative}
+    #yueyue-preview .yy-shade{position:absolute;inset:0;z-index:20;border-radius:inherit;background:light-dark(#2f203870,#130d1b9c);opacity:0;transition:opacity .18s ease}
+    #yueyue-preview .yy-shade.is-open{opacity:1}
+    #yueyue-preview .yy-shade[hidden],#yueyue-preview .yy-qr-dialog[hidden]{display:none}
+    #yueyue-preview .yy-qr-dialog{position:absolute;inset:auto;margin:0;z-index:21;width:calc(100% - 32px);transform-origin:center top}
+    #yueyue-preview .yy-dialog-caption{text-align:center;font-size:12px;margin:12px 0 0;color:light-dark(#8c6e99,#c6a5d6)}
+    #yueyue-preview .yy-contact .yy-contact-arrow{flex:0 0 auto;font-size:19px;color:light-dark(#8d709d,#cba8e1)}
+    #yueyue-preview a:focus-visible,#yueyue-preview button:focus-visible{outline:2px solid #ad8bc6;outline-offset:3px}
+    #yueyue-preview button,#yueyue-preview a{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    #yueyue-preview .yy-service{min-width:0;flex-wrap:wrap}
+    #yueyue-preview .yy-qr-dialog{max-height:calc(100svh - 32px);overflow:auto;overscroll-behavior:contain}
+    #yueyue-preview .yy-dialog-image{max-height:max(100px,calc(100svh - 200px))}
+    #yueyue-preview .yy-dialog-caption{overflow-wrap:anywhere}
+    @media(prefers-reduced-motion:reduce){#yueyue-preview *,#yueyue-preview *::before,#yueyue-preview *::after{transition:none!important;transform:none!important}}
+    @media(max-width:360px){#yueyue-preview{padding:8px 0}#yueyue-preview .yy-page{padding:18px}#yueyue-preview .yy-hero{gap:13px}#yueyue-preview h1{font-size:26px}#yueyue-preview .yy-contact{padding:12px 10px;gap:8px}#yueyue-preview .yy-mini{padding:14px 12px}}
+  </style>
+  <main class="yy-page" aria-label="悦悦的扩条">
+    <header class="yy-top"><span class="yy-brand">悦悦的扩条</span><span>FURRYHK.CN</span></header>
+    <section class="yy-hero">
+      <img class="yy-avatar" src="mmexport1726063520349.jpeg" alt="悦悦的头像" width="80" height="80" fetchpriority="high" draggable="false">
+      <div><p class="yy-hello">你好呀，很高兴见到你 <img class="yy-emoji" data-emoji="emoji_u1f44b.svg" src="assets/noto-emoji/emoji_u1f44b.svg" alt="" aria-hidden="true"></p><h1>我是悦悦。</h1><p class="yy-handle">@furryhk</p></div>
+    </section>
+    <p class="yy-intro">一个不热爱生活的 i 人。<br>雷点很少，很好相处。吃吃吃，玩玩玩。</p>
+    <div class="yy-tags"><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> Furry</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f1.svg" src="assets/noto-emoji/emoji_u1f4f1.svg" alt=""> 数码人</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt=""> 喜欢摄影</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""> 二次元</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> 线条小狗重度依赖</button></div>
+    <section class="yy-section"><h2>来找我玩</h2><div class="yy-social">
+      <button class="yy-contact cursor-interaction" type="button" data-contact="微信" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f4ac.svg" src="assets/noto-emoji/emoji_u1f4ac.svg" alt=""><span>微信</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
+      <button class="yy-contact cursor-interaction" type="button" data-contact="QQ" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f427.svg" src="assets/noto-emoji/emoji_u1f427.svg" alt=""><span>QQ</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
+      <button class="yy-contact cursor-interaction" type="button" data-contact="抖音" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f3b5.svg" src="assets/noto-emoji/emoji_u1f3b5.svg" alt=""><span>抖音</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
+      <button class="yy-contact cursor-interaction" type="button" data-contact="邮箱" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f4e7.svg" src="assets/noto-emoji/emoji_u1f4e7.svg" alt=""><span>邮箱</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
+    </div><div class="yy-reveal" id="yy-contact-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
+    <section class="yy-section"><h2>我的小偏爱</h2><div class="yy-life">
+      <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="">奶茶续命</span><span class="yy-mini-copy">喜茶 · 瑞幸 · 古茗<br>抹茶重度爱好者 <img class="yy-emoji" data-emoji="emoji_u1f375.svg" src="assets/noto-emoji/emoji_u1f375.svg" alt=""></span></button>
+      <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt="">爱好</span><span class="yy-mini-copy">喜欢摄影 · 数码人<br>QQ 重度使用</span></button>
+    </div><button type="button" class="yy-mini yy-game cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f3ae.svg" src="assets/noto-emoji/emoji_u1f3ae.svg" alt="">菜菜的，但爱玩</span><span class="yy-mini-copy">蛋仔派对 · PUBG Mobile · 伊莫<br>游戏 ID：古茗店员</span></button></section>
+    <section class="yy-section"><h2>我在折腾的小东西 <img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""></h2><a class="yy-service" href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer" aria-label="FurryHK 免费个人邮箱服务，查看使用条款"><div><h3>FurryHK 免费个人邮箱</h3><p>专属 @furryhk.cn 邮箱<br>人工审核开通</p></div><span class="yy-service-more">使用条款 ↗</span></a><div class="yy-pending"><div class="yy-pending-heading"><img class="yy-emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true">待开发项目</div><p>二级域名服务 · 筹备中<br>更多功能 · 开发中</p></div></section>
+    <section class="yy-section"><button type="button" id="yy-reward" class="yy-support cursor-interaction" aria-expanded="false" aria-controls="yy-reward-detail">请我喝杯奶茶 <img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt=""></button><div class="yy-reveal" id="yy-reward-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
+    <footer class="yy-footer"><span>谢谢你来看我呀，祝你天天开心。</span></footer>
+    <div class="yy-shade" id="yy-shade" aria-hidden="true" hidden></div><div class="yy-qr-dialog" id="yy-qr-dialog" role="dialog" aria-modal="true" aria-labelledby="yy-dialog-title" aria-hidden="true" hidden><div class="yy-dialog-head"><span id="yy-dialog-title">二维码</span><button class="yy-dialog-close cursor-interaction" type="button" id="yy-dialog-close">关闭</button></div><img class="yy-dialog-image" id="yy-dialog-image" alt="放大的二维码"><p class="yy-dialog-caption">扫码就能找到我啦</p></div>
+  </main>
+  <template id="yy-wechat-template"><div class="yy-contact-info"><img class="yy-qr" src="wechat.png" data-filename="wechat.png" width="140" height="140" alt="微信二维码"><p>微信号：<strong>furryhk</strong></p></div></template>
+  <template id="yy-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="qq.png" data-filename="qq.png" width="140" height="140" alt="QQ二维码"><p>扫码加我好友</p><div class="yy-links"><a href="https://qm.qq.com/q/n51fppV6nK" target="_blank" rel="noopener noreferrer">快捷跳转 ↗</a></div></div></template>
+  <template id="yy-douyin-template"><div class="yy-contact-info"><p>抖音号：<strong>furryhk</strong></p><div class="yy-links"><a href="https://v.douyin.com/T7s9JgT9Ags/" target="_blank" rel="noopener noreferrer">去我主页 ↗</a></div></div></template>
+  <template id="yy-email-template"><div class="yy-contact-info"><p>推荐邮箱<br><strong>furryhk@furryhk.cn</strong></p><p>谷歌邮箱<br><strong>furryyueyue@gmail.com</strong></p><div class="yy-links"><a href="mailto:furryhk@furryhk.cn">发邮件给推荐邮箱</a><a href="mailto:furryyueyue@gmail.com">发邮件给谷歌邮箱</a></div></div></template>
+  <template id="yy-payments-template"><div class="yy-payments"><div><img class="yy-qr" src="alipay.png" data-filename="alipay.png" width="140" height="140" alt="支付宝收款码"><p>支付宝</p><div class="yy-links"><a href="https://qr.alipay.com/2m615317eyo37denaqpqi57" target="_blank" rel="noopener noreferrer">支付宝打赏 ↗</a></div></div><div><img class="yy-qr" src="wechatpay.png" data-filename="wechatpay.png" width="140" height="140" alt="微信收款码"><p>微信</p><div class="yy-links"><a href="https://payapp.wechatpay.cn/sjt/qr/AQFyYNFUThdZuSq-cts4FRF8" target="_blank" rel="noopener noreferrer">微信打赏 ↗</a></div></div></div></template>
+  <script>
+    (() => {
+      const root = document.getElementById('yueyue-preview');
+      const panel = root.querySelector('#yy-contact-detail');
+      const detail = panel.querySelector('.yy-detail');
+      const buttons = [...root.querySelectorAll('[data-contact]')];
+      const templates = {'微信':'#yy-wechat-template','QQ':'#yy-qq-template','抖音':'#yy-douyin-template','邮箱':'#yy-email-template'};
+      let selected = null;
+      let contactGeneration = 0;
+      let contactSwitching = false;
+      let contactCollapseAnimation = null;
+      const motionCounts = new WeakMap();
+      const animateMotion = (element, frames, options) => {
+        const compositorMotion = frames.some(frame => 'transform' in frame || 'opacity' in frame) && !frames.some(frame => 'height' in frame || 'width' in frame);
+        if (compositorMotion) {
+          motionCounts.set(element,(motionCounts.get(element) || 0) + 1);
+          element.style.willChange = 'transform, opacity';
         }
-        // 联系方式数据
-        const contacts = {
-            wechat: {
-                label: '微信号',
-                value: 'furryhk',
-                qrcode: true,
-                qrcodeImg: 'wechat.png',
-                tip: '点击二维码可放大查看'
-            },
-            qq: {
-                label: 'QQ',
-                value: '扫码加我好友',
-                qrcode: true,
-                qrcodeImg: 'qq.png',
-                link: 'https://qm.qq.com/q/n51fppV6nK',
-                linkText: '快捷跳转',
-                tip: '点击二维码可放大查看'
-            },
-            douyin: {
-                label: '抖音号',
-                value: 'furryhk',
-                qrcode: true,
-                link: 'https://v.douyin.com/T7s9JgT9Ags/',
-                linkText: '去我主页',
-                tip: '点击跳转抖音主页'
-            },
-            email: {
-                label: '邮箱',
-                value: '',
-                isEmail: true,
-                tip: '两个邮箱都可以用哦'
-            },
-            reward: {
-                label: '请我喝杯奶茶吧 <img class="emoji" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="" aria-hidden="true" draggable="false">',
-                value: '',
-                isReward: true,
-                tip: '点击二维码可放大查看'
-            }
-        };
-        const panel = document.getElementById('contactPanel');
-        const content = document.getElementById('contactContent');
-        const buttons = document.querySelectorAll('.icon-btn');
-        let currentType = null;
-        let contactTransition = 0;
-        let contactSwapTimeout = 0;
-        let contactSwapEnd = null;
-        const cancelContactSwap = () => {
-            if (contactSwapTimeout) clearTimeout(contactSwapTimeout);
-            contactSwapTimeout = 0;
-            if (contactSwapEnd) panel.removeEventListener('transitionend', contactSwapEnd);
-            contactSwapEnd = null;
-        };
-        const closeContactPanel = () => {
-            panel.style.height = panel.getBoundingClientRect().height + 'px';
-            void panel.offsetHeight;
-            panel.classList.remove('open');
-            panel.style.height = '0px';
-        };
-        const openContactPanel = () => {
-            panel.classList.add('open');
-            panel.style.height = (content.scrollHeight + 20) + 'px';
-        };
-        panel.addEventListener('transitionend', event => {
-            if (event.target === panel && event.propertyName === 'height' && panel.classList.contains('open')) {
-                panel.style.height = 'auto';
-            }
-        });
-        buttons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const type = btn.dataset.type;
-                const transitionId = ++contactTransition;
-                cancelContactSwap();
-                
-                // 点击同一个就关闭
-                if (currentType === type) {
-                    currentType = null;
-                    content.classList.remove('show');
-                    closeContactPanel();
-                    btn.classList.remove('active');
-                    return;
-                }
-                // 清除其他激活状态
-                buttons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                // 生成内容
-                const data = contacts[type];
-                let html = '';
-                
-                if (data.isReward) {
-                    // 打赏双二维码
-                    html += `<div class="contact-label">${data.label}</div>`;
-                    html += '<div class="reward-qrcodes">';
-                    html += '<div class="reward-item">';
-                    html += '<div class="qrcode-placeholder" onclick="openModal(\'alipay.png\')"><img src="alipay.png" alt="支付宝收款码"></div>';
-                    html += '<div class="reward-label">支付宝</div>';
-                    html += '</div>';
-                    html += '<div class="reward-item">';
-                    html += '<div class="qrcode-placeholder" onclick="openModal(\'wechatpay.png\')"><img src="wechatpay.png" alt="微信收款码"></div>';
-                    html += '<div class="reward-label">微信</div>';
-                    html += '</div>';
-                    html += '</div>';
-                    html += '<div style="display: flex; justify-content: center; gap: 24px; margin-top: 8px;">';
-                    html += '<a href="https://qr.alipay.com/2m615317eyo37denaqpqi57" class="contact-link" target="_blank" rel="noopener noreferrer" style="padding: 6px 16px; font-size: 12px;">支付宝打赏</a>';
-                    html += '<a href="https://payapp.wechatpay.cn/sjt/qr/AQFyYNFUThdZuSq-cts4FRF8" class="contact-link" target="_blank" rel="noopener noreferrer" style="padding: 6px 16px; font-size: 12px;">微信打赏</a>';
-                    html += '</div>';
-                } else if (data.isEmail) {
-                    // 两个邮箱
-                    html += `<div class="contact-label">${data.label}</div>`;
-                    html += '<div style="margin: 12px 0;">';
-                    html += '<div style="margin-bottom: 10px;">';
-                    html += '<div style="font-size: 12px; color: #999; margin-bottom: 4px;">推荐邮箱</div>';
-                    html += '<div style="font-size: 16px; font-weight: 600; color: #333;">furryhk@furryhk.cn</div>';
-                    html += '</div>';
-                    html += '<div style="margin-bottom: 16px;">';
-                    html += '<div style="font-size: 12px; color: #999; margin-bottom: 4px;">谷歌邮箱</div>';
-                    html += '<div style="font-size: 16px; font-weight: 600; color: #333;">furryyueyue@gmail.com</div>';
-                    html += '</div>';
-                    html += '</div>';
-                    html += '<div style="display: flex; justify-content: center; gap: 12px; margin-top: 8px;">';
-                    html += '<a href="mailto:furryhk@furryhk.cn" class="contact-link" style="padding: 8px 18px; font-size: 12px;">发邮件给推荐邮箱</a>';
-                    html += '<a href="mailto:furryyueyue@gmail.com" class="contact-link" style="padding: 8px 18px; font-size: 12px;">发邮件给谷歌邮箱</a>';
-                    html += '</div>';
-                } else if (data.qrcode) {
-                    if (data.qrcodeImg) {
-                        html += `<div class="qrcode-placeholder" onclick="openModal('${data.qrcodeImg}')"><img src="${data.qrcodeImg}" alt="二维码"></div>`;
-                    } else {
-                        html += '<div class="qrcode-placeholder"><img class="emoji" src="assets/noto-emoji/emoji_u1f4f1.svg" alt="" aria-hidden="true" draggable="false"></div>';
-                    }
-                    html += `<div class="contact-label">${data.label}</div>`;
-                    if (data.value) {
-                        html += `<div class="contact-value">${data.value}</div>`;
-                    }
-                } else {
-                    html += `<div class="contact-label">${data.label}</div>`;
-                    html += `<div class="contact-value">${data.value}</div>`;
-                }
-                
-                if (data.link) {
-                    html += `<a href="${data.link}" class="contact-link" target="_blank" rel="noopener noreferrer">${data.linkText}</a>`;
-                }
-                
-                if (data.tip) {
-                    html += `<div class="contact-tip">${data.tip}</div>`;
-                }
-                // 切换显示
-                if (panel.classList.contains('open')) {
-                    // 已展开的面板先完整收起，再替换内容
-                    content.classList.remove('show');
-                    closeContactPanel();
-                    let swapFinished = false;
-                    const finishSwap = () => {
-                        if (swapFinished) return;
-                        swapFinished = true;
-                        cancelContactSwap();
-                        if (transitionId !== contactTransition || currentType !== type) return;
-                        content.innerHTML = html;
-                        openContactPanel();
-                        requestAnimationFrame(() => {
-                            if (transitionId === contactTransition && currentType === type) content.classList.add('show');
-                        });
-                    };
-                    contactSwapEnd = event => {
-                        if (event.target === panel && event.propertyName === 'height') finishSwap();
-                    };
-                    panel.addEventListener('transitionend', contactSwapEnd);
-                    contactSwapTimeout = setTimeout(finishSwap, 650);
-                } else {
-                    // 第一次展开
-                    content.innerHTML = html;
-                    openContactPanel();
-                    requestAnimationFrame(() => {
-                        if (transitionId === contactTransition) content.classList.add('show');
-                    });
-                }
-                currentType = type;
-            });
-        });
-        // 图片弹窗
-        function openModal(src) {
-            const modal = document.getElementById('imageModal');
-            const img = document.getElementById('modalImage');
-            img.src = src;
-            modal.classList.add('show');
-            document.body.style.overflow = 'hidden';
+        const animation = element.animate(frames,options);
+        if (compositorMotion) {
+          const release = () => {
+            const remaining = Math.max(0,(motionCounts.get(element) || 1) - 1);
+            motionCounts.set(element,remaining);
+            if (!remaining) element.style.willChange = '';
+          };
+          animation.finished.then(release,release);
         }
-        function closeModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.remove('show');
-            document.body.style.overflow = '';
-        }
-        document.addEventListener('keydown', event => {
-            if (event.key === 'Escape') closeModal();
+        return animation;
+      };
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const sparkle = root.querySelector('img[data-emoji="emoji_u2728.svg"]');
+      root.querySelectorAll('template').forEach(template => {
+        template.content.querySelectorAll('.yy-qr').forEach(image => {
+          const trigger = document.createElement('button');
+          trigger.type = 'button';
+          trigger.className = 'yy-qr-trigger cursor-interaction';
+          trigger.setAttribute('aria-label', '点击放大' + image.alt);
+          trigger.setAttribute('aria-haspopup', 'dialog');
+          image.before(trigger);
+          trigger.append(image);
+          const tip = document.createElement('span');
+          tip.className = 'yy-zoom-tip';
+          tip.textContent = '点击放大';
+          const face = sparkle.cloneNode(true);
+          face.setAttribute('aria-hidden','true');
+          tip.append(face);
+          trigger.append(tip);
         });
-        const avatar = document.querySelector('.avatar');
-        if (avatar) {
-            avatar.addEventListener('contextmenu', event => event.preventDefault());
-            avatar.addEventListener('dragstart', event => event.preventDefault());
+      });
+      const rewardButton = root.querySelector('#yy-reward');
+      const rewardEmoji = rewardButton.querySelector('img');
+      const rewardLabel = document.createElement('span');
+      rewardLabel.className = 'yy-reward-label';
+      const rewardTitle = document.createElement('span');
+      rewardTitle.textContent = '请我喝杯奶茶';
+      const rewardHint = document.createElement('span');
+      rewardHint.className = 'yy-reward-hint';
+      rewardHint.textContent = '点击有惊喜';
+      const rewardSparkle = sparkle.cloneNode(true);
+      rewardSparkle.style.width = '13px';
+      rewardSparkle.style.height = '13px';
+      rewardHint.append(' ', rewardSparkle);
+      rewardLabel.append(rewardTitle,rewardHint);
+      const supportArrow = document.createElement('span');
+      supportArrow.className = 'yy-support-arrow';
+      supportArrow.textContent = '↗';
+      rewardButton.replaceChildren(rewardEmoji,rewardLabel,supportArrow);
+      const dialog = root.querySelector('#yy-qr-dialog');
+      const dialogImage = root.querySelector('#yy-dialog-image');
+      const dialogTitle = root.querySelector('#yy-dialog-title');
+      const dialogCaption = root.querySelector('.yy-dialog-caption');
+      const page = root.querySelector('.yy-page');
+      const shade = root.querySelector('#yy-shade');
+      let originImage = null;
+      let inertStates = [];
+      let previousMinHeight = '';
+      let closingDialog = false;
+      let openingDialog = false;
+      let imageRequest = 0;
+      let lastHaptic = 0;
+      const feedbackTimers = new WeakMap();
+      const tapHaptic = () => {
+        const now = performance.now();
+        if (now - lastHaptic < 80) return;
+        lastHaptic = now;
+        if (typeof navigator.vibrate === 'function') {
+          try { navigator.vibrate(8); } catch (_) {}
         }
-        document.querySelectorAll('img').forEach(img => {
-            img.addEventListener('error', () => {
-                img.dataset.failed = 'true';
-                if (img.closest('.avatar')) img.closest('.avatar').classList.add('image-missing');
-            }, { once: true });
+      };
+      const finishClose = () => {
+        dialog.hidden = true;
+        dialog.setAttribute('aria-hidden','true');
+        shade.hidden = true;
+        shade.classList.remove('is-open');
+        dialogImage.getAnimations().forEach(animation => animation.cancel());
+        dialog.getAnimations().forEach(animation => animation.cancel());
+        page.style.minHeight = previousMinHeight;
+        inertStates.forEach(([element,inert]) => { element.inert = inert; });
+        inertStates = [];
+        const trigger = originImage && originImage.closest('.yy-qr-trigger');
+        if (trigger && trigger.isConnected) trigger.focus({preventScroll:true});
+        originImage = null;
+        closingDialog = false;
+        openingDialog = false;
+      };
+      const closeImage = () => {
+        if (dialog.hidden || closingDialog) return;
+        closingDialog = true;
+        shade.classList.remove('is-open');
+        if (reduceMotion.matches) { finishClose(); return; }
+        const start = getComputedStyle(dialog).transform;
+        const opacity = getComputedStyle(dialog).opacity;
+        dialog.getAnimations().forEach(animation => animation.cancel());
+        const flight = animateMotion(dialog,[{transform:start === 'none' ? 'translate3d(0,0,0) scale(1)' : start,opacity},{transform:'translate3d(0,5px,0) scale(.97)',opacity:0}],{duration:180,easing:'ease-in',fill:'forwards'});
+        flight.finished.then(finishClose).catch(finishClose);
+      };
+      const openImage = async image => {
+        if (!dialog.hidden || openingDialog) return;
+        openingDialog = true;
+        const request = ++imageRequest;
+        originImage = image;
+        dialogImage.src = image.src;
+        dialogImage.alt = '放大的' + image.alt;
+        if (image.naturalWidth && image.naturalHeight) {
+          dialogImage.width = image.naturalWidth;
+          dialogImage.height = image.naturalHeight;
+        }
+        dialogTitle.textContent = image.alt;
+        const captions = {'wechat.png':'打开微信，扫码添加好友','qq.png':'打开 QQ，扫码添加好友','alipay.png':'请使用支付宝扫码打赏','wechatpay.png':'请使用微信扫码打赏'};
+        dialogCaption.textContent = captions[image.dataset.filename] || '扫描二维码';
+        try { if (dialogImage.decode) await dialogImage.decode(); } catch (_) {}
+        if (request !== imageRequest || !image.isConnected || image.closest('[inert]')) { openingDialog = false;return; }
+        const source = image.getBoundingClientRect();
+        const bounds = page.getBoundingClientRect();
+        previousMinHeight = page.style.minHeight;
+        dialog.hidden = false;
+        dialog.setAttribute('aria-hidden','false');
+        const top = Math.max(16,source.top - bounds.top - page.clientTop - 32);
+        dialog.style.left = Math.max(16,(page.clientWidth - dialog.offsetWidth) / 2) + 'px';
+        dialog.style.top = top + 'px';
+        page.style.minHeight = Math.max(page.offsetHeight,top + dialog.offsetHeight + 24) + 'px';
+        shade.hidden = false;
+        inertStates = [...page.children].filter(element => element !== dialog && element !== shade).map(element => [element,element.inert]);
+        inertStates.forEach(([element]) => { element.inert = true; });
+        openingDialog = false;
+        root.querySelector('#yy-dialog-close').focus({preventScroll:true});
+        requestAnimationFrame(() => { if (!dialog.hidden && !closingDialog) shade.classList.add('is-open'); });
+        if (reduceMotion.matches) return;
+        animateMotion(dialog,[{opacity:0,transform:'translate3d(0,7px,0) scale(.95)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:240,easing:'cubic-bezier(.16,1,.3,1)'});
+        const chrome = [root.querySelector('.yy-dialog-head'),root.querySelector('.yy-dialog-caption')];
+        chrome.forEach(element => animateMotion(element,[{opacity:0,transform:'translate3d(0,3px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:180,delay:110,easing:'ease-out',fill:'backwards'}));
+      };
+      root.querySelector('#yy-dialog-close').addEventListener('click',closeImage);
+      shade.addEventListener('click',() => { tapHaptic();closeImage(); });
+      dialog.addEventListener('keydown',event => {
+        if (event.key === 'Escape') { event.preventDefault();tapHaptic();closeImage(); }
+        if (event.key === 'Tab') { event.preventDefault();root.querySelector('#yy-dialog-close').focus({preventScroll:true}); }
+      });
+      root.addEventListener('click',event => {
+        const qrButton = event.target.closest('.yy-qr-trigger');
+        if (qrButton) {
+          const image = qrButton.querySelector('img.yy-qr');
+          openImage(image);
+        }
+        const control = event.target.closest('button,a');
+        if (!control || !root.contains(control)) return;
+        tapHaptic();
+        if (reduceMotion.matches) return;
+        if (!qrButton) {
+          control.getAnimations().forEach(animation => animation.cancel());
+          animateMotion(control,[{transform:'scale(.985)'},{transform:'scale(1.003)',offset:.7},{transform:'scale(1)'}],{duration:230,easing:'cubic-bezier(.2,.8,.2,1)'});
+        }
+        control.classList.add('yy-feedback-host','yy-touched');
+        clearTimeout(feedbackTimers.get(control));
+        feedbackTimers.set(control,setTimeout(() => control.classList.remove('yy-touched'),260));
+        control.querySelectorAll('.yy-click-spark').forEach(sticker => {
+          sticker.getAnimations().forEach(animation => animation.cancel());
+          sticker.remove();
         });
-    </script>
+        const emoji = control.querySelector('.yy-emoji') || sparkle;
+        const sticker = emoji.cloneNode(true);
+        sticker.className = 'yy-click-spark';
+        sticker.alt = '';
+        sticker.removeAttribute('id');
+        sticker.setAttribute('aria-hidden','true');
+        control.append(sticker);
+        const emojiAnimation = animateMotion(sticker,[
+          {opacity:0,transform:'translate3d(0,6px,0) scale(.7)'},
+          {opacity:1,transform:'translate3d(0,-5px,0) scale(1.1)',offset:.45},
+          {opacity:0,transform:'translate3d(0,-16px,0) scale(.95)'}
+        ],{duration:450,easing:'ease-out'});
+        emojiAnimation.finished.then(() => sticker.remove()).catch(() => sticker.remove());
+      });
+      const reveal = (element, open) => {
+        const currentHeight = element.getBoundingClientRect().height;
+        element.style.height = currentHeight + 'px';
+        void element.offsetHeight;
+        element.classList.toggle('is-open', open);
+        element.setAttribute('aria-hidden', String(!open));
+        element.inert = !open;
+        element.style.height = open ? element.querySelector('.yy-reveal-inner').scrollHeight + 'px' : '0px';
+        if (open && reduceMotion.matches) element.style.height = 'auto';
+      };
+      const collapseContact = async generation => {
+        const height = panel.getBoundingClientRect().height;
+        if (contactCollapseAnimation) {
+          contactCollapseAnimation.cancel();
+          contactCollapseAnimation = null;
+        }
+        panel.style.transition = 'none';
+        panel.classList.remove('is-open');
+        panel.setAttribute('aria-hidden','true');
+        panel.inert = true;
+        panel.style.height = '0px';
+        if (height > .5 && !reduceMotion.matches) {
+          const animation = panel.animate([{height:height + 'px'},{height:'0px'}],{duration:360,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+          contactCollapseAnimation = animation;
+          await animation.finished.catch(() => {});
+          if (generation !== contactGeneration) return false;
+          animation.cancel();
+          if (contactCollapseAnimation === animation) contactCollapseAnimation = null;
+        }
+        if (generation !== contactGeneration) return false;
+        panel.style.height = '0px';
+        panel.style.transition = '';
+        return true;
+      };
+      root.querySelectorAll('.yy-reveal').forEach(element => {
+        element.addEventListener('transitionend',event => {
+          if (event.target === element && event.propertyName === 'height' && element.classList.contains('is-open') && !(element === panel && contactSwitching)) element.style.height = 'auto';
+        });
+      });
+      root.querySelector('#yy-reward-detail .yy-detail').replaceChildren(root.querySelector('#yy-payments-template').content.cloneNode(true));
+      const surprise = document.createElement('p');
+      surprise.className = 'yy-surprise';
+      surprise.textContent = '谢谢你请我喝奶茶';
+      surprise.prepend(rewardEmoji.cloneNode(true),' ');
+      root.querySelector('#yy-reward-detail .yy-detail').prepend(surprise);
+      buttons.forEach(button => button.addEventListener('click', async () => {
+        const generation = ++contactGeneration;
+        const type = button.dataset.contact;
+        const close = selected === type;
+        detail.getAnimations().forEach(animation => animation.cancel());
+        contactSwitching = true;
+        selected = close ? null : type;
+        buttons.forEach(b => {
+          const active = !close && b === button;
+          b.setAttribute('aria-pressed', String(active));
+          b.setAttribute('aria-expanded', String(active));
+        });
+        const collapsed = await collapseContact(generation);
+        if (!collapsed || generation !== contactGeneration) return;
+        contactSwitching = false;
+        if (close) return;
+        detail.replaceChildren(root.querySelector(templates[type]).content.cloneNode(true));
+        reveal(panel, true);
+      }));
+      [['#yy-reward','#yy-reward-detail']].forEach(([buttonId,panelId]) => {
+        const button = root.querySelector(buttonId);
+        const element = root.querySelector(panelId);
+        button.addEventListener('click', () => {
+          const open = !element.classList.contains('is-open');
+          button.setAttribute('aria-expanded', String(open));
+          reveal(element, open);
+        });
+      });
+      const resizeOpenPanels = () => {
+        if (!dialog.hidden) {
+          dialog.style.left = Math.max(16,(page.clientWidth - dialog.offsetWidth) / 2) + 'px';
+          page.style.minHeight = Math.max(page.offsetHeight,parseFloat(dialog.style.top) + dialog.offsetHeight + 24) + 'px';
+        }
+        root.querySelectorAll('.yy-reveal.is-open').forEach(element => {
+          if (element === panel && contactSwitching) return;
+          if (element.style.height !== 'auto') element.style.height = element.querySelector('.yy-reveal-inner').scrollHeight + 'px';
+        });
+      };
+      let resizeFrame = 0;
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(resizeFrame);
+        resizeFrame = requestAnimationFrame(resizeOpenPanels);
+      });
+      root.addEventListener('load', event => { if (event.target.matches('img.yy-qr')) resizeOpenPanels(); },true);
+      root.querySelector('.yy-avatar').addEventListener('contextmenu',event => event.preventDefault());
+      if (!reduceMotion.matches) {
+        const entryGroups = [...page.children].filter(element => element.matches('.yy-top,.yy-hero,.yy-intro,.yy-tags,.yy-section,.yy-footer'));
+        entryGroups.forEach((element,index) => {
+          animateMotion(element,[{opacity:0,transform:'translate3d(0,18px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{
+            duration:index < 2 ? 1150 : 1050,
+            delay:Math.min(index * 65,455),
+            easing:'cubic-bezier(.16,1,.3,1)',
+            fill:'backwards'
+          });
+        });
+      }
+    })();
+  </script>
+</div>
+
 </body>
 </html>
