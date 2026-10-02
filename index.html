@@ -232,7 +232,15 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       let contactSwitching = false;
       let contactCollapseAnimation = null;
       const motionCounts = new WeakMap();
+      const canAnimate = typeof Element.prototype.animate === 'function' && typeof Element.prototype.getAnimations === 'function';
       const animateMotion = (element, frames, options) => {
+        if (!canAnimate) {
+          const finalFrame = frames[frames.length - 1] || {};
+          Object.entries(finalFrame).forEach(([property,value]) => {
+            if (property !== 'offset' && property !== 'easing' && property !== 'composite') element.style[property] = value;
+          });
+          return {finished:Promise.resolve(),cancel(){}};
+        }
         const compositorMotion = frames.some(frame => 'transform' in frame || 'opacity' in frame) && !frames.some(frame => 'height' in frame || 'width' in frame);
         if (compositorMotion) {
           motionCounts.set(element,(motionCounts.get(element) || 0) + 1);
@@ -410,7 +418,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         tapHaptic();
         if (qrButton || control.closest('.yy-qr-dialog')) return;
         if (!reduceMotion.matches) {
-          control.getAnimations().forEach(animation => animation.cancel());
+          if (canAnimate) control.getAnimations().forEach(animation => animation.cancel());
           animateMotion(control,[{transform:'scale(.993)'},{transform:'scale(1)'}],{duration:170,easing:'ease-out'});
         }
         control.classList.add('yy-feedback-host','yy-touched');
@@ -460,7 +468,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         panel.setAttribute('aria-hidden','true');
         panel.inert = true;
         panel.style.height = '0px';
-        if (height > .5 && !reduceMotion.matches) {
+        if (height > .5 && !reduceMotion.matches && canAnimate) {
           const animation = panel.animate([{height:height + 'px'},{height:'0px'}],{duration:360,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
           contactCollapseAnimation = animation;
           await animation.finished.catch(() => {});
@@ -488,7 +496,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         const generation = ++contactGeneration;
         const type = button.dataset.contact;
         const close = selected === type;
-        detail.getAnimations().forEach(animation => animation.cancel());
+        if (canAnimate) detail.getAnimations().forEach(animation => animation.cancel());
         contactSwitching = true;
         selected = close ? null : type;
         buttons.forEach(b => {
@@ -514,8 +522,14 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       });
       const resizeOpenPanels = () => {
         if (!dialog.hidden) {
+          page.style.minHeight = previousMinHeight;
+          const bounds = page.getBoundingClientRect();
+          const source = imageSlot && imageSlot.isConnected ? imageSlot.getBoundingClientRect() : null;
+          const naturalPageHeight = page.offsetHeight;
+          if (source) dialog.style.top = Math.max(16,source.top - bounds.top - page.clientTop - 32) + 'px';
           dialog.style.left = Math.max(16,(page.clientWidth - dialog.offsetWidth) / 2) + 'px';
-          page.style.minHeight = Math.max(page.offsetHeight,parseFloat(dialog.style.top) + dialog.offsetHeight + 24) + 'px';
+          const dialogTop = Number.parseFloat(dialog.style.top) || 16;
+          page.style.minHeight = Math.max(naturalPageHeight,dialogTop + dialog.offsetHeight + 24) + 'px';
         }
         root.querySelectorAll('.yy-reveal.is-open').forEach(element => {
           if (element === panel && contactSwitching) return;
