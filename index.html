@@ -11,6 +11,7 @@
 html{background:#f2eef4;color:#393343;background:light-dark(#f2eef4,#17141c);color:light-dark(#393343,#eee9f4);color-scheme:light dark}
 body{margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
 button,a{font-family:inherit}
+body>.yy-click-spark{position:fixed;z-index:9999;width:34px;height:34px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 3px 8px #30203755);transform-origin:center;user-select:none;-webkit-user-drag:none}
 </style>
 </head>
 <body>
@@ -32,7 +33,6 @@ button,a{font-family:inherit}
     #yueyue-preview button.yy-tag{border:0;font-family:inherit;font-weight:400;line-height:inherit;text-align:center;position:relative;transition:transform .15s ease}
     #yueyue-preview button.yy-tag:active{transform:scale(.97)}
     #yueyue-preview button.yy-tag:focus-visible{outline:2px solid light-dark(#ad8bc6,#b58acf);outline-offset:3px}
-    #yueyue-preview button.yy-tag .yy-click-spark{right:7px;top:2px;width:18px;height:18px}
     #yueyue-preview h2{font-size:15px;font-weight:600;letter-spacing:.02em;margin:0 0 14px}
     #yueyue-preview .yy-section{margin-bottom:28px}
     #yueyue-preview .yy-social{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -94,7 +94,6 @@ button,a{font-family:inherit}
     #yueyue-preview .yy-mini-copy{display:block;font-size:12px;line-height:1.85;color:light-dark(#766e78,#bdb2c4)}
     #yueyue-preview .yy-mini.yy-touched{border-color:light-dark(#ba9cc9,#ad84c2)}
     #yueyue-preview .yy-feedback-host{position:relative}
-    #yueyue-preview .yy-click-spark{position:absolute;right:12px;top:7px;width:21px;height:21px;pointer-events:none;object-fit:contain}
     #yueyue-preview .yy-qr-trigger{display:block;width:fit-content;max-width:100%;padding:0;margin:0 auto 10px;border:0;background:transparent;color:inherit;font:inherit;border-radius:12px;transition:transform .16s ease}
     #yueyue-preview .yy-qr-trigger .yy-qr{margin:0 auto 6px;max-width:100%}
     #yueyue-preview .yy-payments .yy-qr-trigger{width:100%;max-width:140px}
@@ -339,31 +338,36 @@ button,a{font-family:inherit}
         const control = event.target.closest('button,a');
         if (!control || !root.contains(control)) return;
         tapHaptic();
-        if (reduceMotion.matches) return;
         if (!qrButton) {
-          control.getAnimations().forEach(animation => animation.cancel());
-          animateMotion(control,[{transform:'scale(.985)'},{transform:'scale(1.003)',offset:.7},{transform:'scale(1)'}],{duration:230,easing:'cubic-bezier(.2,.8,.2,1)'});
+          if (!reduceMotion.matches) {
+            control.getAnimations().forEach(animation => animation.cancel());
+            animateMotion(control,[{transform:'scale(.985)'},{transform:'scale(1.003)',offset:.7},{transform:'scale(1)'}],{duration:230,easing:'cubic-bezier(.2,.8,.2,1)'});
+          }
         }
         control.classList.add('yy-feedback-host','yy-touched');
         clearTimeout(feedbackTimers.get(control));
         feedbackTimers.set(control,setTimeout(() => control.classList.remove('yy-touched'),260));
-        control.querySelectorAll('.yy-click-spark').forEach(sticker => {
-          sticker.getAnimations().forEach(animation => animation.cancel());
-          sticker.remove();
-        });
         const emoji = control.querySelector('.yy-emoji') || sparkle;
         const sticker = emoji.cloneNode(true);
         sticker.className = 'yy-click-spark';
         sticker.alt = '';
         sticker.removeAttribute('id');
         sticker.setAttribute('aria-hidden','true');
-        control.append(sticker);
-        const emojiAnimation = animateMotion(sticker,[
-          {opacity:0,transform:'translate3d(0,6px,0) scale(.7)'},
-          {opacity:1,transform:'translate3d(0,-5px,0) scale(1.1)',offset:.45},
-          {opacity:0,transform:'translate3d(0,-16px,0) scale(.95)'}
-        ],{duration:450,easing:'ease-out'});
-        emojiAnimation.finished.then(() => sticker.remove()).catch(() => sticker.remove());
+        const bounds = control.getBoundingClientRect();
+        const x = event.detail ? event.clientX : bounds.left + bounds.width / 2;
+        const y = event.detail ? event.clientY : bounds.top + bounds.height / 2;
+        sticker.style.left = Math.max(10,Math.min(window.innerWidth - 44,x + 8)) + 'px';
+        sticker.style.top = Math.max(10,Math.min(window.innerHeight - 44,y - 38)) + 'px';
+        document.body.append(sticker);
+        const stickers = document.querySelectorAll('body>.yy-click-spark');
+        if (stickers.length > 8) stickers[0].remove();
+        if (!reduceMotion.matches) animateMotion(sticker,[
+          {opacity:0,transform:'translate3d(0,10px,0) scale(.72)',offset:0},
+          {opacity:1,transform:'translate3d(0,0,0) scale(1.13)',offset:.14},
+          {opacity:1,transform:'translate3d(0,-5px,0) scale(1.08)',offset:.7},
+          {opacity:0,transform:'translate3d(0,-34px,0) scale(.98)',offset:1}
+        ],{duration:950,easing:'cubic-bezier(.2,.8,.25,1)',fill:'forwards'});
+        setTimeout(() => sticker.remove(),reduceMotion.matches ? 800 : 1000);
       });
       const reveal = (element, open) => {
         const currentHeight = element.getBoundingClientRect().height;
