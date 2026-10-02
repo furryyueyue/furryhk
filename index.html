@@ -505,7 +505,6 @@
         }
         .avatar { cursor: default; user-select: none; -webkit-user-select: none; }
         .avatar img { pointer-events: none; -webkit-user-drag: none; }
-        .loader-content { animation-duration: 2s; }
         .card > .header,.card > .bio,.card > .tags,.card > .section-title,
         .card > .social-icons,.card > .contact-panel,.card > .module-box,
         .card > .tip-box,.card > .footer {
@@ -519,29 +518,6 @@
         .card > .module-box:nth-child(8) { animation-delay: .68s; }
         .card > .tip-box,.card > .footer { animation-delay: .8s; }
         @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
-        /* 灵动的加载与入场效果 */
-        .page-loader{position:fixed;inset:0;z-index:2000;display:grid;place-items:center;overflow:hidden;background:#f2f1f8;opacity:1;visibility:visible;isolation:isolate;transition:opacity .65s cubic-bezier(.2,.8,.2,1),visibility .65s}
-        .page-loader::before,.page-loader::after{content:"";position:absolute;width:min(72vw,560px);aspect-ratio:1;border-radius:50%;filter:blur(72px);opacity:.52;z-index:-1;pointer-events:none}
-        .page-loader::before{background:radial-gradient(circle,#d9d2ff 0%,rgba(217,210,255,0) 70%);left:-18%;top:-24%;animation:mistDrift 8s ease-in-out infinite alternate}
-        .page-loader::after{background:radial-gradient(circle,#c9e7ff 0%,rgba(201,231,255,0) 70%);right:-18%;bottom:-28%;animation:mistDrift 10s ease-in-out infinite alternate-reverse}
-        @keyframes mistDrift{to{transform:translate3d(7vw,4vh,0) scale(1.12)}}
-        .page-loader.done{opacity:0;visibility:hidden;pointer-events:none}
-        .loader-content{text-align:center;color:#51427f}
-        .security-demo{animation:securityFloat 2.8s ease-in-out infinite}
-        .security-label{margin-bottom:22px;font-size:11px;font-weight:700;letter-spacing:.19em;color:#76649f}
-        .security-ring{position:relative;width:104px;height:104px;margin:0 auto 20px;display:grid;place-items:center}
-        .security-ring>svg:first-child{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);overflow:visible}
-        .ring-track,.ring-progress{fill:none;stroke-width:5}
-        .ring-track{stroke:rgba(111,91,163,.12)}
-        .ring-progress{stroke:url(#unused);stroke:#8265d5;stroke-linecap:round;stroke-dasharray:238.76;stroke-dashoffset:238.76;filter:drop-shadow(0 1px 4px rgba(126,94,207,.28))}
-        .ring-percent{font-size:21px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.04em;color:#51427f;transition:opacity .22s ease,transform .35s cubic-bezier(.2,1.5,.4,1)}
-        .security-ring.complete .ring-percent{opacity:0;transform:scale(.72)}
-        .success-mark{position:absolute;width:47px;height:47px;overflow:visible}
-        .success-mark path{fill:none;stroke:#45b987;stroke-width:4.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:42;stroke-dashoffset:42;opacity:0;transform:scale(.72);transform-origin:50% 50%;transition:stroke-dashoffset .62s cubic-bezier(.2,.8,.2,1),opacity .22s ease,transform .52s cubic-bezier(.18,1.65,.4,1)}
-        .security-ring.complete .success-mark path{stroke-dashoffset:0;opacity:1;transform:scale(1)}
-        .security-status{font-size:15px;font-weight:600;letter-spacing:.04em;color:#51427f;transition:opacity .22s ease,transform .22s ease}
-        .security-caption{margin-top:8px;font-size:11px;letter-spacing:.04em;color:#948ba9}
-        @keyframes securityFloat{50%{transform:translateY(-3px)}}
         .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer{animation:sectionIn .72s cubic-bezier(.18,.85,.25,1) both}
         .card>.header{animation-delay:.05s}.card>.bio{animation-delay:.13s}.card>.tags{animation-delay:.2s}.card>.section-title,.card>.social-icons{animation-delay:.27s}
         .card>.module-box:nth-child(7){animation-delay:.34s}.card>.module-box:nth-child(8){animation-delay:.41s}.card>.tip-box,.card>.footer{animation-delay:.48s}
@@ -556,9 +532,8 @@
         .glass-blob-1 { background:radial-gradient(circle,rgba(199,174,255,.5),rgba(199,174,255,0) 72%); }
         .glass-blob-2 { background:radial-gradient(circle,rgba(134,170,255,.44),rgba(134,170,255,0) 72%); }
         .glass-blob-3 { background:radial-gradient(circle,rgba(225,190,255,.38),rgba(225,190,255,0) 72%); }
-        .page-loader::before,.page-loader::after { filter:none!important; }
         .snow span { will-change:auto; }
-        .avatar,.wave,.security-demo { animation:none!important; }
+        .avatar,.wave { animation:none!important; }
         .image-modal { background:rgba(20,16,40,.84); }
         .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer {
             animation-duration:.68s!important;
@@ -567,10 +542,9 @@
             .snow { display:none!important; }
             .card { -webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
             .glass-blob { opacity:.7; }
-            .page-loader::before,.page-loader::after { opacity:.38; }
         }
         @media(prefers-reduced-motion:reduce) {
-            .card,.card>* ,.glass-blob,.snow span,.avatar,.wave,.security-demo { animation:none!important; }
+            .card,.card>* ,.glass-blob,.snow span,.avatar,.wave { animation:none!important; }
         }
         .tag:active,.icon-btn:active,.module-btn:active,.contact-link:active{transform:scale(.96)}
         .icon-btn:focus-visible,.module-btn:focus-visible,.contact-link:focus-visible,.back-btn:focus-visible{outline:3px solid rgba(102,126,234,.55);outline-offset:3px}
@@ -582,16 +556,6 @@
         .icon-btn .emoji{width:1.35em;height:1.35em;vertical-align:middle}
         .snow .emoji{width:1em;height:1em;vertical-align:middle}
         @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
-        /* 进度完成后以柔和弹性呈现成功圆勾 */
-        .security-ring::before{content:"";position:absolute;left:50%;top:50%;width:58px;height:58px;border-radius:50%;background:#4fbe8c;opacity:0;transform:translate(-50%,-50%) scale(.48);z-index:0;box-shadow:0 8px 24px rgba(52,174,122,.22);transition:opacity .22s ease,transform .52s cubic-bezier(.18,1.65,.4,1)}
-        .security-ring>svg:first-child{z-index:1}
-        .ring-progress{transition:stroke .38s ease}
-        .ring-percent{position:relative;z-index:2}
-        .success-mark{z-index:3}
-        .success-mark path{stroke:#fff}
-        .security-ring.complete{transform:scale(1.035);transition:transform .52s cubic-bezier(.18,1.65,.4,1)}
-        .security-ring.complete::before{opacity:1;transform:translate(-50%,-50%) scale(1)}
-        .security-ring.complete .ring-progress{stroke:#4fbe8c}
         /* 入场采用慢速、柔和的滑动节奏 */
         .card > .header,.card > .bio,.card > .tags,.card > .section-title,
         .card > .social-icons,.card > .contact-panel,.card > .module-box,
@@ -610,45 +574,12 @@
         .card > .tip-box,.card > .footer { animation-delay: .8s; }
         @keyframes sectionIn { from { opacity: 0; transform: translateY(34px) scale(.985); filter: blur(3px); } to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); } }
         /* 减少动画合成和重绘，保留轻盈入场 */
-        html.intro-active .card,html.intro-active .card *,html.intro-active .glass-blob,html.intro-active .snow span { animation-play-state:paused !important; }
-        .page-loader::before,.page-loader::after { animation:none !important; }
         .bio,.tag,.icon-btn,.module-box,.tip-box,.contact-content { backdrop-filter:none !important; -webkit-backdrop-filter:none !important; }
-        .ring-progress { transition-property:stroke,stroke-dashoffset !important; transition-duration:.38s,var(--ring-duration,2s) !important; transition-timing-function:ease,linear !important; filter:none !important; }
         .card>.header,.card>.bio,.card>.tags,.card>.section-title,.card>.social-icons,.card>.contact-panel,.card>.module-box,.card>.tip-box,.card>.footer { animation-duration:.95s !important; animation-timing-function:cubic-bezier(.2,.8,.2,1) !important; }
         @keyframes sectionIn { from { opacity:0; transform:translate3d(0,20px,0); } to { opacity:1; transform:translate3d(0,0,0); } }
-        .notice-modal{position:fixed;inset:0;z-index:1800;display:grid;place-items:center;padding:24px;background:rgba(31,25,57,.28);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .28s ease,visibility .28s ease}
-        .notice-modal.show{opacity:1;visibility:visible;pointer-events:auto}
-        .notice-dialog{width:min(100%,390px);padding:28px 24px 22px;border:1px solid rgba(255,255,255,.76);border-radius:28px;background:linear-gradient(150deg,rgba(255,255,255,.96),rgba(247,245,255,.94));box-shadow:0 24px 72px rgba(38,28,82,.2),inset 0 1px 0 #fff;text-align:center;transform:translateY(14px) scale(.97);transition:transform .42s cubic-bezier(.18,1.25,.35,1)}
-        .notice-modal.show .notice-dialog{transform:translateY(0) scale(1)}
-        .notice-mark{width:48px;height:48px;margin:0 auto 14px;display:grid;place-items:center;border-radius:17px;background:linear-gradient(145deg,#eee9ff,#e6f0ff);color:#7963c9;font-size:25px;box-shadow:inset 0 1px 0 #fff}
-        .notice-eyebrow{margin-bottom:6px;color:#80749d;font-size:12px;font-weight:600;letter-spacing:.12em}
-        .notice-title{margin:0 0 10px;color:#29233d;font-size:21px;font-weight:650}
-        .notice-message{margin:0 auto 22px;max-width:290px;color:#676174;font-size:14px;line-height:1.8}
-        .notice-ok{width:100%;min-height:50px;border:0;border-radius:17px;background:linear-gradient(135deg,#7665d7,#8b70d5);box-shadow:0 8px 20px rgba(112,90,199,.24);color:#fff;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
-        .notice-ok:hover{transform:translateY(-1px);box-shadow:0 11px 24px rgba(112,90,199,.3)}
-        .notice-ok:active{transform:scale(.98)}
-        .notice-ok:focus-visible{outline:3px solid rgba(102,126,234,.48);outline-offset:3px}
-        @media(prefers-reduced-motion:reduce){.notice-modal,.notice-dialog,.notice-ok{transition-duration:.01ms!important}}
     </style>
 </head>
 <body>
-    <div class="page-loader" id="pageLoader" role="status" aria-live="polite">
-        <div class="loader-content security-demo">
-            <div class="security-label">正在准备页面</div>
-            <div class="security-ring" role="img" aria-label="安全验证进度">
-                <svg viewBox="0 0 88 88" aria-hidden="true">
-                    <circle class="ring-track" cx="44" cy="44" r="38"></circle>
-                    <circle class="ring-progress" id="ringProgress" cx="44" cy="44" r="38"></circle>
-                </svg>
-                <span class="ring-percent" id="ringPercent">0%</span>
-                <svg class="success-mark" id="successMark" viewBox="0 0 48 48" aria-hidden="true">
-                    <path d="M11 24.5 20 33l17-19"></path>
-                </svg>
-            </div>
-            <p class="security-status" id="securityStatus">页面加载中…</p>
-            <p class="security-caption">加载完成后将自动进入主页</p>
-        </div>
-    </div>
     <div class="glass-blob glass-blob-1"></div>
     <div class="glass-blob glass-blob-2"></div>
     <div class="glass-blob glass-blob-3"></div>
@@ -732,15 +663,6 @@
     <div class="image-modal" id="imageModal" onclick="closeModal()">
         <img id="modalImage" src="" alt="大图">
         <div class="close-tip">点击任意位置关闭</div>
-    </div>
-    <div class="notice-modal" id="noticeModal" role="dialog" aria-modal="true" aria-labelledby="noticeTitle" aria-describedby="noticeMessage" aria-hidden="true">
-        <div class="notice-dialog">
-            <div class="notice-mark" aria-hidden="true">✦</div>
-            <p class="notice-eyebrow">小提示</p>
-            <h2 class="notice-title" id="noticeTitle">页面已加载</h2>
-            <p class="notice-message" id="noticeMessage">如遇到未加载出来的内容，请刷新重试，谢谢。</p>
-            <button class="notice-ok" id="noticeOk" type="button">OK</button>
-        </div>
     </div>
     <script>
         // 生成雪花 - 优化飘落效果
@@ -951,73 +873,6 @@
         document.addEventListener('keydown', event => {
             if (event.key === 'Escape') closeModal();
         });
-        const pageLoader = document.getElementById('pageLoader');
-        const ring = document.getElementById('ringProgress');
-        const ringPercent = document.getElementById('ringPercent');
-        const securityRing = document.querySelector('.security-ring');
-        const securityStatus = document.getElementById('securityStatus');
-        document.documentElement.classList.add('intro-active');
-        // 圆环交给 CSS 原生过渡绘制，脚本只低频更新百分比数字。
-        const checkStartedAt = performance.now();
-        const preparationDuration = 2000 + Math.random() * 2500;
-        const successAndExitDuration = 1200;
-        const checkDuration = preparationDuration - successAndExitDuration;
-        let checkComplete = false;
-        let lastPercent = -1;
-        if (ring) {
-            ring.style.setProperty('--ring-duration', checkDuration + 'ms');
-            ring.style.transition = 'stroke .38s ease, stroke-dashoffset ' + checkDuration + 'ms linear';
-            void ring.getBoundingClientRect();
-            requestAnimationFrame(() => { ring.style.strokeDashoffset = '0'; });
-        }
-        const updateSecurityProgress = () => {
-            if (checkComplete) return;
-            const progress = Math.min(1, (performance.now() - checkStartedAt) / checkDuration);
-            const percent = Math.floor(progress * 100);
-            if (percent !== lastPercent && ringPercent) {
-                ringPercent.textContent = percent + '%';
-                lastPercent = percent;
-            }
-            if (progress < 1) {
-                setTimeout(updateSecurityProgress, 40);
-                return;
-            }
-            checkComplete = true;
-            if (ringPercent) ringPercent.textContent = '100%';
-            if (securityRing) securityRing.classList.add('complete');
-            if (securityStatus) securityStatus.textContent = '页面已就绪';
-            setTimeout(() => {
-                if (!pageLoader) return;
-                document.documentElement.classList.remove('intro-active');
-                pageLoader.classList.add('done');
-                setTimeout(() => {
-                    pageLoader.remove();
-                    const noticeModal = document.getElementById('noticeModal');
-                    const noticeOk = document.getElementById('noticeOk');
-                    if (!noticeModal || !noticeOk) return;
-                    noticeModal.classList.add('show');
-                    noticeModal.setAttribute('aria-hidden', 'false');
-                    document.body.style.overflow = 'hidden';
-                    noticeOk.focus({ preventScroll: true });
-                    const handleNoticeKeydown = event => {
-                        if (event.key === 'Escape' && noticeModal.classList.contains('show')) {
-                            closeNotice();
-                            noticeOk.blur();
-                        }
-                    };
-                    const closeNotice = () => {
-                        noticeModal.classList.remove('show');
-                        noticeModal.setAttribute('aria-hidden', 'true');
-                        document.body.style.overflow = '';
-                        noticeOk.removeEventListener('click', closeNotice);
-                        document.removeEventListener('keydown', handleNoticeKeydown);
-                    };
-                    noticeOk.addEventListener('click', closeNotice);
-                    document.addEventListener('keydown', handleNoticeKeydown);
-                }, 750);
-            }, 550);
-        };
-        setTimeout(updateSecurityProgress, 40);
         const avatar = document.querySelector('.avatar');
         if (avatar) {
             avatar.addEventListener('contextmenu', event => event.preventDefault());
