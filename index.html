@@ -142,34 +142,52 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     #yueyue-preview .yy-qr-dialog::before{content:"";position:absolute;inset:0;border:1px solid light-dark(#e8dced,#584461);border-radius:inherit;background:light-dark(#faf7fc,#2e2535);box-shadow:0 16px 45px light-dark(#36203d28,#00000050);opacity:0;pointer-events:none;transition:opacity .22s ease}
     #yueyue-preview .yy-qr-dialog.yy-present::before{opacity:1}
     #yueyue-preview .yy-dialog-head,#yueyue-preview .yy-dialog-caption,#yueyue-preview .yy-dialog-stage{position:relative;z-index:1}
+    #yueyue-preview .yy-dialog-stage{display:flex;justify-content:center}
     #yueyue-preview .yy-dialog-head,#yueyue-preview .yy-dialog-caption{opacity:0;transition:opacity .18s ease}
     #yueyue-preview .yy-qr-dialog.yy-present .yy-dialog-head,#yueyue-preview .yy-qr-dialog.yy-present .yy-dialog-caption{opacity:1}
-    #yueyue-preview .yy-dialog-image{max-height:max(100px,calc(100svh - 200px));margin:0;transform-origin:top left}
+    #yueyue-preview .yy-dialog-stage>.yy-dialog-image{width:min(100%,max(100px,calc(100svh - 200px)));height:auto;aspect-ratio:1;max-height:none;margin:0;flex:none;transform-origin:top left}
     #yueyue-preview .yy-qr-slot{display:block;margin:0 auto 6px;max-width:100%}
     #yueyue-preview .yy-dialog-caption{overflow-wrap:anywhere}
+    #yueyue-preview .yy-profile{display:contents}
+    @media(min-width:760px) and (orientation:landscape){
+      #yueyue-preview{padding:30px 20px}
+      #yueyue-preview .yy-page{max-width:1040px;padding:36px 46px 26px;display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,.96fr);column-gap:40px;row-gap:18px;align-items:start}
+      #yueyue-preview .yy-top{grid-column:1/-1;grid-row:1;padding-bottom:20px}
+      #yueyue-preview .yy-profile{display:block;grid-column:1;grid-row:2;min-width:0}
+      #yueyue-preview h1{font-size:40px}
+      #yueyue-preview .yy-intro{font-size:16px;max-width:36ch}
+      #yueyue-preview .yy-tags{margin-bottom:8px}
+      #yueyue-preview .yy-social-section{grid-column:2;grid-row:2 / span 2}
+      #yueyue-preview .yy-life-section{grid-column:1;grid-row:3 / span 2}
+      #yueyue-preview .yy-projects-section{grid-column:2;grid-row:4}
+      #yueyue-preview .yy-reward-section{grid-column:2;grid-row:5}
+      #yueyue-preview .yy-social-section,#yueyue-preview .yy-projects-section,#yueyue-preview .yy-reward-section{padding-left:26px;border-left:1px solid light-dark(#e6dfeb,#44374d)}
+      #yueyue-preview .yy-section{margin-bottom:0;min-width:0}
+      #yueyue-preview .yy-footer{grid-column:1/-1;grid-row:6;border-top:1px solid light-dark(#e6dfeb,#44374d);padding-top:18px}
+    }
     @media(prefers-reduced-motion:reduce){#yueyue-preview *,#yueyue-preview *::before,#yueyue-preview *::after{transition:none!important;transform:none!important}}
     @media(max-width:360px){#yueyue-preview{padding:8px 0}#yueyue-preview .yy-page{padding:18px}#yueyue-preview .yy-hero{gap:13px}#yueyue-preview h1{font-size:26px}#yueyue-preview .yy-contact{padding:12px 10px;gap:8px}#yueyue-preview .yy-mini{padding:14px 12px}}
   </style>
   <main class="yy-page" aria-label="悦悦的扩条">
     <header class="yy-top"><span class="yy-brand">悦悦的扩条</span><span>FURRYHK.CN</span></header>
-    <section class="yy-hero">
+    <div class="yy-profile"><section class="yy-hero">
       <img class="yy-avatar" src="mmexport1726063520349.jpeg" alt="悦悦的头像" width="80" height="80" fetchpriority="high" draggable="false">
       <div><p class="yy-hello">你好呀，很高兴见到你 <img class="yy-emoji" data-emoji="emoji_u1f44b.svg" src="assets/noto-emoji/emoji_u1f44b.svg" alt="" aria-hidden="true"></p><h1>我是悦悦。</h1><p class="yy-handle">@furryhk</p></div>
     </section>
     <p class="yy-intro">一个不热爱生活的 i 人。<br>雷点很少，很好相处。吃吃吃，玩玩玩。</p>
-    <div class="yy-tags"><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> Furry</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f1.svg" src="assets/noto-emoji/emoji_u1f4f1.svg" alt=""> 数码人</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt=""> 喜欢摄影</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""> 二次元</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> 线条小狗重度依赖</button></div>
-    <section class="yy-section"><h2>来找我玩</h2><div class="yy-social">
+    <div class="yy-tags"><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> Furry</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f1.svg" src="assets/noto-emoji/emoji_u1f4f1.svg" alt=""> 数码人</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt=""> 喜欢摄影</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""> 二次元</button><button type="button" class="yy-tag cursor-interaction"><img class="yy-emoji" data-emoji="emoji_u1f43e.svg" src="assets/noto-emoji/emoji_u1f43e.svg" alt=""> 线条小狗重度依赖</button></div></div>
+    <section class="yy-section yy-social-section"><h2>来找我玩</h2><div class="yy-social">
       <button class="yy-contact cursor-interaction" type="button" data-contact="微信" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f4ac.svg" src="assets/noto-emoji/emoji_u1f4ac.svg" alt=""><span>微信</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
       <button class="yy-contact cursor-interaction" type="button" data-contact="QQ" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f427.svg" src="assets/noto-emoji/emoji_u1f427.svg" alt=""><span>QQ</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
       <button class="yy-contact cursor-interaction" type="button" data-contact="抖音" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f3b5.svg" src="assets/noto-emoji/emoji_u1f3b5.svg" alt=""><span>抖音</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
       <button class="yy-contact cursor-interaction" type="button" data-contact="邮箱" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f4e7.svg" src="assets/noto-emoji/emoji_u1f4e7.svg" alt=""><span>邮箱</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
     </div><div class="yy-reveal" id="yy-contact-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
-    <section class="yy-section"><h2>我的小偏爱</h2><div class="yy-life">
+    <section class="yy-section yy-life-section"><h2>我的小偏爱</h2><div class="yy-life">
       <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="">奶茶续命</span><span class="yy-mini-copy">喜茶 · 瑞幸 · 古茗<br>抹茶重度爱好者 <img class="yy-emoji" data-emoji="emoji_u1f375.svg" src="assets/noto-emoji/emoji_u1f375.svg" alt=""></span></button>
       <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt="">爱好</span><span class="yy-mini-copy">喜欢摄影 · 数码人<br>QQ 重度使用</span></button>
     </div><button type="button" class="yy-mini yy-game cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f3ae.svg" src="assets/noto-emoji/emoji_u1f3ae.svg" alt="">菜菜的，但爱玩</span><span class="yy-mini-copy">蛋仔派对 · PUBG Mobile · 伊莫<br>游戏 ID：古茗店员</span></button></section>
-    <section class="yy-section"><h2>我在折腾的小东西 <img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""></h2><a class="yy-service" href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer" aria-label="FurryHK 免费个人邮箱服务，查看使用条款"><div><h3>FurryHK 免费个人邮箱</h3><p>专属 @furryhk.cn 邮箱<br>人工审核开通</p></div><span class="yy-service-more">使用条款 ↗</span></a><div class="yy-pending"><div class="yy-pending-heading"><img class="yy-emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true">待开发项目</div><p>二级域名服务 · 筹备中<br>更多功能 · 开发中</p></div></section>
-    <section class="yy-section"><button type="button" id="yy-reward" class="yy-support cursor-interaction" aria-expanded="false" aria-controls="yy-reward-detail">请我喝杯奶茶 <img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt=""></button><div class="yy-reveal" id="yy-reward-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
+    <section class="yy-section yy-projects-section"><h2>我在折腾的小东西 <img class="yy-emoji" data-emoji="emoji_u2728.svg" src="assets/noto-emoji/emoji_u2728.svg" alt=""></h2><a class="yy-service" href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer" aria-label="FurryHK 免费个人邮箱服务，查看使用条款"><div><h3>FurryHK 免费个人邮箱</h3><p>专属 @furryhk.cn 邮箱<br>人工审核开通</p></div><span class="yy-service-more">使用条款 ↗</span></a><div class="yy-pending"><div class="yy-pending-heading"><img class="yy-emoji" src="assets/noto-emoji/emoji_u2728.svg" alt="" aria-hidden="true">待开发项目</div><p>二级域名服务 · 筹备中<br>更多功能 · 开发中</p></div></section>
+    <section class="yy-section yy-reward-section"><button type="button" id="yy-reward" class="yy-support cursor-interaction" aria-expanded="false" aria-controls="yy-reward-detail">请我喝杯奶茶 <img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt=""></button><div class="yy-reveal" id="yy-reward-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
     <footer class="yy-footer"><span>谢谢你来看我呀，祝你天天开心。</span></footer>
     <div class="yy-shade" id="yy-shade" aria-hidden="true" hidden></div><div class="yy-qr-dialog" id="yy-qr-dialog" role="dialog" aria-modal="true" aria-labelledby="yy-dialog-title" aria-hidden="true" hidden><div class="yy-dialog-head"><span id="yy-dialog-title">二维码</span><button class="yy-dialog-close cursor-interaction" type="button" id="yy-dialog-close">关闭</button></div><div class="yy-dialog-stage" id="yy-dialog-stage"></div><p class="yy-dialog-caption">扫码就能找到我啦</p></div>
   </main>
@@ -301,12 +319,11 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         const target = imageSlot.getBoundingClientRect();
         const dx = target.left - expanded.left;
         const dy = target.top - expanded.top;
-        const sx = target.width / Math.max(1,expanded.width);
-        const sy = target.height / Math.max(1,expanded.height);
+        const scale = target.width / Math.max(1,expanded.width);
         imageFlight = animateMotion(originImage,[
           {transform:start === 'none' ? 'translate3d(0,0,0) scale(1)' : start},
-          {transform:`translate3d(${dx}px,${dy}px,0) scale(${sx},${sy})`}
-        ],{duration:300,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+          {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`}
+        ],{duration:320,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
         imageFlight.finished.then(finishClose,finishClose);
       };
       const openImage = image => {
@@ -319,6 +336,8 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         dialogCaption.textContent = captions[image.dataset.filename] || '扫描二维码';
         const source = image.getBoundingClientRect();
         const bounds = page.getBoundingClientRect();
+        const pageWidth = page.clientWidth;
+        const pageHeight = page.offsetHeight;
         previousMinHeight = page.style.minHeight;
         imageSlot = document.createElement('span');
         imageSlot.className = 'yy-qr-slot';
@@ -330,14 +349,14 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         dialog.hidden = false;
         dialog.setAttribute('aria-hidden','false');
         const top = Math.max(16,source.top - bounds.top - page.clientTop - 32);
-        dialog.style.left = Math.max(16,(page.clientWidth - Math.min(340,page.clientWidth - 32)) / 2) + 'px';
+        dialog.style.left = Math.max(16,(pageWidth - Math.min(340,pageWidth - 32)) / 2) + 'px';
         dialog.style.top = top + 'px';
-        page.style.minHeight = Math.max(page.offsetHeight,top + dialog.offsetHeight + 24) + 'px';
         const expanded = image.getBoundingClientRect();
+        const dialogHeight = dialog.getBoundingClientRect().height;
         const dx = source.left - expanded.left;
         const dy = source.top - expanded.top;
-        const sx = source.width / Math.max(1,expanded.width);
-        const sy = source.height / Math.max(1,expanded.height);
+        const scale = source.width / Math.max(1,expanded.width);
+        page.style.minHeight = Math.max(pageHeight,top + dialogHeight + 24) + 'px';
         shade.hidden = false;
         inertStates = [...page.children].filter(element => element !== dialog && element !== shade).map(element => [element,element.inert]);
         inertStates.forEach(([element]) => { element.inert = true; });
@@ -345,9 +364,9 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         root.querySelector('#yy-dialog-close').focus({preventScroll:true});
         if (reduceMotion.matches) { shade.classList.add('is-open');dialog.classList.add('yy-present');return; }
         imageFlight = animateMotion(image,[
-          {transform:`translate3d(${dx}px,${dy}px,0) scale(${sx},${sy})`},
+          {transform:`translate3d(${dx}px,${dy}px,0) scale(${scale})`},
           {transform:'translate3d(0,0,0) scale(1)'}
-        ],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+        ],{duration:360,easing:'cubic-bezier(.25,.75,.25,1)'});
         requestAnimationFrame(() => { if (!dialog.hidden && !closingDialog) { shade.classList.add('is-open');dialog.classList.add('yy-present'); } });
       };
       root.querySelector('#yy-dialog-close').addEventListener('click',closeImage);
@@ -487,7 +506,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       root.addEventListener('load', event => { if (event.target.matches('img.yy-qr')) resizeOpenPanels(); },true);
       root.querySelector('.yy-avatar').addEventListener('contextmenu',event => event.preventDefault());
       if (!reduceMotion.matches) {
-        const entryGroups = [...page.children].filter(element => element.matches('.yy-top,.yy-hero,.yy-intro,.yy-tags,.yy-section,.yy-footer'));
+        const entryGroups = [...root.querySelectorAll('.yy-top,.yy-hero,.yy-intro,.yy-tags,.yy-section,.yy-footer')];
         entryGroups.forEach((element,index) => {
           animateMotion(element,[{opacity:0,transform:'translate3d(0,18px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{
             duration:index < 2 ? 1150 : 1050,
