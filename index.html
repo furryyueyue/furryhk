@@ -45,7 +45,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     #yueyue-preview .yy-detail{padding:16px;margin-top:10px;background:light-dark(#eee7f2,#352c3e);border-radius:14px;font-size:13px;line-height:1.9;overflow-wrap:anywhere}
     #yueyue-preview .yy-reveal{height:0;overflow:hidden;transition:height .26s cubic-bezier(.2,.8,.2,1);pointer-events:none}
     #yueyue-preview .yy-reveal.is-open{pointer-events:auto}
-    #yueyue-preview .yy-reveal-inner{overflow:hidden;opacity:0;transform:translateY(3px);transition:opacity .15s ease,transform .18px ease}
+    #yueyue-preview .yy-reveal-inner{overflow:hidden;opacity:0;transform:translateY(3px);transition:opacity .15s ease,transform .18s ease}
     #yueyue-preview .yy-reveal.is-open .yy-reveal-inner{opacity:1;transform:translateY(0)}
     #yueyue-preview .yy-reveal{contain:layout style}
     #yueyue-preview #yy-contact-detail{transition:height .44s cubic-bezier(.22,1,.36,1)}
@@ -217,9 +217,9 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     <div class="yy-shade" id="yy-shade" aria-hidden="true" hidden></div><div class="yy-qr-dialog" id="yy-qr-dialog" role="dialog" aria-modal="true" aria-labelledby="yy-dialog-title" aria-hidden="true" hidden><div class="yy-dialog-head"><span id="yy-dialog-title">二维码</span><button class="yy-dialog-close cursor-interaction" type="button" id="yy-dialog-close">关闭</button></div><div class="yy-dialog-stage" id="yy-dialog-stage"></div><p class="yy-dialog-caption">扫码就能找到我啦</p></div>
   </main>
   <template id="yy-wechat-template"><div class="yy-contact-info"><img class="yy-qr" src="wechat.png" data-filename="wechat.png" width="140" height="140" alt="微信二维码"><p>微信号：<strong>furryhk</strong></p></div></template>
-  <template id="yy-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="qq.png" data-filename="qq.png" width="140" height="140" alt="QQ二维码"><p>扫码加我好友</p><div class="yy-links"><a href="https://qm.qq.com/q/n51fppV6nK" target="_blank" rel="noopener noreferrer">快捷跳转 ↗</a></div></div></template>
-  <template id="yy-douyin-template"><div class="yy-contact-info"><p>抖音号：<strong>furryhk</strong></p><div class="yy-links"><a href="https://v.douyin.com/T7s9JgT9Ags/" target="_blank" rel="noopener noreferrer">去我主页 ↗</a></div></div></template>
-  <template id="yy-email-template"><div class="yy-contact-info"><p>推荐邮箱<br><strong>furryhk@furryhk.cn</strong></p><p>谷歌邮箱<br><strong>furryyueyue@gmail.com</strong></p><div class="yy-links"><a href="mailto:furryhk@furryhk.cn">发邮件给推荐邮箱</a><a href="mailto:furryyueyue@gmail.com">发邮件给谷歌邮箱</a></div></div></template>
+  <template id="yy-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="qq.png" data-filename="qq.png" width="140" height="140" alt="QQ二维码"><p>扫码加我好友</p><div class="yy-links"><a href="https://qm.qq.com/q/n51fppV6nK" target="_blank" rel="noopener noreferrer">快捷跳转 ↗</a></div></template>
+  <template id="yy-douyin-template"><div class="yy-contact-info"><p>抖音号：<strong>furryhk</strong></p><div class="yy-links"><a href="https://v.douyin.com/T7s9JgT9Ags/" target="_blank" rel="noopener noreferrer">去我主页 ↗</a></div></template>
+  <template id="yy-email-template"><div class="yy-contact-info"><p>推荐邮箱<br><strong>furryhk@furryhk.cn</strong></p><p>谷歌邮箱<br><strong>furryyueyue@gmail.com</strong></p><div class="yy-links"><a href="mailto:furryhk@furryhk.cn">发邮件给推荐邮箱</a><a href="mailto:furryyueyue@gmail.com">发邮件给谷歌邮箱</a></div></template>
   <template id="yy-payments-template"><div class="yy-payments"><div><img class="yy-qr" src="alipay.png" data-filename="alipay.png" width="140" height="140" alt="支付宝收款码"><p>支付宝</p><div class="yy-links"><a href="https://qr.alipay.com/2m615317eyo37denaqpqi57" target="_blank" rel="noopener noreferrer">支付宝打赏 ↗</a></div></div><div><img class="yy-qr" src="wechatpay.png" data-filename="wechatpay.png" width="140" height="140" alt="微信收款码"><p>微信</p><div class="yy-links"><a href="https://payapp.wechatpay.cn/sjt/qr/AQFyYNFUThdZuSq-cts4FRF8" target="_blank" rel="noopener noreferrer">微信打赏 ↗</a></div></div></div></template>
   <script>
     (() => {
@@ -436,7 +436,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         const x = event.detail ? event.clientX : bounds.left + bounds.width / 2;
         const y = event.detail ? event.clientY : bounds.top + bounds.height / 2;
         sticker.style.left = Math.max(10,Math.min(window.innerWidth - 36,x + 6)) + 'px';
-        sticker.style.top = Math.max(10,Math.min(window.innerWidth - 36,y - 29)) + 'px';
+        sticker.style.top = Math.max(10,Math.min(window.innerHeight - 36,y - 29)) + 'px';
         document.body.append(sticker);
         const stickers = document.querySelectorAll('body>.yy-click-spark');
         if (stickers.length > 8) stickers[0].remove();
