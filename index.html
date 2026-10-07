@@ -178,6 +178,32 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
     #yueyue-preview .yy-dialog-stage>.yy-dialog-image{width:min(100%,max(100px,calc(100svh - 200px)));height:auto;aspect-ratio:1;max-height:none;margin:0;flex:none;transform-origin:top left}
     #yueyue-preview .yy-qr-slot{display:block;margin:0 auto 6px;max-width:100%}
     #yueyue-preview .yy-dialog-caption{overflow-wrap:anywhere}
+    #yueyue-preview .yy-friends-heading{display:flex;align-items:center;gap:8px}
+    #yueyue-preview .yy-friends-icon{width:19px;height:19px;flex:none;color:light-dark(#8d709d,#cba8e1)}
+    #yueyue-preview .yy-friend-scroll{max-height:244px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scroll-snap-type:y proximity;padding-right:3px;border-radius:17px}
+    #yueyue-preview .yy-friend-scroll::-webkit-scrollbar{width:5px}
+    #yueyue-preview .yy-friend-scroll::-webkit-scrollbar-thumb{background:light-dark(#bba8c6,#765f84);border-radius:999px}
+    #yueyue-preview .yy-friend-card{scroll-snap-align:start;margin-bottom:10px}
+    #yueyue-preview .yy-friend-card:last-child{margin-bottom:0}
+    #yueyue-preview .yy-friend-bar{width:100%;min-height:74px;display:flex;align-items:center;gap:13px;padding:10px 13px;border:1px solid light-dark(#e8e1eb,#453a4e);border-radius:16px;background:linear-gradient(135deg,light-dark(#fffefa,#332d3a),light-dark(#f7f2f9,#2b2831));color:inherit;text-align:left;font:inherit;box-shadow:inset 0 1px 0 light-dark(#ffffff,#51435b);transition:transform .16s ease,border-color .2s ease,background .2s ease}
+    #yueyue-preview .yy-friend-bar:active{transform:scale(.988)}
+    #yueyue-preview .yy-friend-bar[aria-expanded="true"]{border-color:light-dark(#cbb8d5,#876398)}
+    #yueyue-preview .yy-friend-avatar{width:52px;height:52px;border-radius:14px;object-fit:cover;flex:none;border:2px solid light-dark(#fffefa,#463b51);box-shadow:0 5px 14px light-dark(#69507818,#00000030)}
+    #yueyue-preview .yy-friend-meta{min-width:0;flex:1}
+    #yueyue-preview .yy-friend-name{display:block;font-size:15px;font-weight:650}
+    #yueyue-preview .yy-friend-sub{display:block;margin-top:4px;font-size:11px;color:light-dark(#83798a,#b9afc0)}
+    #yueyue-preview .yy-friend-arrow{flex:none;font-size:20px;color:light-dark(#8d709d,#cba8e1);transition:transform .32s cubic-bezier(.22,1,.36,1)}
+    #yueyue-preview .yy-friend-bar[aria-expanded="true"] .yy-friend-arrow{transform:rotate(90deg)}
+    #yueyue-preview .yy-friend-body{padding:10px 2px 1px}
+    #yueyue-preview .yy-friend-contact-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    #yueyue-preview .yy-friend-contact{min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid light-dark(#e8e1eb,#453a4e);border-radius:14px;background:light-dark(#eee7f2,#352c3e);color:inherit;font:inherit;font-size:13px;transition:transform .16s ease,border-color .2s ease,background .2s ease}
+    #yueyue-preview .yy-friend-contact:active{transform:scale(.985)}
+    #yueyue-preview .yy-friend-contact[aria-pressed="true"]{border-color:light-dark(#cbb8d5,#876398);background:light-dark(#e8dcf0,#493653)}
+    #yueyue-preview .yy-friend-contact .yy-emoji{width:18px;height:18px}
+    #yueyue-preview .yy-friend-qr-reveal .yy-detail{margin-top:10px}
+    #yueyue-preview .yy-friend-qr-reveal .yy-reveal-inner{transform:translate3d(0,7px,0);transition:opacity .28s ease,transform .38s cubic-bezier(.22,1,.36,1)}
+    #yueyue-preview .yy-friend-qr-reveal.is-open .yy-reveal-inner{transform:translate3d(0,0,0)}
+    #yueyue-preview .yy-friend-scroll-hint{margin:8px 2px 0;font-size:10px;color:light-dark(#938999,#b4a8bb);text-align:right}
     #yueyue-preview .yy-profile{display:contents}
     @media(min-width:760px){
       body{box-sizing:border-box;min-height:100svh;display:flex;flex-direction:column}
@@ -201,15 +227,16 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       #yueyue-preview .yy-reward-hint{font-size:13px}
       #yueyue-preview .yy-social-section{grid-column:2;grid-row:2 / span 2}
       #yueyue-preview .yy-life-section{grid-column:1;grid-row:3 / span 2}
-      #yueyue-preview .yy-projects-section{grid-column:2;grid-row:4}
-      #yueyue-preview .yy-reward-section{grid-column:2;grid-row:5}
-      #yueyue-preview .yy-social-section,#yueyue-preview .yy-projects-section,#yueyue-preview .yy-reward-section{padding-left:26px;border-left:1px solid light-dark(#e6dfeb,#44374d)}
+      #yueyue-preview .yy-friends-section{grid-column:2;grid-row:4}
+      #yueyue-preview .yy-projects-section{grid-column:2;grid-row:5}
+      #yueyue-preview .yy-reward-section{grid-column:2;grid-row:6}
+      #yueyue-preview .yy-social-section,#yueyue-preview .yy-friends-section,#yueyue-preview .yy-projects-section,#yueyue-preview .yy-reward-section{padding-left:26px;border-left:1px solid light-dark(#e6dfeb,#44374d)}
       #yueyue-preview .yy-section{margin-bottom:0;min-width:0}
-      #yueyue-preview .yy-footer{grid-column:1/-1;grid-row:6;border-top:1px solid light-dark(#e6dfeb,#44374d);padding-top:18px;font-size:12px}
+      #yueyue-preview .yy-footer{grid-column:1/-1;grid-row:7;border-top:1px solid light-dark(#e6dfeb,#44374d);padding-top:18px;font-size:12px}
     }
     @media(min-width:760px) and (max-width:900px){
       #yueyue-preview .yy-page{padding:28px;column-gap:24px}
-      #yueyue-preview .yy-social-section,#yueyue-preview .yy-projects-section,#yueyue-preview .yy-reward-section{padding-left:14px}
+      #yueyue-preview .yy-social-section,#yueyue-preview .yy-friends-section,#yueyue-preview .yy-projects-section,#yueyue-preview .yy-reward-section{padding-left:14px}
       #yueyue-preview .yy-contact{gap:8px;padding:12px 10px;font-size:15px}
     }
     @media(prefers-reduced-motion:reduce){#yueyue-preview *,#yueyue-preview *::before,#yueyue-preview *::after{transition:none!important;transform:none!important}}
@@ -229,6 +256,26 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       <button class="yy-contact cursor-interaction" type="button" data-contact="抖音" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f3b5.svg" src="assets/noto-emoji/emoji_u1f3b5.svg" alt=""><span>抖音</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
       <button class="yy-contact cursor-interaction" type="button" data-contact="邮箱" aria-pressed="false" aria-expanded="false" aria-controls="yy-contact-detail"><img class="yy-emoji" data-emoji="emoji_u1f4e7.svg" src="assets/noto-emoji/emoji_u1f4e7.svg" alt=""><span>邮箱</span><span class="yy-contact-arrow" aria-hidden="true">↗</span></button>
     </div><div class="yy-reveal" id="yy-contact-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div></section>
+    <section class="yy-section yy-friends-section" aria-labelledby="yy-friends-title">
+      <h2 id="yy-friends-title" class="yy-friends-heading"><svg class="yy-friends-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10.6 13.4a4 4 0 0 1 0-5.7l2.1-2.1a4 4 0 1 1 5.7 5.7l-1.5 1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13.4 10.6a4 4 0 0 1 0 5.7l-2.1 2.1a4 4 0 1 1-5.7-5.7l1.5-1.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>友情链接</h2>
+      <div class="yy-friend-scroll" id="yy-friend-scroll" aria-label="友情链接好友列表">
+        <article class="yy-friend-card" data-friend-card="xiaolang">
+          <button class="yy-friend-bar cursor-interaction" type="button" data-friend-toggle aria-expanded="false" aria-controls="yy-friend-xiaolang-detail">
+            <img class="yy-friend-avatar" src="data:image/webp;base64,__YY_AVATAR_B64__" alt="小狼的头像" width="52" height="52" loading="lazy" draggable="false">
+            <span class="yy-friend-meta"><span class="yy-friend-name">小狼</span><span class="yy-friend-sub">点开查看联系方式</span></span>
+            <span class="yy-friend-arrow" aria-hidden="true">›</span>
+          </button>
+          <div class="yy-reveal yy-friend-reveal" id="yy-friend-xiaolang-detail" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-friend-body">
+            <div class="yy-friend-contact-row">
+              <button class="yy-friend-contact cursor-interaction" type="button" data-friend-contact="QQ" aria-pressed="false"><img class="yy-emoji" src="assets/noto-emoji/emoji_u1f427.svg" alt="" aria-hidden="true">QQ</button>
+              <button class="yy-friend-contact cursor-interaction" type="button" data-friend-contact="微信" aria-pressed="false"><img class="yy-emoji" src="assets/noto-emoji/emoji_u1f4ac.svg" alt="" aria-hidden="true">微信</button>
+            </div>
+            <div class="yy-reveal yy-friend-qr-reveal" aria-hidden="true" inert><div class="yy-reveal-inner"><div class="yy-detail" aria-live="polite"></div></div></div>
+          </div></div></div>
+        </article>
+      </div>
+      <p class="yy-friend-scroll-hint">好友较多时可在这里上下滑动</p>
+    </section>
     <section class="yy-section yy-life-section"><h2>我的小偏爱</h2><div class="yy-life">
       <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f9cb.svg" src="assets/noto-emoji/emoji_u1f9cb.svg" alt="">奶茶续命</span><span class="yy-mini-copy">喜茶 · 瑞幸 · 古茗<br>抹茶重度爱好者 <img class="yy-emoji" data-emoji="emoji_u1f375.svg" src="assets/noto-emoji/emoji_u1f375.svg" alt=""></span></button>
       <button type="button" class="yy-mini cursor-interaction" data-preference><span class="yy-mini-head"><img class="yy-emoji" data-emoji="emoji_u1f4f8.svg" src="assets/noto-emoji/emoji_u1f4f8.svg" alt="">爱好</span><span class="yy-mini-copy">喜欢摄影 · 数码人<br>QQ 重度使用</span></button>
@@ -242,6 +289,8 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
   <template id="yy-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="qq.png" data-filename="qq.png" width="140" height="140" alt="QQ二维码"><p>企鹅号：<strong>3515317372</strong></p><div class="yy-links"><a href="https://qm.qq.com/q/n51fppV6nK" target="_blank" rel="noopener noreferrer">快捷跳转 ↗</a></div></div></template>
   <template id="yy-douyin-template"><div class="yy-contact-info"><p>抖音号：<strong>furryhk</strong></p><div class="yy-links"><a href="https://v.douyin.com/T7s9JgT9Ags/" target="_blank" rel="noopener noreferrer">去我主页 ↗</a></div></div></template>
   <template id="yy-email-template"><div class="yy-contact-info"><p>推荐邮箱<br><strong>furryhk@furryhk.cn</strong></p><p>谷歌邮箱<br><strong>furryyueyue@gmail.com</strong></p><div class="yy-links"><a href="mailto:furryhk@furryhk.cn">发邮件给推荐邮箱</a><a href="mailto:furryyueyue@gmail.com">发邮件给谷歌邮箱</a></div></div></template>
+  <template id="yy-friend-xiaolang-qq-template"><div class="yy-contact-info"><img class="yy-qr" src="data:image/webp;base64,__YY_QQ_B64__" data-filename="xiaolang-qq.webp" width="140" height="140" alt="小狼QQ二维码"><p>QQ：<strong>3772953255</strong></p></div></template>
+  <template id="yy-friend-xiaolang-wechat-template"><div class="yy-contact-info"><img class="yy-qr" src="data:image/webp;base64,__YY_WECHAT_B64__" data-filename="xiaolang-wechat.webp" width="140" height="140" alt="小狼微信二维码"><p>微信扫码添加小狼</p></div></template>
   <template id="yy-payments-template"><div class="yy-payments"><div><img class="yy-qr" src="alipay.png" data-filename="alipay.png" width="140" height="140" alt="支付宝收款码"><p>支付宝</p><div class="yy-links"><a href="https://qr.alipay.com/2m615317eyo37denaqpqi57" target="_blank" rel="noopener noreferrer">支付宝打赏 ↗</a></div></div><div><img class="yy-qr" src="wechatpay.png" data-filename="wechatpay.png" width="140" height="140" alt="微信收款码"><p>微信</p><div class="yy-links"><a href="https://payapp.wechatpay.cn/sjt/qr/AQFyYNFUThdZuSq-cts4FRF8" target="_blank" rel="noopener noreferrer">微信打赏 ↗</a></div></div></div></template>
   <script>
     (() => {
@@ -387,7 +436,7 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         openingDialog = true;
         originImage = image;
         dialogTitle.textContent = image.alt;
-        const captions = {'wechat.png':'打开微信，扫码添加好友','qq.png':'企鹅号：3515317372','alipay.png':'请使用支付宝扫码打赏','wechatpay.png':'请使用微信扫码打赏'};
+        const captions = {'wechat.png':'打开微信，扫码添加好友','qq.png':'企鹅号：3515317372','xiaolang-qq.webp':'QQ：3772953255','xiaolang-wechat.webp':'微信扫码添加小狼','alipay.png':'请使用支付宝扫码打赏','wechatpay.png':'请使用微信扫码打赏'};
         dialogCaption.textContent = captions[image.dataset.filename] || '扫描二维码';
         const source = image.getBoundingClientRect();
         const bounds = page.getBoundingClientRect();
@@ -508,6 +557,47 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         element.addEventListener('transitionend',event => {
           if (event.target === element && event.propertyName === 'height' && element.classList.contains('is-open') && !(element === panel && contactSwitching)) element.style.height = 'auto';
         });
+      });
+      root.querySelectorAll('[data-friend-card]').forEach(card => {
+        const toggle = card.querySelector('[data-friend-toggle]');
+        const friendPanel = root.querySelector('#' + toggle.getAttribute('aria-controls'));
+        const contactButtons = [...card.querySelectorAll('[data-friend-contact]')];
+        const qrPanel = card.querySelector('.yy-friend-qr-reveal');
+        const qrDetail = qrPanel.querySelector('.yy-detail');
+        let friendSelected = null;
+        let friendSwitchGeneration = 0;
+        const resetFriendContacts = () => {
+          friendSelected = null;
+          contactButtons.forEach(button => button.setAttribute('aria-pressed','false'));
+          if (qrPanel.classList.contains('is-open')) reveal(qrPanel,false);
+        };
+        toggle.addEventListener('click', () => {
+          const open = !friendPanel.classList.contains('is-open');
+          toggle.setAttribute('aria-expanded',String(open));
+          if (!open) resetFriendContacts();
+          reveal(friendPanel,open);
+          if (open) requestAnimationFrame(() => toggle.scrollIntoView({block:'nearest',behavior:reduceMotion.matches?'auto':'smooth'}));
+        });
+        contactButtons.forEach(button => button.addEventListener('click', async () => {
+          const generation = ++friendSwitchGeneration;
+          const type = button.dataset.friendContact;
+          const close = friendSelected === type && qrPanel.classList.contains('is-open');
+          friendSelected = close ? null : type;
+          contactButtons.forEach(item => item.setAttribute('aria-pressed',String(!close && item === button)));
+          if (close) { reveal(qrPanel,false);return; }
+          const template = root.querySelector(type === 'QQ' ? '#yy-friend-xiaolang-qq-template' : '#yy-friend-xiaolang-wechat-template');
+          if (qrPanel.classList.contains('is-open') && !reduceMotion.matches) {
+            const out = animateMotion(qrDetail,[{opacity:1,transform:'translate3d(0,0,0) scale(1)'},{opacity:0,transform:'translate3d(0,6px,0) scale(.985)'}],{duration:180,easing:'ease-in',fill:'forwards'});
+            await out.finished.catch(() => {});
+            if (generation !== friendSwitchGeneration) return;
+            qrDetail.replaceChildren(template.content.cloneNode(true));
+            animateMotion(qrDetail,[{opacity:0,transform:'translate3d(0,8px,0) scale(.97)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:380,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+          } else {
+            qrDetail.replaceChildren(template.content.cloneNode(true));
+            reveal(qrPanel,true);
+            if (!reduceMotion.matches) animateMotion(qrDetail,[{opacity:0,transform:'translate3d(0,8px,0) scale(.97)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:420,easing:'cubic-bezier(.22,1,.36,1)',fill:'forwards'});
+          }
+        }));
       });
       root.querySelector('#yy-reward-detail .yy-detail').replaceChildren(root.querySelector('#yy-payments-template').content.cloneNode(true));
       const surprise = document.createElement('p');
