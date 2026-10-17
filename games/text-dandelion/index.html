@@ -216,13 +216,13 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
   <section class="pg-game" data-game aria-labelledby="pg-title">
     <nav class="pg-nav" aria-label="游戏导航"><a class="pg-back cursor-interaction" href="https://furryhk.cn/" data-back>← 返回主页</a><span class="pg-site-mark"><span class="pg-site-label">FURRYHK.CN</span><small class="pg-game-label">文字蒲公英</small></span></nav>
     <header><p class="pg-eyebrow">A LITTLE WISH, A LITTLE WIND</p><h1 class="pg-title" id="pg-title">文字蒲公英</h1><p class="pg-description">把想说的话，种成一朵蒲公英。<br>轻轻一碰，让每个字随风出发。</p></header>
-    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，拖动圆点碰到文字才会放飞；下方按钮可一键散开。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 拖动圆点触碰文字</div></div>
+    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，圆圈碰到文字或尾巴就会放飞；下方按钮可一键散开。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 圆圈碰到文字或尾巴就放飞</div></div>
     <div class="pg-ending" data-ending hidden aria-hidden="true"><span class="pg-ending-char" style="--happy-x:1.02em;--happy-delay:120ms">天</span><span class="pg-ending-char" style="--happy-x:.34em;--happy-delay:0ms">天</span><span class="pg-ending-char" style="--happy-x:-.34em;--happy-delay:40ms">开</span><span class="pg-ending-char" style="--happy-x:-1.02em;--happy-delay:160ms">心</span></div>
     <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键散开 ↗</button></div>
     <div class="pg-editor-shade" data-editor hidden>
       <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
         <div class="pg-editor-head"><h2 id="pg-editor-title">输入你的文字</h2><button class="pg-editor-close cursor-interaction" type="button" data-close aria-label="关闭输入弹窗">×</button></div>
-        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>轻点任意处放飞，拖动圆点碰到文字才放飞<br>按文字顺序时，点一下送走一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
+        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>轻点任意处放飞，移动圆圈碰到文字或尾巴就放飞<br>按文字顺序时，点一下送走一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
         <label class="pg-sr" for="pg-wish">写下你的话</label><textarea class="pg-textarea" id="pg-wish" data-wish maxlength="600" rows="4" placeholder="写下你的话…">把想说的话交给风，愿悦悦天天开心</textarea>
         <div class="pg-editor-count" data-count>0 / 150</div>
         <fieldset class="pg-order"><legend>飘散顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风散开</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
@@ -345,14 +345,19 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         });
       }
       function paintGlyph(c,p,x,y){const s=p.sprite;if(s)c.drawImage(s.image,x-s.side/2,y-s.side/2,s.side,s.side);}
-      function paintTail(c,p,x,y,angle,bend=0,scale=1){
-        if(!p.sprite)return;
+      function tailGeometry(p,x,y,angle,bend=0,scale=1){
+        if(!p.sprite)return null;
         const dx=Math.cos(angle),dy=Math.sin(angle),font=p.sprite.side/2;
         const edge=font*.48*scale,length=(font*.66+5)*scale;
-        const startX=x+dx*edge,startY=y+dy*edge,alpha=c.globalAlpha;
+        const ax=x+dx*edge,ay=y+dy*edge;
+        return{ax,ay,cx:ax+dx*length*.5-dy*bend,cy:ay+dy*length*.5+dx*bend,bx:ax+dx*length,by:ay+dy*length};
+      }
+      function paintTail(c,p,x,y,angle,bend=0,scale=1){
+        const tail=tailGeometry(p,x,y,angle,bend,scale);if(!tail)return;
+        const alpha=c.globalAlpha;
         c.setTransform(density,0,0,density,0,0);c.globalAlpha=alpha*.58;c.strokeStyle='#fff';c.lineWidth=.65;c.lineCap='round';
-        c.beginPath();c.moveTo(startX,startY);
-        c.quadraticCurveTo(startX+dx*length*.5-dy*bend,startY+dy*length*.5+dx*bend,startX+dx*length,startY+dy*length);
+        c.beginPath();c.moveTo(tail.ax,tail.ay);
+        c.quadraticCurveTo(tail.cx,tail.cy,tail.bx,tail.by);
         c.stroke();c.globalAlpha=alpha;
       }
       function paintFlight(p){
@@ -516,10 +521,28 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           return (x-a.x-t*dx)**2+(y-a.y-t*dy)**2<=r*r;
         });
       }
+      function pointSegmentDistance2(x,y,a,b){
+        const dx=b.x-a.x,dy=b.y-a.y,length2=dx*dx+dy*dy,t=length2?Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/length2)):0;
+        return (x-a.x-t*dx)**2+(y-a.y-t*dy)**2;
+      }
+      function touchesStroke(a,b,c,d,lineWidth){
+        const r=pointerRadius+1+lineWidth/2;
+        if(Math.max(a.x,b.x)+r<Math.min(c.x,d.x)||Math.min(a.x,b.x)-r>Math.max(c.x,d.x)||Math.max(a.y,b.y)+r<Math.min(c.y,d.y)||Math.min(a.y,b.y)-r>Math.max(c.y,d.y))return false;
+        const dx=b.x-a.x,dy=b.y-a.y,ex=d.x-c.x,ey=d.y-c.y,cross=dx*ey-dy*ex;
+        if(Math.abs(cross)>1e-8){const x=c.x-a.x,y=c.y-a.y,t=(x*ey-y*ex)/cross,u=(x*dy-y*dx)/cross;if(t>=0&&t<=1&&u>=0&&u<=1)return true;}
+        return Math.min(pointSegmentDistance2(c.x,c.y,a,b),pointSegmentDistance2(d.x,d.y,a,b),pointSegmentDistance2(a.x,a.y,c,d),pointSegmentDistance2(b.x,b.y,c,d))<=r*r;
+      }
+      function touchesTail(a,b,p,q){
+        // The entire visible filament belongs to this seed, from the flower center to the glyph.
+        if(touchesStroke(a,b,{x:cx,y:cy},q,.55))return true;
+        const tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x));
+        return !!tail&&touchesStroke(a,b,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by},.65);
+      }
       function brush(from,to,impulse={x:0,y:0}){
         const hit=particles.filter(p=>{
           if(p.free)return false;
-          return touchesGlyph(from,to,position(p),p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8});
+          const q=position(p);
+          return touchesGlyph(from,to,q,p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8})||touchesTail(from,to,p,q);
         });
         if(hit.length)release(hit,1,false,impulse);
         return hit.length;
@@ -533,6 +556,8 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         if(!editor.hidden||gameExit||down||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
         down=true;activePointer=event.pointerId===undefined?'mouse':event.pointerId;dragged=false;gestureHit=false;hoverPoint=null;
         pressOrigin=previous=point(event);previousTime=event.timeStamp||performance.now();setPointer(previous.x,previous.y);pointer.classList.add('is-pressing');
+        // Contact is immediate, including a stationary touch; do not wait for movement or release.
+        gestureHit=brush(previous,previous)>0;
         if(canvas.setPointerCapture&&typeof activePointer==='number'){try{canvas.setPointerCapture(activePointer);}catch(_){}}
       }
       function move(event){
