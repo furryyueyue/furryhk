@@ -170,6 +170,18 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
     @media(max-height:480px){#dandelion-preview .pg-nav{font-size:11px}#dandelion-preview .pg-bottom-actions,#dandelion-preview[data-standalone="true"] .pg-bottom-actions{bottom:max(12px,env(safe-area-inset-bottom))}#dandelion-preview .pg-caption{display:none}#dandelion-preview .pg-editor-shade{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:12px}}
     @media(max-width:360px){#dandelion-preview .pg-bottom-actions{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}#dandelion-preview .pg-site-label{font-size:11px}#dandelion-preview .pg-nav{gap:8px}}
   </style>
+  <style>
+    #dandelion-preview .pg-ending{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;white-space:nowrap;pointer-events:none;color:#fffffff2;font-size:clamp(28px,4.2vmin,88px);font-weight:400;line-height:1.6;text-shadow:0 2px 22px #ffffff12}
+    #dandelion-preview .pg-ending-char{display:inline-block;padding-inline:.09em;will-change:transform,opacity}
+    #dandelion-preview .pg-game.is-complete .pg-ending-char{animation:yy-happy-unfold 1600ms cubic-bezier(.16,1,.3,1) both;animation-delay:calc(100ms + var(--happy-delay,0ms));animation-play-state:var(--happy-play,running)}
+    #dandelion-preview .pg-game.is-editing,#dandelion-preview .pg-game.is-paused{--happy-play:paused}
+    #dandelion-preview .pg-still,#dandelion-preview .pg-caption{transition:opacity 650ms cubic-bezier(.22,1,.36,1)}
+    #dandelion-preview .pg-game .pg-pointer{transition:opacity 650ms cubic-bezier(.22,1,.36,1)!important}
+    #dandelion-preview .pg-game.is-complete .pg-still,#dandelion-preview .pg-game.is-complete .pg-pointer,#dandelion-preview .pg-game.is-complete .pg-caption{opacity:0}
+    @keyframes yy-happy-unfold{from{opacity:0;transform:translate3d(var(--happy-x,0em),10px,0) scale(.94)}70%{opacity:.9}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+    @keyframes yy-happy-fade{from{opacity:0}to{opacity:1}}
+    @media(prefers-reduced-motion:reduce){#dandelion-preview .pg-game.is-complete .pg-ending-char{animation-name:yy-happy-fade;animation-duration:300ms;animation-delay:0ms}#dandelion-preview .pg-still,#dandelion-preview .pg-caption,#dandelion-preview .pg-game .pg-pointer{transition:none!important}}
+  </style>
   <div class="pg-lobby" data-lobby hidden>
     <section class="pg-section">
       <h2 class="pg-heading">我在折腾的小东西 ✨</h2>
@@ -205,6 +217,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
     <nav class="pg-nav" aria-label="游戏导航"><a class="pg-back cursor-interaction" href="https://furryhk.cn/" data-back>← 返回主页</a><span class="pg-site-mark"><span class="pg-site-label">FURRYHK.CN</span><small class="pg-game-label">文字蒲公英</small></span></nav>
     <header><p class="pg-eyebrow">A LITTLE WISH, A LITTLE WIND</p><h1 class="pg-title" id="pg-title">文字蒲公英</h1><p class="pg-description">把想说的话，种成一朵蒲公英。<br>轻轻一碰，让每个字随风出发。</p></header>
     <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，拖动圆点碰到文字才会放飞；下方按钮可一键散开。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 拖动圆点触碰文字</div></div>
+    <div class="pg-ending" data-ending hidden aria-hidden="true"><span class="pg-ending-char" style="--happy-x:1.02em;--happy-delay:120ms">天</span><span class="pg-ending-char" style="--happy-x:.34em;--happy-delay:0ms">天</span><span class="pg-ending-char" style="--happy-x:-.34em;--happy-delay:40ms">开</span><span class="pg-ending-char" style="--happy-x:-1.02em;--happy-delay:160ms">心</span></div>
     <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键散开 ↗</button></div>
     <div class="pg-editor-shade" data-editor hidden>
       <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
@@ -235,6 +248,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const form = root.querySelector('[data-form]');
       const blowButton = root.querySelector('[data-blow]');
       const editButton = root.querySelector('[data-edit]');
+      const ending = root.querySelector('[data-ending]');
       let inertStates=[],focusFrame=0;
       let ctx = null,stillCtx=null;
       try { ctx = canvas.getContext('2d');stillCtx=stillCanvas.getContext('2d'); } catch (_) {}
@@ -405,8 +419,15 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           sampleFlight(p,age);
           if(age>p.duration||p.x>width+70||p.x< -70||p.y< -70)p.gone=true;else active=true;
         });
-        draw();if(active||turning){if(!frame)frame=raf(animate);}else last=0;
+        draw();showEndingIfReady();if(active||turning){if(!frame)frame=raf(animate);}else last=0;
       }
+      function showEndingIfReady(){
+        if(!ending.hidden||gameExit||sent!==TOTAL||!particles.length||!particles.every(p=>p.gone))return;
+        // Start only after the last flight has been cleared, never on the blow-button click.
+        ending.hidden=false;game.classList.add('is-complete');
+        status.textContent='文字都随风出发了，愿你天天开心。';
+      }
+      function resetEnding(){ending.hidden=true;game.classList.remove('is-complete');}
       function attachFlight(p,q){
         p.x=p.originX=q.x;p.y=p.originY=q.y;p.tetherX=cx;p.tetherY=cy;
         p.launchAlpha=.35+(q.z+1)*.325;p.tailAngle=Math.atan2(cy-q.y,cx-q.x);
@@ -429,7 +450,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         p.scale=reduced.matches?1:1+p.scaleDelta*lift;
       }
       function wake(){if(ctx&&!frame&&running()&&editor.hidden)frame=raf(animate);}
-      function grow(){end();stop();rotationAngle=0;rotating=true;TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();setPointer(cx,stemY);wake();}
+      function grow(){end();stop();resetEnding();rotationAngle=0;rotating=true;TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();setPointer(cx,stemY);wake();}
       function resize(){
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
         const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
@@ -446,7 +467,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function blow(x,y,force=1,all=false){
         if(!ctx){status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';return;}
         const available=particles.filter(p=>!p.free);
-        if(!available.length){announce();return;}
+        if(!available.length){if(ending.hidden)announce();return;}
         if(!all&&mode==='random')available.sort((a,b)=>{const ap=position(a),bp=position(b);return Math.hypot(ap.x-x,ap.y-y)-Math.hypot(bp.x-x,bp.y-y);});
         if(all&&mode==='random')for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
         const chosen=all?available:available.slice(0,mode==='sequence'?1:8);
@@ -598,8 +619,8 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         event.viewTransition.finished.then(()=>{nativeGameArrival=false;},()=>{nativeGameArrival=false;});
       });
       window.addEventListener('pagehide',()=>{restoreGameExit();cancelEntrance();end();stop();});
-      window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){restoreGameExit();resize();draw();revealGame();wake();}});
-      document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
+      window.addEventListener('pageshow',event=>{game.classList.toggle('is-paused',document.hidden);if(event.persisted&&!game.hidden){restoreGameExit();resize();draw();revealGame();wake();}});
+      document.addEventListener('visibilitychange',()=>{game.classList.toggle('is-paused',document.hidden);end();if(document.hidden)stop();else if(running())wake();});
       if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
       const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);
       const onMotion=()=>{stop();wake();};if(reduced.addEventListener)reduced.addEventListener('change',onMotion);else if(reduced.addListener)reduced.addListener(onMotion);
