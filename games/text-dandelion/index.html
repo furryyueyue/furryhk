@@ -193,7 +193,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
     <div class="pg-editor-shade" data-editor hidden>
       <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
         <div class="pg-editor-head"><h2 id="pg-editor-title">输入你的文字</h2><button class="pg-editor-close cursor-interaction" type="button" data-close aria-label="关闭输入弹窗">×</button></div>
-        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>按文字顺序时，点一下散开一个字；一键散开放走全部</p>
+        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>按文字顺序时，点一下散开一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
         <label class="pg-sr" for="pg-wish">写下你的话</label><textarea class="pg-textarea" id="pg-wish" data-wish maxlength="600" rows="4" placeholder="写下你的话…">把想说的话交给风，愿悦悦天天开心</textarea>
         <div class="pg-editor-count" data-count>0 / 150</div>
         <fieldset class="pg-order"><legend>飘散顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风散开</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
@@ -226,6 +226,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const raf = window.requestAnimationFrame ? fn => window.requestAnimationFrame(fn) : fn => setTimeout(() => fn(Date.now()),16);
       const caf = window.cancelAnimationFrame ? id => window.cancelAnimationFrame(id) : id => clearTimeout(id);
       let width=360,height=360,cx=180,cy=148,radius=90,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
+      let rotationAngle=0,rotationFrame=0,rotating=false;
       const sprites=new Map();let stillDirty=false;
       let entranceAnimations=[];
       const nativePageTransitions='onpageswap' in window&&'onpagereveal' in window;
@@ -281,7 +282,15 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         }catch(_){finish();}
       }
       const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
-      const position = p => {const perspective=.94+p.sz*.11;return{x:cx+p.sx*radius*perspective,y:cy+p.sy*radius*perspective};};
+      const position = p => {
+        // 3D绕Y轴（垂直轴）旋转，模拟真实蒲公英球转动
+        const cosA=Math.cos(rotationAngle), sinA=Math.sin(rotationAngle);
+        const x = p.sx * cosA + p.sz * sinA;
+        const z = -p.sx * sinA + p.sz * cosA;
+        // 根据深度做透视：z越靠近镜头（z越大）越大，越远越小
+        const perspective = 0.82 + z * 0.18;
+        return {x:cx + x * radius * perspective, y:cy + p.sy * radius * perspective, z:z};
+      };
       // Shape each glyph once; animation frames only composite small cached images.
       function prepareSprites(){
         sprites.clear();
@@ -318,7 +327,23 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function drawStill(){
         if(!stillCtx)return;const c=stillCtx;c.clearRect(0,0,width,height);c.lineWidth=1;c.strokeStyle='#fff';c.globalAlpha=.68;
         c.beginPath();c.moveTo(cx,height-10);c.lineTo(cx,cy);c.stroke();c.globalAlpha=.3;c.beginPath();c.arc(cx,height-10,5.5,0,Math.PI*2);c.stroke();
-        ordered.forEach(p=>{if(p.launched)return;const q=position(p);c.globalAlpha=(.18+p.depth*.82)*(.12+p.depth*.06);c.lineWidth=.55;c.beginPath();c.moveTo(cx,cy);c.lineTo(q.x,q.y);c.stroke();c.globalAlpha=.18+p.depth*.82;paintTail(c,p,q.x,q.y,p.a+Math.PI);paintGlyph(c,p,q.x,q.y);});c.globalAlpha=1;
+        ordered.forEach(p=>{
+        if(p.launched)return;
+        const q=position(p);
+        // 近大远小、近实远虚的3D效果
+        const depthAlpha = 0.35 + (q.z + 1)/2 * 0.65;
+        c.globalAlpha=depthAlpha;
+        // 先画从中心到字的连线（小尾巴），不管怎么转都始终连到中心
+        c.lineWidth=.55;
+        c.beginPath();
+        c.moveTo(cx,cy);
+        c.lineTo(q.x,q.y);
+        c.stroke();
+        // 小尾巴的角度：当前字相对于中心的反方向，始终从字指向中心
+        const tailAngle = Math.atan2(q.y - cy, q.x - cx) + Math.PI;
+        paintTail(c,p,q.x,q.y,tailAngle);
+        paintGlyph(c,p,q.x,q.y);
+      });c.globalAlpha=1;
       }
       function draw(){
         if(!ctx)return;if(stillDirty){drawStill();stillDirty=false;}ctx.setTransform(density,0,0,density,0,0);ctx.clearRect(0,0,width,height);
@@ -332,7 +357,16 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           paintFlight(p);
         });ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;
       }
-      function stop(){if(frame)caf(frame);frame=0;last=0;}
+      function stop(){if(frame)caf(frame);frame=0;last=0;stopRotation();}
+      function stopRotation(){if(rotationFrame)caf(rotationFrame);rotationFrame=0;rotating=false;}
+      function rotateLoop(){
+        rotationFrame=0;
+        if(!running()||!rotating)return;
+        rotationAngle += 0.002; // 慢速立体旋转
+        stillDirty=true;
+        drawStill();
+        rotationFrame=raf(rotateLoop);
+      }
       function animate(now){
         frame=0;if(!running()||!editor.hidden){last=0;return;}
         const dt=last?Math.min(.064,Math.max(0,(now-last)/1000)):.016;last=now;
@@ -351,7 +385,13 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         draw();if(active)frame=raf(animate);else last=0;
       }
       function wake(){if(!frame&&running())frame=raf(animate);}
-      function grow(){stop();TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();}
+      function grow(){stop();TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();
+        // 启动3D慢速旋转
+        stopRotation();
+        rotationAngle=0;
+        rotating=true;
+        rotationFrame=raf(rotateLoop);
+      }
       function resize(){
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
         const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
@@ -367,6 +407,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         if(!all&&mode==='random')available.sort((a,b)=>{const ap=position(a),bp=position(b);return Math.hypot(ap.x-x,ap.y-y)-Math.hypot(bp.x-x,bp.y-y);});
         if(all&&mode==='random')for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
         const chosen=all?available:mode==='sequence'?available.slice(0,1):available.filter(p=>{const q=position(p);return Math.hypot(q.x-x,q.y-y)<radius*.65;}).slice(0,Math.ceil(8*force));
+        if(all)stopRotation();
         chosen.forEach(p=>{
           const q=position(p),phase=Math.random()*Math.PI*2,depthSpeed=.78+p.depth*.44;
           Object.assign(p,{
@@ -421,7 +462,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){restoreGameExit();resize();draw();revealGame();wake();}});
       document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
       if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
-      const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);
+      const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener(onTheme));
       if(root.dataset.standalone==='true'||root.dataset.startGame==='true'){lobby.hidden=true;game.hidden=false;}
       grow();resize();updateCount();revealGame();
       if(!ctx)status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';
