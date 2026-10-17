@@ -154,6 +154,22 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
     #dandelion-preview .pg-editor-shade{padding-top:110px;z-index:5}
     @media(max-width:360px){#dandelion-preview .pg-game{height:680px;min-height:680px;padding-left:16px;padding-right:16px}#dandelion-preview .pg-bottom-actions{left:16px;right:16px}#dandelion-preview .pg-bottom-actions .pg-reset,#dandelion-preview .pg-bottom-actions .pg-blow{padding-left:13px;padding-right:13px;font-size:12px}#dandelion-preview .pg-editor-shade{padding-top:88px}}
   </style>
+  <style>
+    #dandelion-preview .pg-pointer{position:absolute;left:0;top:0;z-index:1;width:12px;height:12px;margin:0;border:1px solid #ffffffad;border-radius:50%;background:#ffffff0a;pointer-events:none;transition:none!important;will-change:transform}
+    #dandelion-preview .pg-pointer.is-pressing{border-color:#fff;background:#ffffff2b}
+    #dandelion-preview .pg-game{isolation:isolate}
+    #dandelion-preview .pg-canvas{touch-action:none}
+    #dandelion-preview[data-standalone="true"] .pg-game{height:100vh;height:100svh;height:100dvh;min-height:0;padding: max(12px,env(safe-area-inset-top)) max(20px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(20px,env(safe-area-inset-left))}
+    #dandelion-preview .pg-game.is-editing{min-height:0!important}
+    #dandelion-preview .pg-bottom-actions{left:max(20px,env(safe-area-inset-left));right:max(20px,env(safe-area-inset-right));bottom:max(24px,calc(env(safe-area-inset-bottom) + 16px));max-width:1440px;margin-inline:auto}
+    #dandelion-preview[data-standalone="true"] .pg-bottom-actions{bottom:max(24px,calc(env(safe-area-inset-bottom) + 16px))}
+    #dandelion-preview .pg-editor-shade{padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));align-items:flex-start;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+    #dandelion-preview .pg-editor{margin-block:auto;flex-shrink:0}
+    #dandelion-preview .pg-caption{display:block;bottom:88px;left:16px;right:16px;margin:0;color:#ffffffc7;font-size:11px;line-height:1.6;letter-spacing:.04em}
+    @media(min-width:900px){#dandelion-preview .pg-bottom-actions .pg-reset,#dandelion-preview .pg-bottom-actions .pg-blow{font-size:15px;min-height:50px;padding:12px 24px}#dandelion-preview .pg-caption{bottom:94px;font-size:12px}}
+    @media(max-height:480px){#dandelion-preview .pg-nav{font-size:11px}#dandelion-preview .pg-bottom-actions,#dandelion-preview[data-standalone="true"] .pg-bottom-actions{bottom:max(12px,env(safe-area-inset-bottom))}#dandelion-preview .pg-caption{display:none}#dandelion-preview .pg-editor-shade{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:12px}}
+    @media(max-width:360px){#dandelion-preview .pg-bottom-actions{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}#dandelion-preview .pg-site-label{font-size:11px}#dandelion-preview .pg-nav{gap:8px}}
+  </style>
   <div class="pg-lobby" data-lobby hidden>
     <section class="pg-section">
       <h2 class="pg-heading">我在折腾的小东西 ✨</h2>
@@ -188,12 +204,12 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
   <section class="pg-game" data-game aria-labelledby="pg-title">
     <nav class="pg-nav" aria-label="游戏导航"><a class="pg-back cursor-interaction" href="https://furryhk.cn/" data-back>← 返回主页</a><span class="pg-site-mark"><span class="pg-site-label">FURRYHK.CN</span><small class="pg-game-label">文字蒲公英</small></span></nav>
     <header><p class="pg-eyebrow">A LITTLE WISH, A LITTLE WIND</p><h1 class="pg-title" id="pg-title">文字蒲公英</h1><p class="pg-description">把想说的话，种成一朵蒲公英。<br>轻轻一碰，让每个字随风出发。</p></header>
-    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="一朵由文字组成的蒲公英，点击或拖动可以吹散。也可使用下方吹风按钮。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">点击花朵，或用手指轻轻划过</div></div>
+    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，拖动圆点碰到文字才会放飞；下方按钮可一键散开。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 拖动圆点触碰文字</div></div>
     <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键散开 ↗</button></div>
     <div class="pg-editor-shade" data-editor hidden>
       <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
         <div class="pg-editor-head"><h2 id="pg-editor-title">输入你的文字</h2><button class="pg-editor-close cursor-interaction" type="button" data-close aria-label="关闭输入弹窗">×</button></div>
-        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>按文字顺序时，点一下散开一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
+        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>轻点任意处放飞，拖动圆点碰到文字才放飞<br>按文字顺序时，点一下送走一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
         <label class="pg-sr" for="pg-wish">写下你的话</label><textarea class="pg-textarea" id="pg-wish" data-wish maxlength="600" rows="4" placeholder="写下你的话…">把想说的话交给风，愿悦悦天天开心</textarea>
         <div class="pg-editor-count" data-count>0 / 150</div>
         <fieldset class="pg-order"><legend>飘散顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风散开</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
@@ -210,6 +226,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const lobby = root.querySelector('[data-lobby]');
       const game = root.querySelector('[data-game]');
       const canvas = root.querySelector('[data-canvas]');
+      const pointer = root.querySelector('[data-pointer]');
       const stillCanvas = document.createElement('canvas');
       stillCanvas.className='pg-still';stillCanvas.setAttribute('aria-hidden','true');canvas.before(stillCanvas);
       const status = root.querySelector('[data-status]');
@@ -225,9 +242,11 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const dark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : {matches:false};
       const raf = window.requestAnimationFrame ? fn => window.requestAnimationFrame(fn) : fn => setTimeout(() => fn(Date.now()),16);
       const caf = window.cancelAnimationFrame ? id => window.cancelAnimationFrame(id) : id => clearTimeout(id);
-      let width=360,height=360,cx=180,cy=148,radius=90,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
-      let rotationAngle=0,rotationFrame=0,rotating=false;
-      const sprites=new Map();let stillDirty=false;
+      let width=360,height=360,cx=180,cy=148,radius=90,stemY=342,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
+      let rotationAngle=0,rotating=false;
+      let activePointer=null,pressOrigin=null,dragged=false,pointerPosition=null,previousTime=0,gestureHit=false,hoverPoint=null,hoverTime=0;
+      const pointerRadius=6,dragThreshold=7;
+      const sprites=new Map();let stillDirty=false,flightPainted=false;
       let entranceAnimations=[];
       const nativePageTransitions='onpageswap' in window&&'onpagereveal' in window;
       let nativeGameArrival=false,gameExit=null;
@@ -299,9 +318,14 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           if(!sprites.has(key)){
             const image=document.createElement('canvas'),side=size*2;
             image.width=image.height=Math.ceil(side*density);
-            const c=image.getContext('2d');
-            if(c){c.setTransform(density,0,0,density,0,0);c.translate(side/2,side/2);c.textAlign='center';c.textBaseline='middle';c.font=size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';c.fillStyle='#fff';c.fillText(p.char,0,0);}
-            sprites.set(key,{image,side});
+            const c=image.getContext('2d');let bounds={left:-size*.5,right:size*.5,top:-size*.5,bottom:size*.5};
+            if(c){
+              c.setTransform(density,0,0,density,0,0);c.translate(side/2,side/2);c.textAlign='center';c.textBaseline='middle';c.font=size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';
+              const m=c.measureText(p.char),finite=Number.isFinite;
+              bounds={left:finite(m.actualBoundingBoxLeft)?-m.actualBoundingBoxLeft:-m.width/2,right:finite(m.actualBoundingBoxRight)?m.actualBoundingBoxRight:m.width/2,top:finite(m.actualBoundingBoxAscent)?-m.actualBoundingBoxAscent:-size/2,bottom:finite(m.actualBoundingBoxDescent)?m.actualBoundingBoxDescent:size/2};
+              c.fillStyle='#fff';c.fillText(p.char,0,0);
+            }
+            sprites.set(key,{image,side,bounds});
           }
           p.sprite=sprites.get(key);
         });
@@ -323,10 +347,10 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         ctx.setTransform(density*scale,0,0,density*scale,p.x*density,p.y*density);
         ctx.drawImage(s.image,-s.side/2,-s.side/2,s.side,s.side);
       }
-      // The stem and attached seeds never repaint during a flight.
+      // The attached layer is repainted when rotation or a release changes the flower.
       function drawStill(){
         if(!stillCtx)return;const c=stillCtx;c.clearRect(0,0,width,height);c.lineWidth=1;c.strokeStyle='#fff';c.globalAlpha=.68;
-        c.beginPath();c.moveTo(cx,height-10);c.lineTo(cx,cy);c.stroke();c.globalAlpha=.3;c.beginPath();c.arc(cx,height-10,5.5,0,Math.PI*2);c.stroke();
+        c.beginPath();c.moveTo(cx,stemY);c.lineTo(cx,cy);c.stroke();
         ordered.forEach(p=>{
         if(p.launched)return;
         const q=position(p);
@@ -346,59 +370,78 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       });c.globalAlpha=1;
       }
       function draw(){
-        if(!ctx)return;if(stillDirty){drawStill();stillDirty=false;}ctx.setTransform(density,0,0,density,0,0);ctx.clearRect(0,0,width,height);
+        if(!ctx)return;if(stillDirty){drawStill();stillDirty=false;}
+        const visibleFlight=ordered.some(p=>p.launched&&!p.gone);
+        if(!visibleFlight&&!flightPainted)return;
+        ctx.setTransform(density,0,0,density,0,0);ctx.clearRect(0,0,width,height);flightPainted=visibleFlight;
         ordered.forEach(p=>{
           if(!p.launched||p.gone)return;
           const age=Math.max(0,p.life-p.delay),progress=Math.min(1,age/p.duration),tail=Math.max(0,(progress-.48)/.52),fade=1-tail*tail*(3-2*tail);
-          ctx.globalAlpha=(.18+p.depth*.82)*fade;
-          const settle=reduced.matches?1:1-Math.exp(-age*3),startAngle=p.a+Math.PI,targetAngle=Math.atan2(-p.speedY,-p.speedX);
-          const turn=Math.atan2(Math.sin(targetAngle-startAngle),Math.cos(targetAngle-startAngle));
-          paintTail(ctx,p,p.x,p.y,startAngle+turn*settle,reduced.matches?0:Math.sin(age*2.4+p.phase)*2.5*settle,p.scale);
+          const alpha=p.launchAlpha*fade;
+          // The full filament fades into the small tail instead of vanishing at detachment.
+          const peel=Math.min(1,age/.36),tetherFade=1-peel*peel*(3-2*peel);
+          if(!reduced.matches&&tetherFade>0){ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=alpha*tetherFade;ctx.lineWidth=.55;ctx.strokeStyle='#fff';ctx.beginPath();ctx.moveTo(p.tetherX,p.tetherY);ctx.lineTo(p.x,p.y);ctx.stroke();}
+          ctx.globalAlpha=alpha;
+          const settle=reduced.matches?1:1-(1+age*4)*Math.exp(-age*4),targetAngle=Math.atan2(-p.speedY,-p.speedX);
+          const turn=Math.atan2(Math.sin(targetAngle-p.tailAngle),Math.cos(targetAngle-p.tailAngle));
+          paintTail(ctx,p,p.x,p.y,p.tailAngle+turn*settle,reduced.matches?0:Math.sin(age*2.4+p.phase)*2.1*settle,p.scale);
           paintFlight(p);
         });ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;
       }
-      function stop(){if(frame)caf(frame);frame=0;last=0;stopRotation();}
-      function stopRotation(){if(rotationFrame)caf(rotationFrame);rotationFrame=0;rotating=false;}
-      function rotateLoop(){
-        rotationFrame=0;
-        if(!running()||!rotating)return;
-        rotationAngle += 0.002; // 慢速立体旋转
-        stillDirty=true;
-        drawStill();
-        rotationFrame=raf(rotateLoop);
-      }
+      function stop(){if(frame)caf(frame);frame=0;last=0;}
+      function stopRotation(){rotating=false;}
       function animate(now){
         frame=0;if(!running()||!editor.hidden){last=0;return;}
         const dt=last?Math.min(.064,Math.max(0,(now-last)/1000)):.016;last=now;
+        // One shared clock for rotation and flight; the pointer itself never waits for RAF.
+        const turning=rotating&&!down&&!reduced.matches;
+        if(turning){rotationAngle=(rotationAngle+dt*.12)%(Math.PI*2);stillDirty=true;}
+        if(turning&&hoverPoint)brush(hoverPoint,hoverPoint,{x:0,y:0});
         let active=false;
         particles.forEach(p=>{if(!p.free||p.gone)return;p.life+=dt;
           if(p.life<p.delay){active=true;return;}
-          if(!p.launched){const q=position(p);p.originX=q.x;p.originY=q.y;p.launched=true;stillDirty=true;}
+          if(!p.launched){attachFlight(p,position(p));p.launched=true;stillDirty=true;}
           const age=p.life-p.delay;
-          // Continuous curves keep the same path at 60/120 Hz, with a soft release.
-          const lift=1-Math.exp(-age*2.4),travel=age+(Math.exp(-age*3.2)-1)/3.2;
-          p.x=p.originX+p.speedX*travel+p.spreadX*lift+p.swayX*(Math.sin(age*p.frequency+p.phase)-p.sinPhase)*lift;
-          p.y=p.originY+p.speedY*travel+p.spreadY*lift+p.swayY*(Math.sin(age*p.frequency*.85+p.phase+.9)-p.sinPhaseY)*lift;
-          p.scale=1+p.scaleDelta*lift;
+          sampleFlight(p,age);
           if(age>p.duration||p.x>width+70||p.x< -70||p.y< -70)p.gone=true;else active=true;
         });
-        draw();if(active)frame=raf(animate);else last=0;
+        draw();if(active||turning){if(!frame)frame=raf(animate);}else last=0;
       }
-      function wake(){if(!frame&&running())frame=raf(animate);}
-      function grow(){stop();TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();
-        // 启动3D慢速旋转
-        stopRotation();
-        rotationAngle=0;
-        rotating=true;
-        rotationFrame=raf(rotateLoop);
+      function attachFlight(p,q){
+        p.x=p.originX=q.x;p.y=p.originY=q.y;p.tetherX=cx;p.tetherY=cy;
+        p.launchAlpha=.35+(q.z+1)*.325;p.tailAngle=Math.atan2(cy-q.y,cx-q.x);
+        const cos=Math.cos(rotationAngle),sin=Math.sin(rotationAngle),x=p.sx*cos+p.sz*sin,z=-p.sx*sin+p.sz*cos,perspective=.82+.18*z;
+        // Carry the sphere's tangent velocity into flight, plus a bounded gesture impulse.
+        p.startVelocityX=radius*p.rotationRate*(z*perspective-.18*x*x)+p.impulseX;
+        p.startVelocityY=-radius*p.rotationRate*p.sy*.18*x+p.impulseY;
+        p.velocityX=p.startVelocityX;p.velocityY=p.startVelocityY;
       }
+      function sampleFlight(p,age){
+        const k=3.8,decay=Math.exp(-age*k),carry=(1-decay)/k,travel=age-carry;
+        const u=age*3.4,lift=1-(1+u)*Math.exp(-u),liftRate=3.4*u*Math.exp(-u);
+        const ax=age*p.frequency+p.phase,ay=age*p.frequency*.83+p.phase+.9;
+        const flutterX=reduced.matches?0:p.swayX*(Math.sin(ax)-p.sinPhase),flutterY=reduced.matches?0:p.swayY*(Math.sin(ay)-p.sinPhaseY);
+        const bloomX=reduced.matches?0:p.spreadX,bloomY=reduced.matches?0:p.spreadY;
+        p.x=p.originX+p.startVelocityX*carry+p.speedX*travel+(bloomX+flutterX)*lift;
+        p.y=p.originY+p.startVelocityY*carry+p.speedY*travel+(bloomY+flutterY)*lift;
+        p.velocityX=p.startVelocityX*decay+p.speedX*(1-decay)+(bloomX+flutterX)*liftRate+(reduced.matches?0:p.swayX*p.frequency*Math.cos(ax)*lift);
+        p.velocityY=p.startVelocityY*decay+p.speedY*(1-decay)+(bloomY+flutterY)*liftRate+(reduced.matches?0:p.swayY*p.frequency*.83*Math.cos(ay)*lift);
+        p.scale=reduced.matches?1:1+p.scaleDelta*lift;
+      }
+      function wake(){if(ctx&&!frame&&running()&&editor.hidden)frame=raf(animate);}
+      function grow(){end();stop();rotationAngle=0;rotating=true;TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();setPointer(cx,stemY);wake();}
       function resize(){
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
         const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
-        const dpr=Math.min(window.devicePixelRatio||1,2);if(width===measuredW&&height===measuredH&&density===dpr)return;
-        const oldW=width,oldH=height;width=measuredW;height=measuredH;density=dpr;cx=width*.5;cy=height*.50;radius=Math.min(width*.32,height*.25,230);
+        // Keep two full-screen canvases within a bounded backing-store size, even on 4K / high-DPR screens.
+        const dpr=Math.min(window.devicePixelRatio||1,2,Math.sqrt(8388608/(measuredW*measuredH)));if(width===measuredW&&height===measuredH&&density===dpr)return;
+        const oldW=width,oldH=height,style=getComputedStyle(game);
+        const top=(parseFloat(style.paddingTop)||16)+64,bottom=measuredH-(parseFloat(style.paddingBottom)||20)-76;
+        const space=Math.max(40,bottom-top);
+        width=measuredW;height=measuredH;density=dpr;cx=width*.5;cy=top+space*.5;radius=Math.max(18,Math.min(width*.34,space*.5-26,560));stemY=height-Math.max(18,parseFloat(style.paddingBottom)||20);
         [canvas,stillCanvas].forEach(c=>{c.width=Math.round(width*dpr);c.height=Math.round(height*dpr);});if(ctx)ctx.setTransform(dpr,0,0,dpr,0,0);if(stillCtx)stillCtx.setTransform(dpr,0,0,dpr,0,0);
-        particles.forEach(p=>{if(p.free){const rx=width/oldW,ry=height/oldH;['x','originX','speedX','spreadX','swayX'].forEach(key=>p[key]*=rx);['y','originY','speedY','spreadY','swayY'].forEach(key=>p[key]*=ry);}});prepareSprites();drawStill();draw();
+        particles.forEach(p=>{if(p.free){const rx=width/oldW,ry=height/oldH;['x','originX','tetherX','startVelocityX','velocityX','impulseX','speedX','spreadX','swayX'].forEach(key=>p[key]*=rx);['y','originY','tetherY','startVelocityY','velocityY','impulseY','speedY','spreadY','swayY'].forEach(key=>p[key]*=ry);}});
+        end();setPointer(cx,stemY);prepareSprites();drawStill();draw();wake();
       }
       function blow(x,y,force=1,all=false){
         if(!ctx){status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';return;}
@@ -406,28 +449,124 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         if(!available.length){announce();return;}
         if(!all&&mode==='random')available.sort((a,b)=>{const ap=position(a),bp=position(b);return Math.hypot(ap.x-x,ap.y-y)-Math.hypot(bp.x-x,bp.y-y);});
         if(all&&mode==='random')for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
-        const chosen=all?available:mode==='sequence'?available.slice(0,1):available.filter(p=>{const q=position(p);return Math.hypot(q.x-x,q.y-y)<radius*.65;}).slice(0,Math.ceil(8*force));
+        const chosen=all?available:available.slice(0,mode==='sequence'?1:8);
+        release(chosen,force,all);
+      }
+      function release(chosen,force=1,all=false,impulse={x:0,y:0}){
+        const rotationRate=rotating&&!down&&!reduced.matches?.12:0;
         if(all)stopRotation();
         chosen.forEach(p=>{
           const q=position(p),phase=Math.random()*Math.PI*2,depthSpeed=.78+p.depth*.44;
           Object.assign(p,{
             free:true,x:q.x,y:q.y,originX:q.x,originY:q.y,life:0,scale:1,
-            delay:reduced.matches||!all?0:(p.sx+1)*.12+Math.random()*.16,
-            duration:reduced.matches?.9:6.4+Math.random()*1.8,
-            speedX:(30+Math.random()*35)*depthSpeed*force,speedY:-(14+Math.random()*36)*depthSpeed,
-            spreadX:p.sx*radius*(.07+Math.random()*.10),spreadY:p.sy*radius*(.06+Math.random()*.12),
-            swayX:7+Math.random()*12,swayY:12+Math.random()*19,frequency:.85+Math.random()*.8,
-            phase,sinPhase:Math.sin(phase),sinPhaseY:Math.sin(phase+.9),scaleDelta:(p.depth-.6)*.32
-          });sent++;
+            delay:reduced.matches||!all?0:Math.max(0,(q.x-cx+radius)/(2*radius))*.16+Math.random()*.08,
+            duration:reduced.matches?.9:6.8+Math.random()*1.6,
+            speedX:(28+Math.random()*34)*depthSpeed*force,speedY:-(13+Math.random()*25)*depthSpeed,
+            spreadX:(q.x-cx)*(.08+Math.random()*.09),spreadY:(q.y-cy)*(.06+Math.random()*.09),
+            swayX:9+Math.random()*13,swayY:13+Math.random()*18,frequency:.65+Math.random()*.65,
+            phase,sinPhase:Math.sin(phase),sinPhaseY:Math.sin(phase+.9),scaleDelta:(p.depth-.6)*.22,
+            rotationRate,impulseX:reduced.matches?0:impulse.x,impulseY:reduced.matches?0:impulse.y
+          });attachFlight(p,q);sent++;
         });
-        if(chosen.length){stillDirty=true;announce();wake();}
+        if(chosen.length){if(sent===TOTAL)stopRotation();stillDirty=true;announce();wake();}
       }
-      function point(event){const r=canvas.getBoundingClientRect();return{x:(event.clientX-r.left)*width/Math.max(1,r.width),y:(event.clientY-r.top)*height/Math.max(1,r.height)};}
-      function start(event){if(!editor.hidden||down)return;down=true;previous=point(event);blow(previous.x,previous.y);if(canvas.setPointerCapture&&event.pointerId!==undefined){try{canvas.setPointerCapture(event.pointerId);}catch(_){}}}
-      function move(event){if(!down)return;const p=point(event);if(mode==='sequence'){previous=p;return;}const speed=previous?Math.hypot(p.x-previous.x,p.y-previous.y):0;blow(p.x,p.y,Math.min(2,1+speed/35));previous=p;}
-      function end(){down=false;previous=null;}
-      if(window.PointerEvent){canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('lostpointercapture',end);}
-      else {canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);canvas.addEventListener('touchstart',e=>{if(e.touches.length){e.preventDefault();start(e.touches[0]);}},{passive:false});canvas.addEventListener('touchmove',e=>{if(e.touches.length){e.preventDefault();move(e.touches[0]);}},{passive:false});canvas.addEventListener('touchend',end);canvas.addEventListener('touchcancel',end);}
+      function point(event,r=canvas.getBoundingClientRect()){return{x:(event.clientX-r.left)*width/Math.max(1,r.width),y:(event.clientY-r.top)*height/Math.max(1,r.height)};}
+      function setPointer(x,y){
+        pointerPosition={x:Math.max(0,Math.min(width,x)),y:Math.max(0,Math.min(height,y))};
+        // Direct event-to-transform update: no easing, timer, or queued animation frame.
+        pointer.style.transform='translate3d('+pointerPosition.x+'px,'+pointerPosition.y+'px,0) translate(-50%,-50%)';
+      }
+      function crossesBox(a,b,left,top,right,bottom){
+        let low=0,high=1;
+        for(const [start,delta,min,max] of [[a.x,b.x-a.x,left,right],[a.y,b.y-a.y,top,bottom]]){
+          if(Math.abs(delta)<1e-8){if(start<min||start>max)return false;}
+          else{const u=(min-start)/delta,v=(max-start)/delta;low=Math.max(low,Math.min(u,v));high=Math.min(high,Math.max(u,v));if(low>high)return false;}
+        }
+        return true;
+      }
+      function touchesGlyph(a,b,q,bounds){
+        // Sweep the visible circle over the actual ink bounds, including rounded corners.
+        const r=pointerRadius+1,left=q.x+bounds.left,right=q.x+bounds.right,top=q.y+bounds.top,bottom=q.y+bounds.bottom;
+        if(Math.max(a.x,b.x)+r<left||Math.min(a.x,b.x)-r>right||Math.max(a.y,b.y)+r<top||Math.min(a.y,b.y)-r>bottom)return false;
+        if(crossesBox(a,b,left-r,top,right+r,bottom)||crossesBox(a,b,left,top-r,right,bottom+r))return true;
+        const dx=b.x-a.x,dy=b.y-a.y,length2=dx*dx+dy*dy;
+        return [[left,top],[right,top],[left,bottom],[right,bottom]].some(([x,y])=>{
+          const t=length2?Math.max(0,Math.min(1,((x-a.x)*dx+(y-a.y)*dy)/length2)):0;
+          return (x-a.x-t*dx)**2+(y-a.y-t*dy)**2<=r*r;
+        });
+      }
+      function brush(from,to,impulse={x:0,y:0}){
+        const hit=particles.filter(p=>{
+          if(p.free)return false;
+          return touchesGlyph(from,to,position(p),p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8});
+        });
+        if(hit.length)release(hit,1,false,impulse);
+        return hit.length;
+      }
+      function strokeImpulse(from,to,before,now){
+        const dt=Math.max(.008,(now-before)/1000),dx=to.x-from.x,dy=to.y-from.y,speed=Math.hypot(dx,dy)/dt;
+        const strength=speed?Math.min(speed,500)*.17/speed:0;
+        return{x:dx/dt*strength,y:dy/dt*strength};
+      }
+      function start(event){
+        if(!editor.hidden||gameExit||down||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
+        down=true;activePointer=event.pointerId===undefined?'mouse':event.pointerId;dragged=false;gestureHit=false;hoverPoint=null;
+        pressOrigin=previous=point(event);previousTime=event.timeStamp||performance.now();setPointer(previous.x,previous.y);pointer.classList.add('is-pressing');
+        if(canvas.setPointerCapture&&typeof activePointer==='number'){try{canvas.setPointerCapture(activePointer);}catch(_){}}
+      }
+      function move(event){
+        if(!editor.hidden||gameExit||event.isPrimary===false)return;
+        const id=event.pointerId===undefined?'mouse':event.pointerId;
+        if(down&&id!==activePointer)return;
+        const bounds=canvas.getBoundingClientRect();let samples=[];
+        try{if(event.getCoalescedEvents)samples=event.getCoalescedEvents();}catch(_){}
+        // Include the dispatched endpoint even when a browser returns no coalesced samples.
+        samples=[...samples,event];
+        if(!down){
+          if(event.pointerType!=='touch'){
+            samples.forEach(sample=>{
+              const p=point(sample,bounds),time=sample.timeStamp||event.timeStamp||performance.now(),from=hoverPoint||p;
+              brush(from,p,hoverPoint?strokeImpulse(from,p,hoverTime,time):{x:0,y:0});hoverPoint=p;hoverTime=time;
+            });
+            setPointer(hoverPoint.x,hoverPoint.y);
+          }
+          return;
+        }
+        samples.forEach(sample=>{
+          const p=point(sample,bounds);
+          if(Math.hypot(p.x-pressOrigin.x,p.y-pressOrigin.y)>dragThreshold)dragged=true;
+          const time=sample.timeStamp||event.timeStamp||performance.now(),moved=Math.hypot(p.x-previous.x,p.y-previous.y)>.2;
+          // A short stroke can already touch ink before it crosses the tap/drag threshold.
+          if(moved||dragged)gestureHit=brush(previous,p,strokeImpulse(previous,p,previousTime,time))>0||gestureHit;
+          previous=p;previousTime=time;
+        });
+        setPointer(previous.x,previous.y);
+      }
+      function finish(event){
+        const id=event.pointerId===undefined?'mouse':event.pointerId;
+        if(!down||id!==activePointer)return;
+        move(event);const tap=!dragged&&!gestureHit,p=previous;end();
+        if(tap&&p)blow(p.x,p.y);
+      }
+      function cancel(event){if(!down)hoverPoint=null;else if(event.pointerId===undefined||event.pointerId===activePointer)end();}
+      function end(){
+        const id=activePointer;down=false;activePointer=null;previous=pressOrigin=hoverPoint=null;dragged=false;gestureHit=false;
+        pointer.classList.remove('is-pressing');
+        if(canvas.releasePointerCapture&&typeof id==='number'){try{if(!canvas.hasPointerCapture||canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);}catch(_){}}
+        wake();
+      }
+      const leavePointer=()=>{if(!down)hoverPoint=null;};
+      if(window.PointerEvent){
+        canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('lostpointercapture',cancel);canvas.addEventListener('pointerleave',leavePointer);
+      }else{
+        canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseleave',leavePointer);window.addEventListener('mouseup',finish);
+        const touchEvent=t=>({clientX:t.clientX,clientY:t.clientY,pointerId:'touch-'+t.identifier,pointerType:'touch',button:0});
+        canvas.addEventListener('touchstart',e=>{if(!down&&e.changedTouches.length){e.preventDefault();start(touchEvent(e.changedTouches[0]));}},{passive:false});
+        canvas.addEventListener('touchmove',e=>{const t=Array.from(e.touches).find(t=>'touch-'+t.identifier===activePointer);if(t){e.preventDefault();move(touchEvent(t));}},{passive:false});
+        canvas.addEventListener('touchend',e=>{const t=Array.from(e.changedTouches).find(t=>'touch-'+t.identifier===activePointer);if(t){e.preventDefault();finish(touchEvent(t));}},{passive:false});
+        canvas.addEventListener('touchcancel',e=>{if(Array.from(e.changedTouches).some(t=>'touch-'+t.identifier===activePointer))end();});
+      }
+      window.addEventListener('blur',()=>end());
       function updateCount(){const n=Array.from(input.value).filter(c=>c.trim()).length;root.querySelector('[data-count]').textContent=n+' / 150';}
       function openEditor(){if(!editor.hidden)return;end();stop();editor.hidden=false;game.classList.add('is-editing');inertStates=[...game.children].filter(e=>e!==editor).map(e=>[e,e.inert]);inertStates.forEach(([e])=>{e.inert=true;});updateCount();focusFrame=raf(()=>{focusFrame=0;if(!editor.hidden)input.focus({preventScroll:true});});}
       function closeEditor(focus=true){if(editor.hidden)return;editor.hidden=true;if(focusFrame)caf(focusFrame);focusFrame=0;game.classList.remove('is-editing');inertStates.forEach(([e,inert])=>{e.inert=inert;});inertStates=[];resize();wake();if(focus)editButton.focus({preventScroll:true});}
@@ -462,7 +601,8 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){restoreGameExit();resize();draw();revealGame();wake();}});
       document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
       if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
-      const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener(onTheme));
+      const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);
+      const onMotion=()=>{stop();wake();};if(reduced.addEventListener)reduced.addEventListener('change',onMotion);else if(reduced.addListener)reduced.addListener(onMotion);
       if(root.dataset.standalone==='true'||root.dataset.startGame==='true'){lobby.hidden=true;game.hidden=false;}
       grow();resize();updateCount();revealGame();
       if(!ctx)status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';
