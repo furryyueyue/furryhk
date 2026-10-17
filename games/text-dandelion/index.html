@@ -215,10 +215,30 @@
       const caf = window.cancelAnimationFrame ? id => window.cancelAnimationFrame(id) : id => clearTimeout(id);
       let width=360,height=360,cx=180,cy=148,radius=90,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
       const sprites=new Map();let stillDirty=false;
+      let entranceAnimations=[];
       let letters=Array.from(input.value||'悦悦天天开心');
       let TOTAL = 100;
       let mode='random';
       const running = () => !game.hidden && !document.hidden;
+      function cancelEntrance(){const previous=entranceAnimations;entranceAnimations=[];previous.forEach(animation=>animation.cancel());}
+      function revealGame(){
+        cancelEntrance();if(game.hidden||reduced.matches||typeof game.animate!=='function')return;
+        const easing='cubic-bezier(.22,1,.36,1)';
+        const entrances=[
+          [game,[{opacity:.35,transform:'translate3d(0,8px,0) scale(.992)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:460}],
+          [root.querySelector('.pg-meadow'),[{opacity:0,transform:'translate3d(0,12px,0) scale(.965)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:820,delay:50}],
+          [root.querySelector('.pg-nav'),[{opacity:0,transform:'translate3d(0,-5px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:500,delay:50}],
+          [root.querySelector('.pg-bottom-actions'),[{opacity:0,transform:'translate3d(0,9px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:600,delay:120}]
+        ];
+        entrances.forEach(([element,frames,options])=>{
+          if(!element||typeof element.animate!=='function')return;
+          try {
+            const animation=element.animate(frames,{...options,easing,fill:'backwards'});entranceAnimations.push(animation);
+            const release=()=>{const i=entranceAnimations.indexOf(animation);if(i!==-1)entranceAnimations.splice(i,1);};
+            animation.finished.then(release,release);
+          } catch (_) {}
+        });
+      }
       const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
       const position = p => {const perspective=.94+p.sz*.11;return{x:cx+p.sx*radius*perspective,y:cy+p.sy*radius*perspective};};
       // Shape each glyph once; animation frames only composite small cached images.
@@ -293,8 +313,9 @@
       function grow(){stop();TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();}
       function resize(){
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
-        const dpr=Math.min(window.devicePixelRatio||1,2);if(width===bounds.width&&height===bounds.height&&density===dpr)return;
-        const oldW=width,oldH=height;width=bounds.width;height=bounds.height;density=dpr;cx=width*.5;cy=height*.50;radius=Math.min(width*.32,height*.25,230);
+        const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
+        const dpr=Math.min(window.devicePixelRatio||1,2);if(width===measuredW&&height===measuredH&&density===dpr)return;
+        const oldW=width,oldH=height;width=measuredW;height=measuredH;density=dpr;cx=width*.5;cy=height*.50;radius=Math.min(width*.32,height*.25,230);
         [canvas,stillCanvas].forEach(c=>{c.width=Math.round(width*dpr);c.height=Math.round(height*dpr);});if(ctx)ctx.setTransform(dpr,0,0,dpr,0,0);if(stillCtx)stillCtx.setTransform(dpr,0,0,dpr,0,0);
         particles.forEach(p=>{if(p.free){const rx=width/oldW,ry=height/oldH;['x','originX','speedX','spreadX','swayX'].forEach(key=>p[key]*=rx);['y','originY','speedY','spreadY','swayY'].forEach(key=>p[key]*=ry);}});prepareSprites();drawStill();draw();
       }
@@ -319,7 +340,7 @@
         });
         if(chosen.length){stillDirty=true;announce();wake();}
       }
-      function point(event){const r=canvas.getBoundingClientRect();return{x:event.clientX-r.left,y:event.clientY-r.top};}
+      function point(event){const r=canvas.getBoundingClientRect();return{x:(event.clientX-r.left)*width/Math.max(1,r.width),y:(event.clientY-r.top)*height/Math.max(1,r.height)};}
       function start(event){if(!editor.hidden||down)return;down=true;previous=point(event);blow(previous.x,previous.y);if(canvas.setPointerCapture&&event.pointerId!==undefined){try{canvas.setPointerCapture(event.pointerId);}catch(_){}}}
       function move(event){if(!down)return;const p=point(event);if(mode==='sequence'){previous=p;return;}const speed=previous?Math.hypot(p.x-previous.x,p.y-previous.y):0;blow(p.x,p.y,Math.min(2,1+speed/35));previous=p;}
       function end(){down=false;previous=null;}
@@ -336,13 +357,15 @@
       input.addEventListener('input',e=>{if(!e.isComposing)updateCount();});input.addEventListener('compositionend',updateCount);
       form.addEventListener('submit',e=>{e.preventDefault();const chars=Array.from(input.value.trim()).filter(c=>c.trim());if(chars.length>150){input.setCustomValidity('最多输入150个字，请删减后再生成。');input.reportValidity();return;}input.setCustomValidity('');letters=chars.length?chars:Array.from('悦悦天天开心');input.value=letters.join('');mode=form.querySelector('input[name="pg-order"]:checked').value;grow();closeEditor(false);input.blur();blowButton.focus({preventScroll:true});});
       input.addEventListener('input',()=>input.setCustomValidity(''));
-      root.querySelector('[data-enter]').addEventListener('click',()=>{lobby.hidden=true;game.hidden=false;resize();draw();});
-      root.querySelector('[data-back]').addEventListener('click',e=>{if(root.dataset.standalone==='true')return;e.preventDefault();end();stop();game.hidden=true;lobby.hidden=false;root.querySelector('[data-enter]').focus({preventScroll:true});});
+      root.querySelector('[data-enter]').addEventListener('click',()=>{lobby.hidden=true;game.hidden=false;resize();draw();revealGame();});
+      root.querySelector('[data-back]').addEventListener('click',e=>{if(root.dataset.standalone==='true')return;e.preventDefault();cancelEntrance();end();stop();game.hidden=true;lobby.hidden=false;root.querySelector('[data-enter]').focus({preventScroll:true});});
+      window.addEventListener('pagehide',()=>{cancelEntrance();end();stop();});
+      window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){resize();draw();revealGame();wake();}});
       document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
       if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
       const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);
       if(root.dataset.standalone==='true'||root.dataset.startGame==='true'){lobby.hidden=true;game.hidden=false;}
-      grow();resize();updateCount();
+      grow();resize();updateCount();revealGame();
       if(!ctx)status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';
     })();
   </script>

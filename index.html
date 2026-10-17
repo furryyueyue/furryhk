@@ -700,6 +700,42 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       });
       root.addEventListener('load', event => { if (event.target.matches('img.yy-qr')) resizeOpenPanels(); },true);
       root.querySelector('.yy-avatar').addEventListener('contextmenu',event => event.preventDefault());
+      const gameLink = root.querySelector('.yy-game-link');
+      let gameNavigation = null;
+      const restoreGameNavigation = () => {
+        const previous = gameNavigation;
+        gameNavigation = null;
+        if (!previous) return;
+        clearTimeout(previous.timer);
+        clearTimeout(previous.restoreTimer);
+        if (previous.animation) previous.animation.cancel();
+      };
+      if (gameLink) gameLink.addEventListener('click',event => {
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || reduceMotion.matches || !canAnimate) return;
+        if (gameLink.hasAttribute('download') || (gameLink.target && gameLink.target !== '_self')) return;
+        event.preventDefault();
+        if (gameNavigation) return;
+        const state = {animation:null,timer:0,restoreTimer:0,navigated:false};
+        gameNavigation = state;
+        const navigate = () => {
+          if (gameNavigation !== state || state.navigated) return;
+          state.navigated = true;
+          clearTimeout(state.timer);
+          // Restore the page if a slow or cancelled navigation leaves it visible.
+          state.restoreTimer = setTimeout(restoreGameNavigation,1200);
+          try { window.location.assign(gameLink.href); } catch (_) { restoreGameNavigation(); }
+        };
+        try {
+          state.animation = animateMotion(page,[
+            {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
+            {opacity:.28,transform:'translate3d(0,-6px,0) scale(.992)'}
+          ],{duration:180,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+          state.animation.finished.then(navigate,navigate);
+          state.timer = setTimeout(navigate,260);
+        } catch (_) { navigate(); }
+      });
+      window.addEventListener('pageshow',event => { if (event.persisted) restoreGameNavigation(); });
+      window.addEventListener('pagehide',restoreGameNavigation);
       if (!reduceMotion.matches) {
         const entryGroups = [...root.querySelectorAll('.yy-top,.yy-hero,.yy-intro,.yy-tags,.yy-section,.yy-footer')];
         entryGroups.forEach((element,index) => {
