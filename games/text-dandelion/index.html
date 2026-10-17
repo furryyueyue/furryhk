@@ -1,5 +1,17 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><title>文字蒲公英 · 悦悦的小小游乐园</title><meta name="description" content="写下一句话，种成一朵文字蒲公英。点击、轻划或按下吹风按钮，让心愿随风出发。"><style>html{background:#10459c;color-scheme:light}body{box-sizing:border-box;margin:0;min-width:280px}button,input,a{font-family:inherit}</style></head><body><div id="dandelion-preview" data-standalone="true">
+<html lang="zh-CN" data-yy-page="game"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><title>文字蒲公英 · 悦悦的小小游乐园</title><meta name="description" content="写下一句话，种成一朵文字蒲公英。点击、轻划或按下吹风按钮，让心愿随风出发。"><style>html{background:#10459c;color-scheme:light}body{box-sizing:border-box;margin:0;min-width:280px}button,input,a{font-family:inherit}@view-transition{navigation:auto}
+::view-transition-group(root){animation-duration:380ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(root){animation:yy-document-out 320ms cubic-bezier(.4,0,.2,1) both;mix-blend-mode:normal}
+::view-transition-new(root){animation:yy-document-in 380ms cubic-bezier(.22,1,.36,1) both;mix-blend-mode:normal}
+html[data-yy-page="home"]::view-transition-old(root){animation-name:yy-document-close}
+html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-return}
+@keyframes yy-document-out{to{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}}
+@keyframes yy-document-in{from{opacity:0;transform:translate3d(0,8px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes yy-document-close{to{opacity:0;transform:translate3d(0,8px,0) scale(.996)}}
+@keyframes yy-document-return{from{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
+</style></head><body><div id="dandelion-preview" data-standalone="true">
   <style>
     #dandelion-preview{color-scheme:light dark;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color:#393343;color:light-dark(#393343,#eee9f4);padding:12px 0}
     #dandelion-preview *{box-sizing:border-box}
@@ -216,19 +228,21 @@
       let width=360,height=360,cx=180,cy=148,radius=90,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
       const sprites=new Map();let stillDirty=false;
       let entranceAnimations=[];
+      const nativePageTransitions='onpageswap' in window&&'onpagereveal' in window;
+      let nativeGameArrival=false,gameExit=null;
       let letters=Array.from(input.value||'悦悦天天开心');
       let TOTAL = 100;
       let mode='random';
       const running = () => !game.hidden && !document.hidden;
       function cancelEntrance(){const previous=entranceAnimations;entranceAnimations=[];previous.forEach(animation=>animation.cancel());}
       function revealGame(){
-        cancelEntrance();if(game.hidden||reduced.matches||typeof game.animate!=='function')return;
+        cancelEntrance();if(game.hidden||nativeGameArrival||reduced.matches||typeof game.animate!=='function')return;
         const easing='cubic-bezier(.22,1,.36,1)';
         const entrances=[
-          [game,[{opacity:.35,transform:'translate3d(0,8px,0) scale(.992)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:460}],
-          [root.querySelector('.pg-meadow'),[{opacity:0,transform:'translate3d(0,12px,0) scale(.965)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:820,delay:50}],
-          [root.querySelector('.pg-nav'),[{opacity:0,transform:'translate3d(0,-5px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:500,delay:50}],
-          [root.querySelector('.pg-bottom-actions'),[{opacity:0,transform:'translate3d(0,9px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:600,delay:120}]
+          [game,[{opacity:.65,transform:'translate3d(0,6px,0) scale(.996)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:340}],
+          [root.querySelector('.pg-meadow'),[{opacity:.35,transform:'translate3d(0,6px,0) scale(.988)'},{opacity:1,transform:'translate3d(0,0,0) scale(1)'}],{duration:520,delay:20}],
+          [root.querySelector('.pg-nav'),[{opacity:.5,transform:'translate3d(0,-3px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:320}],
+          [root.querySelector('.pg-bottom-actions'),[{opacity:.5,transform:'translate3d(0,4px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:360,delay:30}]
         ];
         entrances.forEach(([element,frames,options])=>{
           if(!element||typeof element.animate!=='function')return;
@@ -238,6 +252,33 @@
             animation.finished.then(release,release);
           } catch (_) {}
         });
+      }
+      function restoreGameExit(resume=false){
+        const previous=gameExit;gameExit=null;
+        if(previous){clearTimeout(previous.timer);clearTimeout(previous.recovery);if(previous.animation)previous.animation.cancel();previous.frozen.forEach(animation=>animation.cancel());}
+        if(resume&&running())wake();
+      }
+      function leaveGame(commit){
+        if(gameExit)return;
+        const visible=getComputedStyle(game),from={opacity:visible.opacity||1,transform:visible.transform==='none'?'translate3d(0,0,0) scale(1)':visible.transform||'translate3d(0,0,0) scale(1)'};
+        end();stop();
+        if(reduced.matches||typeof game.animate!=='function'){cancelEntrance();commit();return;}
+        const state={animation:null,timer:0,recovery:0,done:false,frozen:[]};gameExit=state;
+        entranceAnimations.splice(0).forEach(animation=>{
+          if(animation.effect&&animation.effect.target!==game&&typeof animation.pause==='function'){
+            animation.pause();state.frozen.push(animation);
+          }else animation.cancel();
+        });
+        const finish=()=>{
+          if(gameExit!==state||state.done)return;state.done=true;clearTimeout(state.timer);
+          if(root.dataset.standalone==='true')state.recovery=setTimeout(()=>restoreGameExit(true),1200);
+          try{commit();}catch(_){restoreGameExit(true);return;}
+          if(root.dataset.standalone!=='true')restoreGameExit();
+        };
+        try{
+          state.animation=game.animate([from,{opacity:.55,transform:'translate3d(0,6px,0) scale(.996)'}],{duration:240,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+          state.animation.finished.then(finish,finish);state.timer=setTimeout(finish,320);
+        }catch(_){finish();}
       }
       const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
       const position = p => {const perspective=.94+p.sz*.11;return{x:cx+p.sx*radius*perspective,y:cy+p.sy*radius*perspective};};
@@ -357,10 +398,27 @@
       input.addEventListener('input',e=>{if(!e.isComposing)updateCount();});input.addEventListener('compositionend',updateCount);
       form.addEventListener('submit',e=>{e.preventDefault();const chars=Array.from(input.value.trim()).filter(c=>c.trim());if(chars.length>150){input.setCustomValidity('最多输入150个字，请删减后再生成。');input.reportValidity();return;}input.setCustomValidity('');letters=chars.length?chars:Array.from('悦悦天天开心');input.value=letters.join('');mode=form.querySelector('input[name="pg-order"]:checked').value;grow();closeEditor(false);input.blur();blowButton.focus({preventScroll:true});});
       input.addEventListener('input',()=>input.setCustomValidity(''));
-      root.querySelector('[data-enter]').addEventListener('click',()=>{lobby.hidden=true;game.hidden=false;resize();draw();revealGame();});
-      root.querySelector('[data-back]').addEventListener('click',e=>{if(root.dataset.standalone==='true')return;e.preventDefault();cancelEntrance();end();stop();game.hidden=true;lobby.hidden=false;root.querySelector('[data-enter]').focus({preventScroll:true});});
-      window.addEventListener('pagehide',()=>{cancelEntrance();end();stop();});
-      window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){resize();draw();revealGame();wake();}});
+      root.querySelector('[data-enter]').addEventListener('click',()=>{if(gameExit)return;lobby.hidden=true;game.hidden=false;resize();draw();revealGame();});
+      root.querySelector('[data-back]').addEventListener('click',event=>{
+        if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+        const back=event.currentTarget,standalone=root.dataset.standalone==='true';
+        if(back.hasAttribute('download')||(back.target&&back.target!=='_self'))return;
+        if(standalone&&(nativePageTransitions||reduced.matches||typeof game.animate!=='function'))return;
+        event.preventDefault();
+        leaveGame(()=>{
+          if(standalone){window.location.assign(back.href);return;}
+          game.hidden=true;lobby.hidden=false;root.querySelector('[data-enter]').focus({preventScroll:true});
+          if(!reduced.matches&&typeof lobby.animate==='function'){
+            try{const animation=lobby.animate([{opacity:.55,transform:'translate3d(0,-6px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:360,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});entranceAnimations.push(animation);animation.finished.then(()=>{const i=entranceAnimations.indexOf(animation);if(i!==-1)entranceAnimations.splice(i,1);},()=>{});}catch(_){}
+          }
+        });
+      });
+      window.addEventListener('pagereveal',event=>{
+        if(!event.viewTransition)return;nativeGameArrival=true;cancelEntrance();
+        event.viewTransition.finished.then(()=>{nativeGameArrival=false;},()=>{nativeGameArrival=false;});
+      });
+      window.addEventListener('pagehide',()=>{restoreGameExit();cancelEntrance();end();stop();});
+      window.addEventListener('pageshow',event=>{if(event.persisted&&!game.hidden){restoreGameExit();resize();draw();revealGame();wake();}});
       document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
       if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
       const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);

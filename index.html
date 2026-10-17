@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-yy-page="home">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -32,6 +32,18 @@ html{background:#f2eef4;color:#393343;background:light-dark(#f2eef4,#17141c);col
 body{box-sizing:border-box;margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
 button,a{font-family:inherit}
 body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 5px #30203733);transform-origin:center;user-select:none;-webkit-user-drag:none}
+@view-transition{navigation:auto}
+::view-transition-group(root){animation-duration:380ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(root){animation:yy-document-out 320ms cubic-bezier(.4,0,.2,1) both;mix-blend-mode:normal}
+::view-transition-new(root){animation:yy-document-in 380ms cubic-bezier(.22,1,.36,1) both;mix-blend-mode:normal}
+html[data-yy-page="home"]::view-transition-old(root){animation-name:yy-document-close}
+html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-return}
+@keyframes yy-document-out{to{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}}
+@keyframes yy-document-in{from{opacity:0;transform:translate3d(0,8px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes yy-document-close{to{opacity:0;transform:translate3d(0,8px,0) scale(.996)}}
+@keyframes yy-document-return{from{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
 </style>
 </head>
 <body>
@@ -701,6 +713,9 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
       root.addEventListener('load', event => { if (event.target.matches('img.yy-qr')) resizeOpenPanels(); },true);
       root.querySelector('.yy-avatar').addEventListener('contextmenu',event => event.preventDefault());
       const gameLink = root.querySelector('.yy-game-link');
+      const nativePageTransitions = 'onpageswap' in window && 'onpagereveal' in window;
+      const homeEntryAnimations = [];
+      let nativeHomeArrival = false,gameVisitStarted = false,homeReturnAnimation = null;
       let gameNavigation = null;
       const restoreGameNavigation = () => {
         const previous = gameNavigation;
@@ -711,10 +726,15 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         if (previous.animation) previous.animation.cancel();
       };
       if (gameLink) gameLink.addEventListener('click',event => {
-        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || reduceMotion.matches || !canAnimate) return;
+        if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         if (gameLink.hasAttribute('download') || (gameLink.target && gameLink.target !== '_self')) return;
+        gameVisitStarted = true;
+        if (nativePageTransitions || reduceMotion.matches || !canAnimate) return;
         event.preventDefault();
         if (gameNavigation) return;
+        const currentPage = getComputedStyle(page);
+        const from = {opacity:currentPage.opacity || 1,transform:currentPage.transform === 'none' ? 'translate3d(0,0,0) scale(1)' : currentPage.transform || 'translate3d(0,0,0) scale(1)'};
+        if (homeReturnAnimation) { homeReturnAnimation.cancel();homeReturnAnimation = null; }
         const state = {animation:null,timer:0,restoreTimer:0,navigated:false};
         gameNavigation = state;
         const navigate = () => {
@@ -727,24 +747,39 @@ body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-f
         };
         try {
           state.animation = animateMotion(page,[
-            {opacity:1,transform:'translate3d(0,0,0) scale(1)'},
-            {opacity:.28,transform:'translate3d(0,-6px,0) scale(.992)'}
-          ],{duration:180,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
+            from,
+            {opacity:.55,transform:'translate3d(0,-5px,0) scale(.996)'}
+          ],{duration:220,easing:'cubic-bezier(.4,0,.2,1)',fill:'forwards'});
           state.animation.finished.then(navigate,navigate);
-          state.timer = setTimeout(navigate,260);
+          state.timer = setTimeout(navigate,300);
         } catch (_) { navigate(); }
       });
-      window.addEventListener('pageshow',event => { if (event.persisted) restoreGameNavigation(); });
+      const revealReturnedHome = () => {
+        if (reduceMotion.matches || !canAnimate || nativeHomeArrival) return;
+        if (homeReturnAnimation) homeReturnAnimation.cancel();
+        homeReturnAnimation = animateMotion(page,[{opacity:.55,transform:'translate3d(0,-6px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:360,easing:'cubic-bezier(.22,1,.36,1)',fill:'backwards'});
+      };
+      window.addEventListener('pagereveal',event => {
+        if (!event.viewTransition) return;
+        nativeHomeArrival = true;
+        if (homeReturnAnimation) { homeReturnAnimation.cancel();homeReturnAnimation = null; }
+        homeEntryAnimations.splice(0).forEach(animation => animation.cancel());
+        event.viewTransition.finished.then(() => { nativeHomeArrival = false; },() => { nativeHomeArrival = false; });
+      });
+      window.addEventListener('pageshow',event => { if (event.persisted) { restoreGameNavigation();if (gameVisitStarted) revealReturnedHome();gameVisitStarted = false; } });
       window.addEventListener('pagehide',restoreGameNavigation);
-      if (!reduceMotion.matches) {
+      let returningFromGame = false;
+      try { const previousURL = new URL(document.referrer);returningFromGame = previousURL.origin === window.location.origin && previousURL.pathname.startsWith('/games/text-dandelion'); } catch (_) {}
+      if (returningFromGame) revealReturnedHome();
+      else if (!reduceMotion.matches) {
         const entryGroups = [...root.querySelectorAll('.yy-top,.yy-hero,.yy-intro,.yy-tags,.yy-section,.yy-footer')];
         entryGroups.forEach((element,index) => {
-          animateMotion(element,[{opacity:0,transform:'translate3d(0,18px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{
+          homeEntryAnimations.push(animateMotion(element,[{opacity:0,transform:'translate3d(0,18px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{
             duration:index < 2 ? 1150 : 1050,
             delay:Math.min(index * 65,455),
             easing:'cubic-bezier(.16,1,.3,1)',
             fill:'backwards'
-          });
+          }));
         });
       }
     })();
