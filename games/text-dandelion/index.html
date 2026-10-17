@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="color-scheme" content="light dark"><title>文字蒲公英 · 悦悦的小小游乐园</title><meta name="description" content="写下一句话，种成一朵文字蒲公英。点击、轻划或按下吹风按钮，让心愿随风出发。"><style>html{background:#10459c;color-scheme:light}body{box-sizing:border-box;margin:0;min-width:280px}button,input,a{font-family:inherit}</style></head><body><div id="dandelion-preview" data-standalone="true">
+  <style>
+    #dandelion-preview{color-scheme:light dark;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color:#393343;color:light-dark(#393343,#eee9f4);padding:12px 0}
+    #dandelion-preview *{box-sizing:border-box}
+    #dandelion-preview [hidden]{display:none!important}
+    #dandelion-preview button,#dandelion-preview input{font:inherit}
+    #dandelion-preview button,#dandelion-preview a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    #dandelion-preview button:focus-visible,#dandelion-preview a:focus-visible,#dandelion-preview input:focus-visible{outline:2px solid #ad8bc6;outline-offset:4px}
+    #dandelion-preview .pg-lobby{max-width:440px;margin:auto;padding:26px 24px;border:1px solid light-dark(#e8e3ed,#39333f);border-radius:24px;background:#f9f7f2;background:light-dark(#f9f7f2,#201f26)}
+    #dandelion-preview .pg-section+.pg-section{margin-top:28px}
+    #dandelion-preview .pg-heading{font-size:15px;font-weight:600;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+    #dandelion-preview .pg-service{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:18px;background:#e9deed;background:light-dark(#e9deed,#3c2c45);border-radius:16px;color:inherit;text-decoration:none}
+    #dandelion-preview .pg-service strong{font-size:14px;display:block;margin-bottom:6px}
+    #dandelion-preview .pg-service p{font-size:12px;line-height:1.7;margin:0;color:light-dark(#796481,#c6afd0)}
+    #dandelion-preview .pg-service>span{font-size:12px;color:light-dark(#796481,#c6afd0)}
+    #dandelion-preview .pg-pending{margin-top:11px;padding:15px 17px;border-radius:14px;background:#efede8;background:light-dark(#efede8,#2b272e);font-size:12px;line-height:1.8;color:light-dark(#706375,#cbb9d3)}
+    #dandelion-preview .pg-pending p{margin:5px 0 0;color:light-dark(#8b818e,#b5a8be)}
+    #dandelion-preview .pg-entry{width:100%;min-height:78px;display:flex;align-items:center;gap:13px;padding:12px 14px;border:1px solid light-dark(#d8e3d6,#415444);border-radius:24px;background:#f2f7ef;background:linear-gradient(135deg,light-dark(#fffefa,#29362b),light-dark(#f0f5ec,#222c25));color:inherit;text-align:left;box-shadow:0 7px 20px light-dark(#53794912,#00000024);transition:transform .2s ease,background .2s ease;text-decoration:none}
+    #dandelion-preview .pg-entry:active{transform:scale(.985)}
+    #dandelion-preview .pg-entry-icon{display:flex;align-items:center;justify-content:center;flex:none;width:52px;height:52px;border-radius:19px;background:#e6efdf;background:light-dark(#e6efdf,#384e39);font-size:30px;color:light-dark(#718868,#b1c5a1)}
+    #dandelion-preview .pg-entry-meta{min-width:0;flex:1}
+    #dandelion-preview .pg-entry-meta strong{font-size:15px;display:block;font-weight:600}
+    #dandelion-preview .pg-entry-meta small{display:block;margin-top:5px;font-size:11px;line-height:1.6;color:light-dark(#74816d,#b6c5af)}
+    #dandelion-preview .pg-entry-arrow{font-size:22px;color:light-dark(#78926e,#b0c9a6);flex:none}
+    #dandelion-preview .pg-friend-context{font-size:12px;color:light-dark(#748692,#b6c7cf);padding:15px;border:1px solid light-dark(#d8e7ee,#3e5662);border-radius:24px;background:light-dark(#f2f8fb,#202d34)}
+    #dandelion-preview .pg-game{max-width:860px;margin:auto;padding:24px;border:1px solid light-dark(#e3e7d9,#39463c);border-radius:26px;background:#f8f8f0;background:radial-gradient(ellipse at 80% 10%,light-dark(#f5f0dd,#3b3528),transparent 55%),light-dark(#f8f8f0,#1d2521);overflow:hidden}
+    #dandelion-preview .pg-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:26px;font-size:11px;letter-spacing:.09em;color:light-dark(#7b8875,#b8c5ae)}
+    #dandelion-preview .pg-back{display:inline-flex;align-items:center;min-height:44px;color:inherit;text-decoration:none;font-size:12px;letter-spacing:0}
+    #dandelion-preview .pg-eyebrow{font-size:10px;letter-spacing:.24em;color:light-dark(#849474,#b7c9a8);margin:0 0 10px}
+    #dandelion-preview .pg-title{font-family:"Songti SC","Noto Serif SC",SimSun,serif;font-size:clamp(29px,5vw,42px);font-weight:500;letter-spacing:.12em;line-height:1.25;margin:0 0 12px;color:light-dark(#435242,#e0e9d6)}
+    #dandelion-preview .pg-description{font-size:13px;line-height:1.9;color:light-dark(#7d8775,#b6c2ac);margin:0}
+    #dandelion-preview .pg-meadow{position:relative;margin:8px -24px 0;height:360px;background:radial-gradient(ellipse at 50% 90%,light-dark(#dbe6cd80,#3e514280),transparent 65%);overflow:hidden}
+    #dandelion-preview .pg-canvas{width:100%;height:100%;display:block;touch-action:none;user-select:none;-webkit-user-select:none}
+    #dandelion-preview .pg-wind-label{position:absolute;right:24px;top:24px;font-size:10px;letter-spacing:.16em;color:light-dark(#929c88,#a3b99d);pointer-events:none}
+    #dandelion-preview .pg-caption{position:absolute;left:20px;right:20px;bottom:8px;text-align:center;font-size:11px;line-height:1.6;color:light-dark(#88947c,#b3c4aa);pointer-events:none}
+    #dandelion-preview .pg-compose{margin-top:16px}
+    #dandelion-preview .pg-compose label{display:block;font-size:11px;line-height:1.6;color:light-dark(#7e8a75,#b2c3a6);margin-bottom:8px}
+    #dandelion-preview .pg-input-row{display:flex;align-items:stretch;gap:9px;min-width:0}
+    #dandelion-preview .pg-input{width:100%;min-width:0;flex:1;min-height:48px;border:1px solid light-dark(#dce2d2,#4c5e4c);border-radius:13px;background:#fffefa;background:light-dark(#fffefa,#26342c);color:inherit;padding:11px 13px;font-size:16px}
+    #dandelion-preview .pg-plant{flex:none;min-height:48px;padding:10px 17px;border:1px solid light-dark(#dce2d2,#4c5e4c);border-radius:13px;background:#eef2e7;background:light-dark(#eef2e7,#344739);color:light-dark(#617354,#d6e1cb);font-size:13px}
+    #dandelion-preview .pg-actions{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:15px;flex-wrap:wrap}
+    #dandelion-preview .pg-blow,#dandelion-preview .pg-reset{min-height:48px;border-radius:14px;padding:12px 22px;font-size:13px;transition:transform .18s ease,background .18s ease}
+    #dandelion-preview .pg-blow{border:1px solid transparent;background:#758766;background:light-dark(#758766,#b1c59d);color:#fff;color:light-dark(#fff,#233022)}
+    #dandelion-preview .pg-reset{border:1px solid light-dark(#dce2d2,#4c5e4c);background:transparent;color:light-dark(#79866e,#c0ceb5)}
+    #dandelion-preview .pg-blow:active,#dandelion-preview .pg-reset:active,#dandelion-preview .pg-plant:active{transform:scale(.97)}
+    #dandelion-preview .pg-status{margin:14px 0 0;text-align:center;font-size:11px;line-height:1.8;color:light-dark(#839078,#b3c4a9);min-height:20px}
+    #dandelion-preview .pg-footer{text-align:center;margin:21px 0 0;padding-top:16px;border-top:1px solid light-dark(#e3e7d9,#39463c);font-size:10px;line-height:1.8;color:light-dark(#98a08c,#9eb294);letter-spacing:.08em}
+    @media(min-width:680px){#dandelion-preview .pg-game{padding:30px 42px}#dandelion-preview .pg-meadow{height:400px;margin-left:-42px;margin-right:-42px}#dandelion-preview .pg-compose{max-width:560px;margin-left:auto;margin-right:auto}}
+    @media(max-width:360px){#dandelion-preview .pg-lobby,#dandelion-preview .pg-game{padding:20px 16px}#dandelion-preview .pg-meadow{margin-left:-16px;margin-right:-16px;height:325px}#dandelion-preview .pg-plant{padding-left:12px;padding-right:12px}#dandelion-preview .pg-blow,#dandelion-preview .pg-reset{padding-left:16px;padding-right:16px}}
+    @media(prefers-reduced-motion:reduce){#dandelion-preview *{transition:none!important}}
+  </style>
+  <style>
+    #dandelion-preview .pg-entry{border-color:light-dark(#d8e7ee,#3e5662);background:linear-gradient(135deg,light-dark(#fff,#293941),light-dark(#f2f8fb,#202d34))}
+    #dandelion-preview .pg-entry-icon{background:light-dark(#e0effb,#304d66);color:light-dark(#5284ad,#b4d9f7)}
+    #dandelion-preview .pg-entry-meta small,#dandelion-preview .pg-entry-arrow{color:light-dark(#718691,#b6c7cf)}
+    #dandelion-preview .pg-game{position:relative;display:flex;flex-direction:column;width:100%;max-width:600px;min-height:690px;padding:16px 20px 20px;border:0;border-radius:22px;color:#fff;background:#2469b4;background:linear-gradient(180deg,#10459c 0%,#347cbe 48%,#78c9e9 100%);box-shadow:none}
+    #dandelion-preview .pg-nav{position:relative;z-index:1;margin:0;color:#ffffffb8;font-size:10px}
+    #dandelion-preview .pg-back{color:#fff;min-height:44px}
+    #dandelion-preview .pg-game header{position:absolute;top:76px;left:18px;right:18px;text-align:center;pointer-events:none}
+    #dandelion-preview .pg-eyebrow,#dandelion-preview .pg-description{display:none}
+    #dandelion-preview .pg-title{font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;font-size:15px;font-weight:400;letter-spacing:.35em;color:#ffffffb3;margin:0;line-height:1.6}
+    #dandelion-preview .pg-meadow{flex:1;min-height:420px;height:420px;margin:0 -20px;background:transparent}
+    #dandelion-preview .pg-wind-label{display:none}
+    #dandelion-preview .pg-caption{bottom:8px;font-size:11px;color:#ffffffbd;letter-spacing:.06em}
+    #dandelion-preview .pg-compose{position:relative;z-index:1;margin:0 auto;width:100%;max-width:440px}
+    #dandelion-preview .pg-compose label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+    #dandelion-preview .pg-input-row{gap:8px}
+    #dandelion-preview .pg-input{border:1px solid #ffffff9c;border-radius:24px;background:#ffffffdc;color:#284b70;min-height:46px;font-size:16px;padding:10px 17px;box-shadow:0 2px 15px #1a5a9120}
+    #dandelion-preview .pg-input::placeholder{color:#5f7fa0}
+    #dandelion-preview .pg-plant{border:1px solid #ffffffa6;border-radius:24px;background:#ffffffcf;color:#315d83;min-height:46px;padding:10px 17px}
+    #dandelion-preview .pg-actions{position:relative;z-index:1;margin-top:12px;gap:10px}
+    #dandelion-preview .pg-blow,#dandelion-preview .pg-reset{border:1px solid #ffffff8f;border-radius:24px;background:#ffffff24;color:#fff;min-height:44px;padding:10px 19px}
+    #dandelion-preview .pg-blow{background:#ffffffdf;color:#2f6089;border-color:#ffffffc9}
+    #dandelion-preview .pg-status{margin-top:11px;color:#ffffffd1;font-size:11px}
+    #dandelion-preview .pg-footer{display:none}
+    #dandelion-preview[data-standalone="true"]{padding:0}
+    #dandelion-preview[data-standalone="true"] .pg-game{max-width:none;min-height:100vh;min-height:100svh;border-radius:0;padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(18px,env(safe-area-inset-bottom))}
+    #dandelion-preview[data-standalone="true"] .pg-meadow{height:calc(100vh - 230px);height:calc(100svh - 230px);min-height:300px;flex:1}
+    @media(max-width:360px){#dandelion-preview .pg-game{padding-left:16px;padding-right:16px;min-height:640px}#dandelion-preview .pg-meadow{margin-left:-16px;margin-right:-16px;height:380px;min-height:380px}#dandelion-preview .pg-plant{padding-left:13px;padding-right:13px}}
+    @media(min-width:900px){#dandelion-preview[data-standalone="true"] .pg-nav{width:100%;max-width:1120px;margin-left:auto;margin-right:auto}#dandelion-preview[data-standalone="true"] .pg-meadow{min-height:360px}}
+  </style>
+  <style>
+    #dandelion-preview .pg-entry-icon svg{width:27px;height:27px;stroke-width:1.65}
+    #dandelion-preview .pg-support-context{display:flex;align-items:center;gap:14px;padding:17px 18px;border-radius:16px;min-height:78px;border:1px solid light-dark(#e8e1eb,#453a4e);background:light-dark(#fffefa,#332d3a);font-size:14px}
+    #dandelion-preview .pg-support-context>span:first-child{font-size:27px}
+    #dandelion-preview .pg-support-context>span:last-child{margin-left:auto;color:light-dark(#917a9b,#bb9ece)}
+    #dandelion-preview .pg-support-context small{display:block;margin-top:4px;font-size:11px;color:light-dark(#90749f,#b79ac8)}
+    #dandelion-preview .pg-home-footer{display:flex;flex-direction:column;align-items:center;gap:9px;margin-top:28px;text-align:center;font-size:11px;line-height:1.6;color:light-dark(#938999,#b4a8bb)}
+    #dandelion-preview .pg-footer-links{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;width:100%}
+    #dandelion-preview .pg-bug{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:44px;padding:0 12px;border:1px solid light-dark(#d8c7e2,#6d557c);border-radius:13px;background:light-dark(#efe5f5,#453050);color:light-dark(#705281,#e0c5ef);font-size:11px;text-decoration:none;white-space:nowrap}
+    #dandelion-preview .pg-bug>span{font-size:16px}
+    #dandelion-preview .pg-icp{display:inline-flex;align-items:center;min-height:44px;color:inherit;font-size:11px;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+    #dandelion-preview .pg-filing-row{flex-wrap:nowrap;gap:10px}
+    #dandelion-preview .pg-filing-row .pg-icp{min-width:0;white-space:normal;overflow-wrap:anywhere;justify-content:center}
+    #dandelion-preview .pg-bottom-actions{justify-content:space-between;margin-top:12px;padding:0;gap:8px}
+    #dandelion-preview .pg-bottom-actions .pg-reset{background:#ffffffd9;border-color:#ffffffbd;color:#284b70}
+    #dandelion-preview .pg-bottom-actions .pg-blow{background:#183864cf;color:#fff;min-width:118px}
+    #dandelion-preview .pg-blow:disabled{opacity:.58}
+    #dandelion-preview .pg-game.is-editing{min-height:690px!important}
+    #dandelion-preview .pg-editor-shade{position:absolute;inset:0;z-index:5;display:flex;align-items:flex-start;justify-content:center;padding:104px 16px 24px;background:#76b9d55c}
+    #dandelion-preview .pg-editor{width:100%;max-width:470px;margin:0;padding:20px;border:1px solid #ffffffeb;border-radius:22px;background:#e8f5fbdc;color:#1b2f58;box-shadow:0 14px 45px #215e8626}
+    #dandelion-preview .pg-editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    #dandelion-preview .pg-editor-head h2{margin:0;font-size:19px;font-weight:500;letter-spacing:.12em;line-height:1.5}
+    #dandelion-preview .pg-editor-close{min-width:44px;min-height:44px;padding:0;border:0;background:transparent;color:#8291a7;font-size:23px;line-height:1}
+    #dandelion-preview .pg-editor-intro{margin:0 0 15px;font-size:12px;line-height:1.9;color:#7a89a4}
+    #dandelion-preview .pg-textarea{box-sizing:border-box;display:block;width:100%;min-height:116px;resize:vertical;border:1px solid #c9d8e3;border-radius:12px;background:#ffffffbf;color:#253e66;padding:12px 14px;font-family:inherit;font-size:16px;line-height:1.7}
+    #dandelion-preview .pg-textarea::placeholder{color:#a2afbf}
+    #dandelion-preview .pg-editor-count{font-size:11px;color:#7a89a4;text-align:right;min-height:16px;margin:5px 0 9px}
+    #dandelion-preview .pg-order{display:flex;gap:8px;padding:0;margin:0 0 15px;border:0;min-width:0}
+    #dandelion-preview .pg-order legend{font-size:15px;letter-spacing:.12em;margin-bottom:10px;padding:0;line-height:1.7}
+    #dandelion-preview .pg-order-choice{display:flex;align-items:center;flex:1;min-width:0;position:relative}
+    #dandelion-preview .pg-order-choice input{appearance:none;-webkit-appearance:none;position:absolute;inset:0;margin:0;width:100%;height:100%;border:1px solid #cbd9e5;border-radius:11px;background:#ffffffbf}
+    #dandelion-preview .pg-order-choice input:checked{background:#d7e5ee;border-color:#7a89aa}
+    #dandelion-preview .pg-order-choice input:focus-visible{outline:2px solid #45688d;outline-offset:3px}
+    #dandelion-preview .pg-order-choice span{position:relative;z-index:1;pointer-events:none;display:flex;align-items:center;justify-content:center;width:100%;min-height:44px;padding:8px 4px;text-align:center;font-size:13px;line-height:1.4;color:#72809c}
+    #dandelion-preview .pg-order-choice input:checked+span{color:#1b2f58;font-weight:600}
+    #dandelion-preview .pg-generate{display:block;width:100%;min-height:48px;padding:10px 12px;border:0;border-radius:13px;background:#1b2e5a;color:#fff;font-size:16px;letter-spacing:.15em}
+    #dandelion-preview .pg-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+    @media(max-width:360px){#dandelion-preview .pg-editor-shade{padding:86px 10px 20px}#dandelion-preview .pg-editor{padding:15px}#dandelion-preview .pg-editor-head h2{font-size:17px}#dandelion-preview .pg-editor-intro{font-size:11px}#dandelion-preview .pg-order-choice span{font-size:12px}#dandelion-preview .pg-bug{padding-left:9px;padding-right:9px}}
+  </style>
+  <style>
+    #dandelion-preview .pg-game{height:720px;min-height:720px;padding:16px 20px 20px}
+    #dandelion-preview .pg-nav{z-index:2;gap:14px;flex-wrap:nowrap;font-size:12px;letter-spacing:.08em}
+    #dandelion-preview .pg-site-label{font-size:12px;font-weight:400;letter-spacing:.08em;color:#ffffffdf;white-space:nowrap}
+    #dandelion-preview .pg-site-mark{display:flex;flex-direction:column;align-items:flex-end;gap:4px;line-height:1.35;margin-left:auto}
+    #dandelion-preview .pg-game-label{font-size:11px;font-weight:400;letter-spacing:.12em;color:#ffffffc7;white-space:nowrap}
+    @media(min-width:900px){#dandelion-preview[data-standalone="true"] .pg-site-label{font-size:14px}}
+    #dandelion-preview .pg-game header{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);left:0;top:0;right:auto}
+    #dandelion-preview .pg-meadow{position:absolute;inset:0;margin:0;width:100%;height:100%;min-height:0}
+    #dandelion-preview .pg-caption{display:none}
+    #dandelion-preview .pg-still{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
+    #dandelion-preview .pg-canvas{position:relative}
+    #dandelion-preview .pg-bottom-actions{position:absolute;z-index:2;left:20px;right:20px;bottom:40px;margin:0;padding:0;justify-content:space-between;flex-wrap:nowrap;gap:8px}
+    #dandelion-preview .pg-bottom-actions .pg-reset,#dandelion-preview .pg-bottom-actions .pg-blow{min-height:46px;border-radius:28px;padding:11px 18px;font-size:13px;white-space:nowrap}
+    #dandelion-preview .pg-bottom-actions .pg-reset{background:#e9f7ffdf;color:#263e64;border:1px solid #ffffffd9}
+    #dandelion-preview .pg-bottom-actions .pg-blow{min-width:0;background:#e9f7ffdf;color:#263e64;border:1px solid #ffffffd9}
+    #dandelion-preview .pg-status{position:absolute;left:0;right:auto;bottom:0;width:1px;height:1px;margin:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;pointer-events:none}
+    #dandelion-preview[data-standalone="true"] .pg-game{height:100vh;height:100svh;min-height:500px}
+    #dandelion-preview[data-standalone="true"] .pg-meadow{height:100%;min-height:0;margin:0}
+    #dandelion-preview[data-standalone="true"] .pg-bottom-actions{bottom:max(40px,calc(env(safe-area-inset-bottom) + 24px))}
+    #dandelion-preview .pg-editor-shade{padding-top:110px;z-index:5}
+    @media(max-width:360px){#dandelion-preview .pg-game{height:680px;min-height:680px;padding-left:16px;padding-right:16px}#dandelion-preview .pg-bottom-actions{left:16px;right:16px}#dandelion-preview .pg-bottom-actions .pg-reset,#dandelion-preview .pg-bottom-actions .pg-blow{padding-left:13px;padding-right:13px;font-size:12px}#dandelion-preview .pg-editor-shade{padding-top:88px}}
+  </style>
+  <div class="pg-lobby" data-lobby hidden>
+    <section class="pg-section">
+      <h2 class="pg-heading">我在折腾的小东西 ✨</h2>
+      <a class="pg-service cursor-interaction" href="https://furryhk-mail.furryhk.cn" target="_blank" rel="noopener noreferrer"><div><strong>FurryHK 免费个人邮箱</strong><p>专属 @furryhk.cn 邮箱<br>人工审核开通</p></div><span>使用条款 ↗</span></a>
+      <div class="pg-pending">✨ 待开发项目<p>二级域名服务 · 筹备中<br>更多功能 · 开发中</p></div>
+    </section>
+    <section class="pg-section">
+      <h2 class="pg-heading"><span aria-hidden="true">🎡</span> 小小游乐园</h2>
+      <button type="button" class="pg-entry cursor-interaction" data-enter><span class="pg-entry-icon" aria-hidden="true"><!-- @license lucide-static v1.59.0 - ISC -->
+<svg
+  class="lucide lucide-wind"
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+>
+  <path d="M12.8 19.6A2 2 0 1 0 14 16H2" />
+  <path d="M17.5 8a2.5 2.5 0 1 1 2 4H2" />
+  <path d="M9.8 4.4A2 2 0 1 1 11 8H2" />
+</svg>
+</span><span class="pg-entry-meta"><strong>文字蒲公英</strong><small>写一句话，让它随风出发</small></span><span class="pg-entry-arrow" aria-hidden="true">›</span></button>
+    </section>
+    <section class="pg-section"><h2 class="pg-heading">友情链接</h2><div class="pg-friend-context">小狼<span style="float:right" aria-hidden="true">›</span></div></section>
+    <section class="pg-section"><div class="pg-support-context"><span aria-hidden="true">🧋</span><span>请我喝杯奶茶<small>点击有惊喜 ✨</small></span><span aria-hidden="true">↗</span></div></section>
+    <footer class="pg-home-footer"><span>谢谢你来看我呀，祝你天天开心</span><a class="pg-bug cursor-interaction" href="mailto:furryhk@furryhk.cn?subject=%E6%89%A9%E6%9D%A1Bug%E5%8F%8D%E9%A6%88"><span aria-hidden="true">🔧</span> Bug反馈</a><div class="pg-footer-links pg-filing-row"><a class="pg-icp cursor-interaction" href="http://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">桂ICP备2026023237号</a><a class="pg-icp cursor-interaction" href="https://icp.gov.moe/?keyword=20268806" target="_blank" rel="noopener noreferrer">🐾 萌ICP备20268806号</a></div></footer>
+  </div>
+  <section class="pg-game" data-game aria-labelledby="pg-title">
+    <nav class="pg-nav" aria-label="游戏导航"><a class="pg-back cursor-interaction" href="/" data-back>← 返回主页</a><span class="pg-site-mark"><span class="pg-site-label">FURRYHK.CN</span><small class="pg-game-label">文字蒲公英</small></span></nav>
+    <header><p class="pg-eyebrow">A LITTLE WISH, A LITTLE WIND</p><h1 class="pg-title" id="pg-title">文字蒲公英</h1><p class="pg-description">把想说的话，种成一朵蒲公英。<br>轻轻一碰，让每个字随风出发。</p></header>
+    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="一朵由文字组成的蒲公英，点击或拖动可以吹散。也可使用下方吹风按钮。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">点击花朵，或用手指轻轻划过</div></div>
+    <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键散开 ↗</button></div>
+    <div class="pg-editor-shade" data-editor hidden>
+      <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
+        <div class="pg-editor-head"><h2 id="pg-editor-title">输入你的文字</h2><button class="pg-editor-close cursor-interaction" type="button" data-close aria-label="关闭输入弹窗">×</button></div>
+        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>按文字顺序时，点一下散开一个字；一键散开放走全部</p>
+        <label class="pg-sr" for="pg-wish">写下你的话</label><textarea class="pg-textarea" id="pg-wish" data-wish maxlength="600" rows="4" placeholder="写下你的话…">把想说的话交给风，愿悦悦天天开心</textarea>
+        <div class="pg-editor-count" data-count>0 / 150</div>
+        <fieldset class="pg-order"><legend>飘散顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风散开</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
+        <button class="pg-generate cursor-interaction" type="submit">生成蒲公英</button>
+      </form>
+    </div>
+    <p class="pg-status" data-status role="status" aria-live="polite">96 个字，等一阵风。</p>
+    <footer class="pg-footer">没有输赢，只有一阵刚刚好的风。<br>FURRYHK · 悦悦的小小游乐园</footer>
+  </section>
+  <script>
+    (() => {
+      const root = document.getElementById('dandelion-preview');
+      if (!root) return;
+      const lobby = root.querySelector('[data-lobby]');
+      const game = root.querySelector('[data-game]');
+      const canvas = root.querySelector('[data-canvas]');
+      const stillCanvas = document.createElement('canvas');
+      stillCanvas.className='pg-still';stillCanvas.setAttribute('aria-hidden','true');canvas.before(stillCanvas);
+      const status = root.querySelector('[data-status]');
+      const input = root.querySelector('[data-wish]');
+      const editor = root.querySelector('[data-editor]');
+      const form = root.querySelector('[data-form]');
+      const blowButton = root.querySelector('[data-blow]');
+      const editButton = root.querySelector('[data-edit]');
+      let inertStates=[],focusFrame=0;
+      let ctx = null,stillCtx=null;
+      try { ctx = canvas.getContext('2d');stillCtx=stillCanvas.getContext('2d'); } catch (_) {}
+      const reduced = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : {matches:false};
+      const dark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : {matches:false};
+      const raf = window.requestAnimationFrame ? fn => window.requestAnimationFrame(fn) : fn => setTimeout(() => fn(Date.now()),16);
+      const caf = window.cancelAnimationFrame ? id => window.cancelAnimationFrame(id) : id => clearTimeout(id);
+      let width=360,height=360,cx=180,cy=148,radius=90,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
+      const sprites=new Map();let stillDirty=false;
+      let letters=Array.from(input.value||'悦悦天天开心');
+      let TOTAL = 100;
+      let mode='random';
+      const running = () => !game.hidden && !document.hidden;
+      const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
+      const position = p => {const perspective=.94+p.sz*.11;return{x:cx+p.sx*radius*perspective,y:cy+p.sy*radius*perspective};};
+      // Shape each glyph once; animation frames only composite small cached images.
+      function prepareSprites(){
+        sprites.clear();
+        particles.forEach(p=>{
+          const size=Math.max(12,Math.round((12+10*p.depth)*Math.max(.85,Math.min(1.45,radius/120)))),key=p.char+':'+size;
+          if(!sprites.has(key)){
+            const image=document.createElement('canvas'),side=size*2;
+            image.width=image.height=Math.ceil(side*density);
+            const c=image.getContext('2d');
+            if(c){c.setTransform(density,0,0,density,0,0);c.translate(side/2,side/2);c.textAlign='center';c.textBaseline='middle';c.font=size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';c.fillStyle='#fff';c.fillText(p.char,0,0);}
+            sprites.set(key,{image,side});
+          }
+          p.sprite=sprites.get(key);
+        });
+      }
+      function paintGlyph(c,p,x,y){const s=p.sprite;if(s)c.drawImage(s.image,x-s.side/2,y-s.side/2,s.side,s.side);}
+      function paintTail(c,p,x,y,angle,bend=0,scale=1){
+        if(!p.sprite)return;
+        const dx=Math.cos(angle),dy=Math.sin(angle),font=p.sprite.side/2;
+        const edge=font*.48*scale,length=(font*.66+5)*scale;
+        const startX=x+dx*edge,startY=y+dy*edge,alpha=c.globalAlpha;
+        c.setTransform(density,0,0,density,0,0);c.globalAlpha=alpha*.58;c.strokeStyle='#fff';c.lineWidth=.65;c.lineCap='round';
+        c.beginPath();c.moveTo(startX,startY);
+        c.quadraticCurveTo(startX+dx*length*.5-dy*bend,startY+dy*length*.5+dx*bend,startX+dx*length,startY+dy*length);
+        c.stroke();c.globalAlpha=alpha;
+      }
+      function paintFlight(p){
+        const s=p.sprite;if(!s)return;
+        const scale=reduced.matches?1:p.scale;
+        ctx.setTransform(density*scale,0,0,density*scale,p.x*density,p.y*density);
+        ctx.drawImage(s.image,-s.side/2,-s.side/2,s.side,s.side);
+      }
+      // The stem and attached seeds never repaint during a flight.
+      function drawStill(){
+        if(!stillCtx)return;const c=stillCtx;c.clearRect(0,0,width,height);c.lineWidth=1;c.strokeStyle='#fff';c.globalAlpha=.68;
+        c.beginPath();c.moveTo(cx,height-10);c.lineTo(cx,cy);c.stroke();c.globalAlpha=.3;c.beginPath();c.arc(cx,height-10,5.5,0,Math.PI*2);c.stroke();
+        ordered.forEach(p=>{if(p.launched)return;const q=position(p);c.globalAlpha=(.18+p.depth*.82)*(.12+p.depth*.06);c.lineWidth=.55;c.beginPath();c.moveTo(cx,cy);c.lineTo(q.x,q.y);c.stroke();c.globalAlpha=.18+p.depth*.82;paintTail(c,p,q.x,q.y,p.a+Math.PI);paintGlyph(c,p,q.x,q.y);});c.globalAlpha=1;
+      }
+      function draw(){
+        if(!ctx)return;if(stillDirty){drawStill();stillDirty=false;}ctx.setTransform(density,0,0,density,0,0);ctx.clearRect(0,0,width,height);
+        ordered.forEach(p=>{
+          if(!p.launched||p.gone)return;
+          const age=Math.max(0,p.life-p.delay),progress=Math.min(1,age/p.duration),tail=Math.max(0,(progress-.48)/.52),fade=1-tail*tail*(3-2*tail);
+          ctx.globalAlpha=(.18+p.depth*.82)*fade;
+          const settle=reduced.matches?1:1-Math.exp(-age*3),startAngle=p.a+Math.PI,targetAngle=Math.atan2(-p.speedY,-p.speedX);
+          const turn=Math.atan2(Math.sin(targetAngle-startAngle),Math.cos(targetAngle-startAngle));
+          paintTail(ctx,p,p.x,p.y,startAngle+turn*settle,reduced.matches?0:Math.sin(age*2.4+p.phase)*2.5*settle,p.scale);
+          paintFlight(p);
+        });ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;
+      }
+      function stop(){if(frame)caf(frame);frame=0;last=0;}
+      function animate(now){
+        frame=0;if(!running()||!editor.hidden){last=0;return;}
+        const dt=last?Math.min(.064,Math.max(0,(now-last)/1000)):.016;last=now;
+        let active=false;
+        particles.forEach(p=>{if(!p.free||p.gone)return;p.life+=dt;
+          if(p.life<p.delay){active=true;return;}
+          if(!p.launched){const q=position(p);p.originX=q.x;p.originY=q.y;p.launched=true;stillDirty=true;}
+          const age=p.life-p.delay;
+          // Continuous curves keep the same path at 60/120 Hz, with a soft release.
+          const lift=1-Math.exp(-age*2.4),travel=age+(Math.exp(-age*3.2)-1)/3.2;
+          p.x=p.originX+p.speedX*travel+p.spreadX*lift+p.swayX*(Math.sin(age*p.frequency+p.phase)-p.sinPhase)*lift;
+          p.y=p.originY+p.speedY*travel+p.spreadY*lift+p.swayY*(Math.sin(age*p.frequency*.85+p.phase+.9)-p.sinPhaseY)*lift;
+          p.scale=1+p.scaleDelta*lift;
+          if(age>p.duration||p.x>width+70||p.x< -70||p.y< -70)p.gone=true;else active=true;
+        });
+        draw();if(active)frame=raf(animate);else last=0;
+      }
+      function wake(){if(!frame&&running())frame=raf(animate);}
+      function grow(){stop();TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();}
+      function resize(){
+        const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
+        const dpr=Math.min(window.devicePixelRatio||1,2);if(width===bounds.width&&height===bounds.height&&density===dpr)return;
+        const oldW=width,oldH=height;width=bounds.width;height=bounds.height;density=dpr;cx=width*.5;cy=height*.50;radius=Math.min(width*.32,height*.25,230);
+        [canvas,stillCanvas].forEach(c=>{c.width=Math.round(width*dpr);c.height=Math.round(height*dpr);});if(ctx)ctx.setTransform(dpr,0,0,dpr,0,0);if(stillCtx)stillCtx.setTransform(dpr,0,0,dpr,0,0);
+        particles.forEach(p=>{if(p.free){const rx=width/oldW,ry=height/oldH;['x','originX','speedX','spreadX','swayX'].forEach(key=>p[key]*=rx);['y','originY','speedY','spreadY','swayY'].forEach(key=>p[key]*=ry);}});prepareSprites();drawStill();draw();
+      }
+      function blow(x,y,force=1,all=false){
+        if(!ctx){status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';return;}
+        const available=particles.filter(p=>!p.free);
+        if(!available.length){announce();return;}
+        if(!all&&mode==='random')available.sort((a,b)=>{const ap=position(a),bp=position(b);return Math.hypot(ap.x-x,ap.y-y)-Math.hypot(bp.x-x,bp.y-y);});
+        if(all&&mode==='random')for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
+        const chosen=all?available:mode==='sequence'?available.slice(0,1):available.filter(p=>{const q=position(p);return Math.hypot(q.x-x,q.y-y)<radius*.65;}).slice(0,Math.ceil(8*force));
+        chosen.forEach(p=>{
+          const q=position(p),phase=Math.random()*Math.PI*2,depthSpeed=.78+p.depth*.44;
+          Object.assign(p,{
+            free:true,x:q.x,y:q.y,originX:q.x,originY:q.y,life:0,scale:1,
+            delay:reduced.matches||!all?0:(p.sx+1)*.12+Math.random()*.16,
+            duration:reduced.matches?.9:6.4+Math.random()*1.8,
+            speedX:(30+Math.random()*35)*depthSpeed*force,speedY:-(14+Math.random()*36)*depthSpeed,
+            spreadX:p.sx*radius*(.07+Math.random()*.10),spreadY:p.sy*radius*(.06+Math.random()*.12),
+            swayX:7+Math.random()*12,swayY:12+Math.random()*19,frequency:.85+Math.random()*.8,
+            phase,sinPhase:Math.sin(phase),sinPhaseY:Math.sin(phase+.9),scaleDelta:(p.depth-.6)*.32
+          });sent++;
+        });
+        if(chosen.length){stillDirty=true;announce();wake();}
+      }
+      function point(event){const r=canvas.getBoundingClientRect();return{x:event.clientX-r.left,y:event.clientY-r.top};}
+      function start(event){if(!editor.hidden||down)return;down=true;previous=point(event);blow(previous.x,previous.y);if(canvas.setPointerCapture&&event.pointerId!==undefined){try{canvas.setPointerCapture(event.pointerId);}catch(_){}}}
+      function move(event){if(!down)return;const p=point(event);if(mode==='sequence'){previous=p;return;}const speed=previous?Math.hypot(p.x-previous.x,p.y-previous.y):0;blow(p.x,p.y,Math.min(2,1+speed/35));previous=p;}
+      function end(){down=false;previous=null;}
+      if(window.PointerEvent){canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',end);canvas.addEventListener('pointercancel',end);canvas.addEventListener('lostpointercapture',end);}
+      else {canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);window.addEventListener('mouseup',end);canvas.addEventListener('touchstart',e=>{if(e.touches.length){e.preventDefault();start(e.touches[0]);}},{passive:false});canvas.addEventListener('touchmove',e=>{if(e.touches.length){e.preventDefault();move(e.touches[0]);}},{passive:false});canvas.addEventListener('touchend',end);canvas.addEventListener('touchcancel',end);}
+      function updateCount(){const n=Array.from(input.value).filter(c=>c.trim()).length;root.querySelector('[data-count]').textContent=n+' / 150';}
+      function openEditor(){if(!editor.hidden)return;end();stop();editor.hidden=false;game.classList.add('is-editing');inertStates=[...game.children].filter(e=>e!==editor).map(e=>[e,e.inert]);inertStates.forEach(([e])=>{e.inert=true;});updateCount();focusFrame=raf(()=>{focusFrame=0;if(!editor.hidden)input.focus({preventScroll:true});});}
+      function closeEditor(focus=true){if(editor.hidden)return;editor.hidden=true;if(focusFrame)caf(focusFrame);focusFrame=0;game.classList.remove('is-editing');inertStates.forEach(([e,inert])=>{e.inert=inert;});inertStates=[];resize();wake();if(focus)editButton.focus({preventScroll:true});}
+      blowButton.addEventListener('click',()=>blow(cx,cy,1,true));
+      editButton.addEventListener('click',openEditor);
+      root.querySelector('[data-close]').addEventListener('click',()=>closeEditor());
+      editor.addEventListener('click',e=>{if(e.target===editor)closeEditor();});
+      editor.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();closeEditor();}if(e.key==='Tab'){const controls=[...form.querySelectorAll('button,textarea,input:checked')];const first=controls[0],lastControl=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();lastControl.focus();}else if(!e.shiftKey&&document.activeElement===lastControl){e.preventDefault();first.focus();}}});
+      input.addEventListener('input',e=>{if(!e.isComposing)updateCount();});input.addEventListener('compositionend',updateCount);
+      form.addEventListener('submit',e=>{e.preventDefault();const chars=Array.from(input.value.trim()).filter(c=>c.trim());if(chars.length>150){input.setCustomValidity('最多输入150个字，请删减后再生成。');input.reportValidity();return;}input.setCustomValidity('');letters=chars.length?chars:Array.from('悦悦天天开心');input.value=letters.join('');mode=form.querySelector('input[name="pg-order"]:checked').value;grow();closeEditor(false);input.blur();blowButton.focus({preventScroll:true});});
+      input.addEventListener('input',()=>input.setCustomValidity(''));
+      root.querySelector('[data-enter]').addEventListener('click',()=>{lobby.hidden=true;game.hidden=false;resize();draw();});
+      root.querySelector('[data-back]').addEventListener('click',e=>{if(root.dataset.standalone==='true')return;e.preventDefault();end();stop();game.hidden=true;lobby.hidden=false;root.querySelector('[data-enter]').focus({preventScroll:true});});
+      document.addEventListener('visibilitychange',()=>{end();if(document.hidden)stop();else if(running())wake();});
+      if(window.ResizeObserver)new ResizeObserver(resize).observe(canvas);else window.addEventListener('resize',resize);
+      const onTheme=()=>draw();if(dark.addEventListener)dark.addEventListener('change',onTheme);else if(dark.addListener)dark.addListener(onTheme);
+      if(root.dataset.standalone==='true'||root.dataset.startGame==='true'){lobby.hidden=true;game.hidden=false;}
+      grow();resize();updateCount();
+      if(!ctx)status.textContent='当前浏览器暂不支持画布，请换用 Safari、Chrome 或 Edge。';
+    })();
+  </script>
+</div>
+<noscript><p style="text-align:center;color:#fff">开启 JavaScript 后，即可种下文字蒲公英。<a href="/" style="color:inherit">返回主页</a></p></noscript></body></html>
