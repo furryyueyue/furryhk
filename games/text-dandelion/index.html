@@ -261,7 +261,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       let rotationAngle=0,rotating=false,frameInterval=0;
       let projectedAngle=NaN,rotationCos=1,rotationSin=0,stillPaintKey='';
       let activePointer=null,pressOrigin=null,dragged=false,pointerPosition=null,previousTime=0,gestureHit=false,hoverPoint=null,hoverTime=0;
-      let contacts=new Set(),hoverTriggered=false,hoverTriggerPoint=null;
+      let contacts=new Set(),contactAnchor=null,hoverTriggered=false,hoverTriggerPoint=null;
       const pointerRadius=6,dragThreshold=7;
       const sprites=new Map();let stillDirty=false,flightPainted=false;
       let entranceAnimations=[];
@@ -325,6 +325,8 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       }
       const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
       const position = p => {
+        const cached=p.projection;
+        if(cached&&cached.angle===rotationAngle&&cached.radius===radius&&cached.cx===cx&&cached.cy===cy)return cached;
         // 3D绕Y轴（垂直轴）旋转，模拟真实蒲公英球转动
         if(projectedAngle!==rotationAngle){projectedAngle=rotationAngle;rotationCos=Math.cos(rotationAngle);rotationSin=Math.sin(rotationAngle);}
         const cosA=rotationCos,sinA=rotationSin;
@@ -333,7 +335,8 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         // 根据深度做透视：z越靠近镜头（z越大）越大，越远越小
         const perspective = 0.82 + z * 0.18;
         const depth=(z+1)/2;
-        return {x:cx + x * radius * perspective, y:cy + p.sy * radius * perspective, z,scale:(12+10*depth)/22,alpha:.24+.76*depth};
+        const q={x:cx + x * radius * perspective, y:cy + p.sy * radius * perspective, z,scale:(12+10*depth)/22,alpha:.24+.76*depth,angle:rotationAngle,radius,cx,cy};
+        p.projection=q;return q;
       };
       // Shape each glyph once; animation frames only composite small cached images.
       function prepareSprites(){
@@ -560,26 +563,45 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         return !!tail&&touchesStroke(a,b,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by},.65);
       }
       function brush(from,to,impulse={x:0,y:0},canRelease=true){
-        if(mode==='sequence')return 0;
-        const entered=[],current=new Set();
+        return brushPath([from,to],impulse,canRelease);
+      }
+      function brushPath(path,impulse={x:0,y:0},canRelease=true){
+        if(mode==='sequence'||!canRelease||!path.length)return 0;
+        const to=path[path.length-1];
+        // A tiny real movement can reach a newly exposed rear seed. Holding still never repeats.
+        if(contactAnchor&&(to.x-contactAnchor.x)**2+(to.y-contactAnchor.y)**2<4)return 0;
+        let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+        path.forEach(p=>{minX=Math.min(minX,p.x);maxX=Math.max(maxX,p.x);minY=Math.min(minY,p.y);maxY=Math.max(maxY,p.y);});
+        const reach=radius+48;
+        if(maxX<cx-reach||minX>cx+reach||maxY<cy-reach||minY>cy+reach){contacts.clear();return 0;}
+        let chosen=null,bestRank=3,bestDistance=Infinity,bestHead=Infinity,bestDepth=-Infinity;
+        // Search the whole sampled stroke once, rather than rescanning the flower for every raw event.
         particles.forEach(p=>{
           if(p.free)return;
-          const q=position(p);
-          const bounds=p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8};
-          const glyph=touchesGlyph(from,to,q,bounds),hit=glyph||touchesTail(from,to,p,q);
-          if(touchesGlyph(to,to,q,bounds)||touchesTail(to,to,p,q))current.add(p.index);
-          if(!hit||contacts.has(p.index))return;
-          const tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x),0,q.scale);
-          const distance=glyph?(q.x-to.x)**2+(q.y-to.y)**2:Math.min(pointSegmentDistance2(to.x,to.y,{x:cx,y:cy},q),tail?pointSegmentDistance2(to.x,to.y,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by}):Infinity);
-          entered.push({p,glyph,distance,headDistance:(q.x-to.x)**2+(q.y-to.y)**2});
+          const q=position(p),bounds=p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8};
+          const head=(q.x-to.x)**2+(q.y-to.y)**2;
+          let rank=3,tail=null;
+          if(touchesGlyph(to,to,q,bounds))rank=0;
+          else if(bestRank>0){
+            for(let i=1;i<path.length;i++)if(touchesGlyph(path[i-1],path[i],q,bounds)){rank=1;break;}
+            if(rank===3&&bestRank>1){
+              for(let i=1;i<path.length;i++)if(touchesStroke(path[i-1],path[i],{x:cx,y:cy},q,.55)){rank=2;break;}
+              if(rank===3){
+                tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x),0,q.scale);
+                if(tail)for(let i=1;i<path.length;i++)if(touchesStroke(path[i-1],path[i],{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by},.65)){rank=2;break;}
+              }
+            }
+          }
+          if(rank>bestRank||rank===3)return;
+          const distance=rank<2?head:Math.min(pointSegmentDistance2(to.x,to.y,{x:cx,y:cy},q),tail?pointSegmentDistance2(to.x,to.y,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by}):Infinity);
+          if(rank<bestRank||distance<bestDistance||distance===bestDistance&&(head<bestHead||head===bestHead&&q.z>bestDepth)){
+            chosen=p;bestRank=rank;bestDistance=distance;bestHead=head;bestDepth=q.z;
+          }
         });
-        // Consume every overlap for this contact, but release only one seed. Rearm on leaving it.
-        contacts=current;
-        if(!canRelease||!entered.length)return 0;
-        entered.sort((a,b)=>Number(b.glyph)-Number(a.glyph)||a.distance-b.distance||a.headDistance-b.headDistance);
-        const chosen=entered[0].p;
+        contacts.clear();
         if(!chosen)return 0;
-        release([chosen],1,false,impulse);return 1;
+        contacts.add(chosen.index);
+        contactAnchor={x:to.x,y:to.y};release([chosen],1,false,impulse);return 1;
       }
       function strokeImpulse(from,to,before,now){
         const dt=Math.max(.008,(now-before)/1000),dx=to.x-from.x,dy=to.y-from.y,speed=Math.hypot(dx,dy)/dt;
@@ -589,7 +611,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function start(event){
         if(!editor.hidden||gameExit||down||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
         const p=point(event),carried=event.pointerType!=='touch'&&hoverTriggered&&hoverPoint&&Math.hypot(p.x-hoverPoint.x,p.y-hoverPoint.y)<=pointerRadius;
-        if(!carried)contacts.clear();
+        if(!carried){contacts.clear();contactAnchor=null;}
         down=true;activePointer=event.pointerId===undefined?'mouse':event.pointerId;dragged=false;gestureHit=!!carried;hoverPoint=null;hoverTriggered=false;hoverTriggerPoint=null;
         pressOrigin=previous=p;previousTime=event.timeStamp||performance.now();if(mode!=='sequence'){setPointer(previous.x,previous.y);pointer.classList.add('is-pressing');}
         // Contact is immediate, including a stationary touch; do not wait for movement or release.
@@ -600,31 +622,28 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         if(!editor.hidden||gameExit||event.isPrimary===false)return;
         const id=event.pointerId===undefined?'mouse':event.pointerId;
         if(down&&id!==activePointer)return;
-        const bounds=canvas.getBoundingClientRect();let samples=[],released=false;
+        const bounds=canvas.getBoundingClientRect();let samples=[];
         try{if(event.getCoalescedEvents)samples=event.getCoalescedEvents();}catch(_){}
-        // Include the dispatched endpoint even when a browser returns no coalesced samples.
+        const latest=point(event,bounds),time=event.timeStamp||performance.now();
+        if(mode!=='sequence'&&(down||event.pointerType!=='touch'))setPointer(latest.x,latest.y);
+        // Bound collision work; keep the endpoint and the curved path's intermediate samples.
         samples=[...samples,event];
+        const sampled=samples.length<=6?samples:Array.from({length:6},(_,i)=>samples[Math.round(i*(samples.length-1)/5)]);
+        const from=down?previous:(hoverPoint||latest),path=[from];
+        sampled.forEach(sample=>{const p=point(sample,bounds),lastPoint=path[path.length-1];if((p.x-lastPoint.x)**2+(p.y-lastPoint.y)**2>.0025)path.push(p);});
+        if(path.length===1)path.push(latest);
         if(!down){
           if(mode!=='sequence'&&event.pointerType!=='touch'){
-            samples.forEach(sample=>{
-              const p=point(sample,bounds),time=sample.timeStamp||event.timeStamp||performance.now(),from=hoverPoint||p;
-              if(brush(from,p,hoverPoint?strokeImpulse(from,p,hoverTime,time):{x:0,y:0},!released)){released=true;hoverTriggered=true;hoverTriggerPoint=p;}
-              if(!contacts.size&&hoverTriggerPoint&&Math.hypot(p.x-hoverTriggerPoint.x,p.y-hoverTriggerPoint.y)>pointerRadius){hoverTriggered=false;hoverTriggerPoint=null;}
-              hoverPoint=p;hoverTime=time;
-            });
-            setPointer(hoverPoint.x,hoverPoint.y);
+            if(brushPath(path,hoverPoint?strokeImpulse(from,latest,hoverTime,time):{x:0,y:0})){hoverTriggered=true;hoverTriggerPoint=latest;}
+            if(!contacts.size&&hoverTriggerPoint&&Math.hypot(latest.x-hoverTriggerPoint.x,latest.y-hoverTriggerPoint.y)>pointerRadius){hoverTriggered=false;hoverTriggerPoint=null;}
+            hoverPoint=latest;hoverTime=time;
           }
           return;
         }
-        samples.forEach(sample=>{
-          const p=point(sample,bounds);
-          if(Math.hypot(p.x-pressOrigin.x,p.y-pressOrigin.y)>dragThreshold)dragged=true;
-          const time=sample.timeStamp||event.timeStamp||performance.now(),moved=Math.hypot(p.x-previous.x,p.y-previous.y)>.2;
-          // A short stroke can already touch ink before it crosses the tap/drag threshold.
-          if(mode!=='sequence'&&(moved||dragged)){if(brush(previous,p,strokeImpulse(previous,p,previousTime,time),!released)){released=true;gestureHit=true;}}
-          previous=p;previousTime=time;
-        });
-        if(mode!=='sequence')setPointer(previous.x,previous.y);
+        if(!dragged)for(const sample of samples){const p=point(sample,bounds);if(Math.hypot(p.x-pressOrigin.x,p.y-pressOrigin.y)>dragThreshold){dragged=true;break;}}
+        const moved=path.length>2||Math.hypot(latest.x-previous.x,latest.y-previous.y)>.2;
+        if(mode!=='sequence'&&(moved||dragged))gestureHit=brushPath(path,strokeImpulse(previous,latest,previousTime,time))>0||gestureHit;
+        previous=latest;previousTime=time;
       }
       function finish(event){
         const id=event.pointerId===undefined?'mouse':event.pointerId;
@@ -632,15 +651,15 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         move(event);const tap=!dragged&&!gestureHit,p=previous;end(false);
         if(tap&&p)blow(p.x,p.y);
       }
-      function cancel(event){if(!down){if(event.type==='lostpointercapture')return;hoverPoint=null;contacts.clear();hoverTriggered=false;hoverTriggerPoint=null;}else if(event.pointerId===undefined||event.pointerId===activePointer)end();}
+      function cancel(event){if(!down){if(event.type==='lostpointercapture')return;hoverPoint=null;contacts.clear();contactAnchor=null;hoverTriggered=false;hoverTriggerPoint=null;}else if(event.pointerId===undefined||event.pointerId===activePointer)end();}
       function end(resetContacts=true){
         const id=activePointer;down=false;activePointer=null;previous=pressOrigin=hoverPoint=null;dragged=false;gestureHit=false;
-        hoverTriggered=false;hoverTriggerPoint=null;if(resetContacts)contacts.clear();
+        hoverTriggered=false;hoverTriggerPoint=null;if(resetContacts){contacts.clear();contactAnchor=null;}
         pointer.classList.remove('is-pressing');
         if(canvas.releasePointerCapture&&typeof id==='number'){try{if(!canvas.hasPointerCapture||canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);}catch(_){}}
         wake();
       }
-      const leavePointer=()=>{if(!down){hoverPoint=null;contacts.clear();hoverTriggered=false;hoverTriggerPoint=null;}};
+      const leavePointer=()=>{if(!down){hoverPoint=null;contacts.clear();contactAnchor=null;hoverTriggered=false;hoverTriggerPoint=null;}};
       if(window.PointerEvent){
         canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('lostpointercapture',cancel);canvas.addEventListener('pointerleave',leavePointer);
       }else{
