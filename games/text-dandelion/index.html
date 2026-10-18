@@ -484,7 +484,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
         const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
         // Keep two full-screen canvases within a bounded backing-store size, even on 4K / high-DPR screens.
-        const dpr=Math.min(window.devicePixelRatio||1,2,Math.sqrt(8388608/(measuredW*measuredH)));if(width===measuredW&&height===measuredH&&density===dpr)return;
+        const dpr=Math.min(window.devicePixelRatio||1,3,Math.sqrt(8388608/(measuredW*measuredH)));if(width===measuredW&&height===measuredH&&density===dpr)return;
         const oldW=width,oldH=height,style=getComputedStyle(game);
         const top=(parseFloat(style.paddingTop)||16)+64,bottom=measuredH-(parseFloat(style.paddingBottom)||20)-76;
         const space=Math.max(40,bottom-top);
