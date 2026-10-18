@@ -216,16 +216,16 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
   <section class="pg-game" data-game aria-labelledby="pg-title">
     <nav class="pg-nav" aria-label="游戏导航"><a class="pg-back cursor-interaction" href="https://furryhk.cn/" data-back>← 返回主页</a><span class="pg-site-mark"><span class="pg-site-label">FURRYHK.CN</span><small class="pg-game-label">文字蒲公英</small></span></nav>
     <header><p class="pg-eyebrow">A LITTLE WISH, A LITTLE WIND</p><h1 class="pg-title" id="pg-title">文字蒲公英</h1><p class="pg-description">把想说的话，种成一朵蒲公英。<br>轻轻一碰，让每个字随风出发。</p></header>
-    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，圆圈碰到文字或尾巴就会放飞；下方按钮可一键散开。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 圆圈碰到文字或尾巴就放飞</div></div>
+    <div class="pg-meadow"><canvas class="pg-canvas" data-canvas role="img" aria-label="文字蒲公英：轻点任意位置放飞文字，圆圈碰到文字或尾巴就会放飞；下方按钮可一键放飞。">请使用支持 Canvas 的浏览器体验文字蒲公英。</canvas><span class="pg-pointer" data-pointer aria-hidden="true"></span><span class="pg-wind-label" aria-hidden="true">风，从这里经过 →</span><div class="pg-caption">轻点任意处放飞 · 圆圈碰到文字或尾巴就放飞</div></div>
     <div class="pg-ending" data-ending hidden aria-hidden="true"><span class="pg-ending-char" style="--happy-x:1.02em;--happy-delay:120ms">天</span><span class="pg-ending-char" style="--happy-x:.34em;--happy-delay:0ms">天</span><span class="pg-ending-char" style="--happy-x:-.34em;--happy-delay:40ms">开</span><span class="pg-ending-char" style="--happy-x:-1.02em;--happy-delay:160ms">心</span></div>
-    <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键散开 ↗</button></div>
+    <div class="pg-actions pg-bottom-actions"><button class="pg-reset cursor-interaction" type="button" data-edit><span aria-hidden="true">✎</span> 输入文字</button><button class="pg-blow cursor-interaction" type="button" data-blow>一键放飞 ↗</button></div>
     <div class="pg-editor-shade" data-editor hidden>
       <form class="pg-editor" data-form role="dialog" aria-modal="true" aria-labelledby="pg-editor-title">
         <div class="pg-editor-head"><h2 id="pg-editor-title">输入你的文字</h2><button class="pg-editor-close cursor-interaction" type="button" data-close aria-label="关闭输入弹窗">×</button></div>
-        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>轻点任意处放飞，移动圆圈碰到文字或尾巴就放飞<br>按文字顺序时，点一下送走一个字；一键散开放走全部<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
+        <p class="pg-editor-intro">蒲公英能承载 50—150 个字，每个字都是一粒种子<br>字数太少会循环排列补满<br>随风放飞：轻点或用圆圈碰触，每次放飞一粒<br>按文字顺序：轻点屏幕，逐字放飞，不显示圆圈<br>一键放飞可放飞全部文字<br><span style="opacity:.7">原创在小红书（95076683818）</span></p>
         <label class="pg-sr" for="pg-wish">写下你的话</label><textarea class="pg-textarea" id="pg-wish" data-wish maxlength="600" rows="4" placeholder="写下你的话…">把想说的话交给风，愿悦悦天天开心</textarea>
         <div class="pg-editor-count" data-count>0 / 150</div>
-        <fieldset class="pg-order"><legend>飘散顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风散开</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
+        <fieldset class="pg-order"><legend>放飞顺序</legend><label class="pg-order-choice"><input type="radio" name="pg-order" value="random" checked><span>随风放飞</span></label><label class="pg-order-choice"><input type="radio" name="pg-order" value="sequence"><span>按文字顺序</span></label></fieldset>
         <button class="pg-generate cursor-interaction" type="submit">生成蒲公英</button>
       </form>
     </div>
@@ -240,6 +240,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const game = root.querySelector('[data-game]');
       const canvas = root.querySelector('[data-canvas]');
       const pointer = root.querySelector('[data-pointer]');
+      const caption = root.querySelector('.pg-caption');
       const stillCanvas = document.createElement('canvas');
       stillCanvas.className='pg-still';stillCanvas.setAttribute('aria-hidden','true');canvas.before(stillCanvas);
       const status = root.querySelector('[data-status]');
@@ -256,9 +257,11 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const dark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : {matches:false};
       const raf = window.requestAnimationFrame ? fn => window.requestAnimationFrame(fn) : fn => setTimeout(() => fn(Date.now()),16);
       const caf = window.cancelAnimationFrame ? id => window.cancelAnimationFrame(id) : id => clearTimeout(id);
-      let width=360,height=360,cx=180,cy=148,radius=90,stemY=342,particles=[],ordered=[],frame=0,last=0,sent=0,down=false,previous=null,density=1;
-      let rotationAngle=0,rotating=false;
+      let width=360,height=360,cx=180,cy=148,radius=90,stemY=342,particles=[],ordered=[],frame=0,last=null,sent=0,down=false,previous=null,density=1;
+      let rotationAngle=0,rotating=false,frameInterval=0;
+      let projectedAngle=NaN,rotationCos=1,rotationSin=0,stillPaintKey='';
       let activePointer=null,pressOrigin=null,dragged=false,pointerPosition=null,previousTime=0,gestureHit=false,hoverPoint=null,hoverTime=0;
+      let contacts=new Set(),hoverTriggered=false,hoverTriggerPoint=null;
       const pointerRadius=6,dragThreshold=7;
       const sprites=new Map();let stillDirty=false,flightPainted=false;
       let entranceAnimations=[];
@@ -267,6 +270,12 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       let letters=Array.from(input.value||'悦悦天天开心');
       let TOTAL = 100;
       let mode='random';
+      function updateMode(){
+        const sequence=mode==='sequence';
+        pointer.hidden=sequence;
+        caption.textContent=sequence?'轻点屏幕，按文字顺序逐字放飞':'轻点任意处放飞 · 圆圈碰到文字或尾巴就放飞';
+        canvas.setAttribute('aria-label',sequence?'文字蒲公英：轻点屏幕，按输入顺序放飞一个字；滑动不会放飞。下方按钮可一键放飞。':'文字蒲公英：轻点任意位置放飞一个字，圆圈碰到文字或尾巴也可放飞；下方按钮可一键放飞。');
+      }
       const running = () => !game.hidden && !document.hidden;
       function cancelEntrance(){const previous=entranceAnimations;entranceAnimations=[];previous.forEach(animation=>animation.cancel());}
       function revealGame(){
@@ -317,24 +326,27 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       const announce = () => { status.textContent = sent === TOTAL ? '文字正随风飘荡，再写一句话吧。' : sent ? '已送出 ' + sent + ' / ' + TOTAL + ' 个字' : TOTAL + ' 个字，等一阵风。'; blowButton.disabled=sent===TOTAL; };
       const position = p => {
         // 3D绕Y轴（垂直轴）旋转，模拟真实蒲公英球转动
-        const cosA=Math.cos(rotationAngle), sinA=Math.sin(rotationAngle);
+        if(projectedAngle!==rotationAngle){projectedAngle=rotationAngle;rotationCos=Math.cos(rotationAngle);rotationSin=Math.sin(rotationAngle);}
+        const cosA=rotationCos,sinA=rotationSin;
         const x = p.sx * cosA + p.sz * sinA;
         const z = -p.sx * sinA + p.sz * cosA;
         // 根据深度做透视：z越靠近镜头（z越大）越大，越远越小
         const perspective = 0.82 + z * 0.18;
-        return {x:cx + x * radius * perspective, y:cy + p.sy * radius * perspective, z:z};
+        const depth=(z+1)/2;
+        return {x:cx + x * radius * perspective, y:cy + p.sy * radius * perspective, z,scale:(12+10*depth)/22,alpha:.24+.76*depth};
       };
       // Shape each glyph once; animation frames only composite small cached images.
       function prepareSprites(){
         sprites.clear();
         particles.forEach(p=>{
-          const size=Math.max(12,Math.round((12+10*p.depth)*Math.max(.85,Math.min(1.45,radius/120)))),key=p.char+':'+size;
+          const size=Math.max(12,Math.round(22*Math.max(.85,Math.min(1.45,radius/120)))),key=p.char+':'+size;
           if(!sprites.has(key)){
             const image=document.createElement('canvas'),side=size*2;
-            image.width=image.height=Math.ceil(side*density);
+            const spriteDensity=Math.max(2,density);
+            image.width=image.height=Math.ceil(side*spriteDensity);
             const c=image.getContext('2d');let bounds={left:-size*.5,right:size*.5,top:-size*.5,bottom:size*.5};
             if(c){
-              c.setTransform(density,0,0,density,0,0);c.translate(side/2,side/2);c.textAlign='center';c.textBaseline='middle';c.font=size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';
+              c.setTransform(spriteDensity,0,0,spriteDensity,0,0);c.translate(side/2,side/2);c.textAlign='center';c.textBaseline='middle';c.font=size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';
               const m=c.measureText(p.char),finite=Number.isFinite;
               bounds={left:finite(m.actualBoundingBoxLeft)?-m.actualBoundingBoxLeft:-m.width/2,right:finite(m.actualBoundingBoxRight)?m.actualBoundingBoxRight:m.width/2,top:finite(m.actualBoundingBoxAscent)?-m.actualBoundingBoxAscent:-size/2,bottom:finite(m.actualBoundingBoxDescent)?m.actualBoundingBoxDescent:size/2};
               c.fillStyle='#fff';c.fillText(p.char,0,0);
@@ -344,7 +356,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           p.sprite=sprites.get(key);
         });
       }
-      function paintGlyph(c,p,x,y){const s=p.sprite;if(s)c.drawImage(s.image,x-s.side/2,y-s.side/2,s.side,s.side);}
+      function paintGlyph(c,p,x,y,scale=1){const s=p.sprite;if(s){const side=s.side*scale;c.drawImage(s.image,x-side/2,y-side/2,side,side);}}
       function tailGeometry(p,x,y,angle,bend=0,scale=1){
         if(!p.sprite)return null;
         const dx=Math.cos(angle),dy=Math.sin(angle),font=p.sprite.side/2;
@@ -355,27 +367,34 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function paintTail(c,p,x,y,angle,bend=0,scale=1){
         const tail=tailGeometry(p,x,y,angle,bend,scale);if(!tail)return;
         const alpha=c.globalAlpha;
-        c.setTransform(density,0,0,density,0,0);c.globalAlpha=alpha*.58;c.strokeStyle='#fff';c.lineWidth=.65;c.lineCap='round';
+        if(c===ctx)c.setTransform(density,0,0,density,0,0);
+        c.globalAlpha=alpha*.58;c.strokeStyle='#fff';c.lineWidth=.65;c.lineCap='round';
         c.beginPath();c.moveTo(tail.ax,tail.ay);
         c.quadraticCurveTo(tail.cx,tail.cy,tail.bx,tail.by);
         c.stroke();c.globalAlpha=alpha;
       }
       function paintFlight(p){
         const s=p.sprite;if(!s)return;
-        const scale=reduced.matches?1:p.scale;
+        const scale=p.scale;
         ctx.setTransform(density*scale,0,0,density*scale,p.x*density,p.y*density);
         ctx.drawImage(s.image,-s.side/2,-s.side/2,s.side,s.side);
       }
       // The attached layer is repainted when rotation or a release changes the flower.
       function drawStill(){
-        if(!stillCtx)return;const c=stillCtx;c.clearRect(0,0,width,height);c.lineWidth=1;c.strokeStyle='#fff';c.globalAlpha=.68;
-        c.beginPath();c.moveTo(cx,stemY);c.lineTo(cx,cy);c.stroke();
+        if(!stillCtx)return;const c=stillCtx;
+        const key=[width,height,density,cx,cy,radius].join(':'),full=key!==stillPaintKey;
+        const left=Math.max(0,Math.floor((cx-radius-48)*density)/density),top=Math.max(0,Math.floor((cy-radius-48)*density)/density);
+        const right=Math.min(width,Math.ceil((cx+radius+48)*density)/density),bottom=Math.min(height,Math.ceil((cy+radius+48)*density)/density);
+        c.setTransform(density,0,0,density,0,0);
+        // Keep the static stem outside the flower intact; repaint only the moving region.
+        if(full)c.clearRect(0,0,width,height);else c.clearRect(left,top,right-left,bottom-top);
+        c.lineWidth=1;c.lineCap='butt';c.strokeStyle='#fff';c.globalAlpha=.68;
+        c.beginPath();c.moveTo(cx,full?stemY:Math.min(stemY,bottom));c.lineTo(cx,cy);c.stroke();
         ordered.forEach(p=>{
         if(p.launched)return;
         const q=position(p);
         // 近大远小、近实远虚的3D效果
-        const depthAlpha = 0.35 + (q.z + 1)/2 * 0.65;
-        c.globalAlpha=depthAlpha;
+        c.globalAlpha=q.alpha;
         // 先画从中心到字的连线（小尾巴），不管怎么转都始终连到中心
         c.lineWidth=.55;
         c.beginPath();
@@ -384,9 +403,9 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         c.stroke();
         // 小尾巴的角度：当前字相对于中心的反方向，始终从字指向中心
         const tailAngle = Math.atan2(q.y - cy, q.x - cx) + Math.PI;
-        paintTail(c,p,q.x,q.y,tailAngle);
-        paintGlyph(c,p,q.x,q.y);
-      });c.globalAlpha=1;
+        paintTail(c,p,q.x,q.y,tailAngle,0,q.scale);
+        paintGlyph(c,p,q.x,q.y,q.scale);
+      });c.globalAlpha=1;stillPaintKey=key;
       }
       function draw(){
         if(!ctx)return;if(stillDirty){drawStill();stillDirty=false;}
@@ -407,15 +426,17 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           paintFlight(p);
         });ctx.setTransform(density,0,0,density,0,0);ctx.globalAlpha=1;
       }
-      function stop(){if(frame)caf(frame);frame=0;last=0;}
+      function stop(){if(frame)caf(frame);frame=0;last=null;frameInterval=0;}
       function stopRotation(){rotating=false;}
       function animate(now){
-        frame=0;if(!running()||!editor.hidden){last=0;return;}
-        const dt=last?Math.min(.064,Math.max(0,(now-last)/1000)):.016;last=now;
+        frame=0;if(!running()||!editor.hidden){last=null;return;}
+        const elapsed=last===null?0:Math.max(0,(now-last)/1000);last=now;
+        // Estimate the display cadence from healthy frames. Never catch up a stalled frame in one jump.
+        if(elapsed>0&&elapsed<.04)frameInterval=frameInterval?frameInterval+(elapsed-frameInterval)*.12:elapsed;
+        const dt=elapsed?Math.min(elapsed,(frameInterval||1/60)*1.2):0;
         // One shared clock for rotation and flight; the pointer itself never waits for RAF.
-        const turning=rotating&&!down&&!reduced.matches;
+        const turning=rotating&&!reduced.matches;
         if(turning){rotationAngle=(rotationAngle+dt*.12)%(Math.PI*2);stillDirty=true;}
-        if(turning&&hoverPoint)brush(hoverPoint,hoverPoint,{x:0,y:0});
         let active=false;
         particles.forEach(p=>{if(!p.free||p.gone)return;p.life+=dt;
           if(p.life<p.delay){active=true;return;}
@@ -424,7 +445,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           sampleFlight(p,age);
           if(age>p.duration||p.x>width+70||p.x< -70||p.y< -70)p.gone=true;else active=true;
         });
-        draw();showEndingIfReady();if(active||turning){if(!frame)frame=raf(animate);}else last=0;
+        draw();showEndingIfReady();if(active||turning){if(!frame)frame=raf(animate);}else last=null;
       }
       function showEndingIfReady(){
         if(!ending.hidden||gameExit||sent!==TOTAL||!particles.length||!particles.every(p=>p.gone))return;
@@ -435,7 +456,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function resetEnding(){ending.hidden=true;game.classList.remove('is-complete');}
       function attachFlight(p,q){
         p.x=p.originX=q.x;p.y=p.originY=q.y;p.tetherX=cx;p.tetherY=cy;
-        p.launchAlpha=.35+(q.z+1)*.325;p.tailAngle=Math.atan2(cy-q.y,cx-q.x);
+        p.launchAlpha=q.alpha;p.launchScale=p.scale=q.scale;p.tailAngle=Math.atan2(cy-q.y,cx-q.x);
         const cos=Math.cos(rotationAngle),sin=Math.sin(rotationAngle),x=p.sx*cos+p.sz*sin,z=-p.sx*sin+p.sz*cos,perspective=.82+.18*z;
         // Carry the sphere's tangent velocity into flight, plus a bounded gesture impulse.
         p.startVelocityX=radius*p.rotationRate*(z*perspective-.18*x*x)+p.impulseX;
@@ -452,10 +473,10 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         p.y=p.originY+p.startVelocityY*carry+p.speedY*travel+(bloomY+flutterY)*lift;
         p.velocityX=p.startVelocityX*decay+p.speedX*(1-decay)+(bloomX+flutterX)*liftRate+(reduced.matches?0:p.swayX*p.frequency*Math.cos(ax)*lift);
         p.velocityY=p.startVelocityY*decay+p.speedY*(1-decay)+(bloomY+flutterY)*liftRate+(reduced.matches?0:p.swayY*p.frequency*.83*Math.cos(ay)*lift);
-        p.scale=reduced.matches?1:1+p.scaleDelta*lift;
+        p.scale=p.launchScale*(reduced.matches?1:1+p.scaleDelta*lift);
       }
       function wake(){if(ctx&&!frame&&running()&&editor.hidden)frame=raf(animate);}
-      function grow(){end();stop();resetEnding();rotationAngle=0;rotating=true;TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();setPointer(cx,stemY);wake();}
+      function grow(){end();stop();updateMode();resetEnding();rotationAngle=0;rotating=true;TOTAL=Math.max(100,Math.min(150,letters.length));particles=Array.from({length:TOTAL},(_,i)=>{const z=1-2*(i+.5)/TOTAL;const spread=Math.sqrt(1-z*z);const phase=i*2.39996323;const x=Math.cos(phase)*spread,y=Math.sin(phase)*spread;const sx=x*Math.cos(.36)+z*Math.sin(.36),sz=z*Math.cos(.36)-x*Math.sin(.36);return{index:i,sx,sy:y,sz,depth:(sz+1)/2,a:Math.atan2(y,sx),char:letters[i%letters.length],free:false,gone:false,launched:false,life:0,delay:0};});ordered=particles.slice().sort((a,b)=>a.depth-b.depth);prepareSprites();sent=0;announce();drawStill();draw();setPointer(cx,stemY);wake();}
       function resize(){
         const bounds=canvas.getBoundingClientRect();if(bounds.width<1||bounds.height<1)return;
         const measuredW=canvas.clientWidth||bounds.width,measuredH=canvas.clientHeight||bounds.height;
@@ -475,14 +496,14 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
         if(!available.length){if(ending.hidden)announce();return;}
         if(!all&&mode==='random')available.sort((a,b)=>{const ap=position(a),bp=position(b);return Math.hypot(ap.x-x,ap.y-y)-Math.hypot(bp.x-x,bp.y-y);});
         if(all&&mode==='random')for(let i=available.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[available[i],available[j]]=[available[j],available[i]];}
-        const chosen=all?available:available.slice(0,mode==='sequence'?1:8);
+        const chosen=all?available:available.slice(0,1);
         release(chosen,force,all);
       }
       function release(chosen,force=1,all=false,impulse={x:0,y:0}){
-        const rotationRate=rotating&&!down&&!reduced.matches?.12:0;
+        const rotationRate=rotating&&!reduced.matches?.12:0;
         if(all)stopRotation();
         chosen.forEach(p=>{
-          const q=position(p),phase=Math.random()*Math.PI*2,depthSpeed=.78+p.depth*.44;
+          const q=position(p),phase=Math.random()*Math.PI*2,depthSpeed=.78+(q.z+1)*.22;
           Object.assign(p,{
             free:true,x:q.x,y:q.y,originX:q.x,originY:q.y,life:0,scale:1,
             delay:reduced.matches||!all?0:Math.max(0,(q.x-cx+radius)/(2*radius))*.16+Math.random()*.08,
@@ -490,7 +511,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
             speedX:(28+Math.random()*34)*depthSpeed*force,speedY:-(13+Math.random()*25)*depthSpeed,
             spreadX:(q.x-cx)*(.08+Math.random()*.09),spreadY:(q.y-cy)*(.06+Math.random()*.09),
             swayX:9+Math.random()*13,swayY:13+Math.random()*18,frequency:.65+Math.random()*.65,
-            phase,sinPhase:Math.sin(phase),sinPhaseY:Math.sin(phase+.9),scaleDelta:(p.depth-.6)*.22,
+            phase,sinPhase:Math.sin(phase),sinPhaseY:Math.sin(phase+.9),scaleDelta:((q.z+1)/2-.6)*.22,
             rotationRate,impulseX:reduced.matches?0:impulse.x,impulseY:reduced.matches?0:impulse.y
           });attachFlight(p,q);sent++;
         });
@@ -512,7 +533,7 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       }
       function touchesGlyph(a,b,q,bounds){
         // Sweep the visible circle over the actual ink bounds, including rounded corners.
-        const r=pointerRadius+1,left=q.x+bounds.left,right=q.x+bounds.right,top=q.y+bounds.top,bottom=q.y+bounds.bottom;
+        const r=pointerRadius+1,left=q.x+bounds.left*q.scale,right=q.x+bounds.right*q.scale,top=q.y+bounds.top*q.scale,bottom=q.y+bounds.bottom*q.scale;
         if(Math.max(a.x,b.x)+r<left||Math.min(a.x,b.x)-r>right||Math.max(a.y,b.y)+r<top||Math.min(a.y,b.y)-r>bottom)return false;
         if(crossesBox(a,b,left-r,top,right+r,bottom)||crossesBox(a,b,left,top-r,right,bottom+r))return true;
         const dx=b.x-a.x,dy=b.y-a.y,length2=dx*dx+dy*dy;
@@ -535,17 +556,30 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       function touchesTail(a,b,p,q){
         // The entire visible filament belongs to this seed, from the flower center to the glyph.
         if(touchesStroke(a,b,{x:cx,y:cy},q,.55))return true;
-        const tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x));
+        const tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x),0,q.scale);
         return !!tail&&touchesStroke(a,b,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by},.65);
       }
-      function brush(from,to,impulse={x:0,y:0}){
-        const hit=particles.filter(p=>{
-          if(p.free)return false;
+      function brush(from,to,impulse={x:0,y:0},canRelease=true){
+        if(mode==='sequence')return 0;
+        const entered=[],current=new Set();
+        particles.forEach(p=>{
+          if(p.free)return;
           const q=position(p);
-          return touchesGlyph(from,to,q,p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8})||touchesTail(from,to,p,q);
+          const bounds=p.sprite?p.sprite.bounds:{left:-8,right:8,top:-8,bottom:8};
+          const glyph=touchesGlyph(from,to,q,bounds),hit=glyph||touchesTail(from,to,p,q);
+          if(touchesGlyph(to,to,q,bounds)||touchesTail(to,to,p,q))current.add(p.index);
+          if(!hit||contacts.has(p.index))return;
+          const tail=tailGeometry(p,q.x,q.y,Math.atan2(cy-q.y,cx-q.x),0,q.scale);
+          const distance=glyph?(q.x-to.x)**2+(q.y-to.y)**2:Math.min(pointSegmentDistance2(to.x,to.y,{x:cx,y:cy},q),tail?pointSegmentDistance2(to.x,to.y,{x:tail.ax,y:tail.ay},{x:tail.bx,y:tail.by}):Infinity);
+          entered.push({p,glyph,distance,headDistance:(q.x-to.x)**2+(q.y-to.y)**2});
         });
-        if(hit.length)release(hit,1,false,impulse);
-        return hit.length;
+        // Consume every overlap for this contact, but release only one seed. Rearm on leaving it.
+        contacts=current;
+        if(!canRelease||!entered.length)return 0;
+        entered.sort((a,b)=>Number(b.glyph)-Number(a.glyph)||a.distance-b.distance||a.headDistance-b.headDistance);
+        const chosen=entered[0].p;
+        if(!chosen)return 0;
+        release([chosen],1,false,impulse);return 1;
       }
       function strokeImpulse(from,to,before,now){
         const dt=Math.max(.008,(now-before)/1000),dx=to.x-from.x,dy=to.y-from.y,speed=Math.hypot(dx,dy)/dt;
@@ -554,25 +588,29 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
       }
       function start(event){
         if(!editor.hidden||gameExit||down||event.isPrimary===false||(event.button!==undefined&&event.button!==0))return;
-        down=true;activePointer=event.pointerId===undefined?'mouse':event.pointerId;dragged=false;gestureHit=false;hoverPoint=null;
-        pressOrigin=previous=point(event);previousTime=event.timeStamp||performance.now();setPointer(previous.x,previous.y);pointer.classList.add('is-pressing');
+        const p=point(event),carried=event.pointerType!=='touch'&&hoverTriggered&&hoverPoint&&Math.hypot(p.x-hoverPoint.x,p.y-hoverPoint.y)<=pointerRadius;
+        if(!carried)contacts.clear();
+        down=true;activePointer=event.pointerId===undefined?'mouse':event.pointerId;dragged=false;gestureHit=!!carried;hoverPoint=null;hoverTriggered=false;hoverTriggerPoint=null;
+        pressOrigin=previous=p;previousTime=event.timeStamp||performance.now();if(mode!=='sequence'){setPointer(previous.x,previous.y);pointer.classList.add('is-pressing');}
         // Contact is immediate, including a stationary touch; do not wait for movement or release.
-        gestureHit=brush(previous,previous)>0;
+        gestureHit=(mode!=='sequence'&&brush(previous,previous)>0)||gestureHit;
         if(canvas.setPointerCapture&&typeof activePointer==='number'){try{canvas.setPointerCapture(activePointer);}catch(_){}}
       }
       function move(event){
         if(!editor.hidden||gameExit||event.isPrimary===false)return;
         const id=event.pointerId===undefined?'mouse':event.pointerId;
         if(down&&id!==activePointer)return;
-        const bounds=canvas.getBoundingClientRect();let samples=[];
+        const bounds=canvas.getBoundingClientRect();let samples=[],released=false;
         try{if(event.getCoalescedEvents)samples=event.getCoalescedEvents();}catch(_){}
         // Include the dispatched endpoint even when a browser returns no coalesced samples.
         samples=[...samples,event];
         if(!down){
-          if(event.pointerType!=='touch'){
+          if(mode!=='sequence'&&event.pointerType!=='touch'){
             samples.forEach(sample=>{
               const p=point(sample,bounds),time=sample.timeStamp||event.timeStamp||performance.now(),from=hoverPoint||p;
-              brush(from,p,hoverPoint?strokeImpulse(from,p,hoverTime,time):{x:0,y:0});hoverPoint=p;hoverTime=time;
+              if(brush(from,p,hoverPoint?strokeImpulse(from,p,hoverTime,time):{x:0,y:0},!released)){released=true;hoverTriggered=true;hoverTriggerPoint=p;}
+              if(!contacts.size&&hoverTriggerPoint&&Math.hypot(p.x-hoverTriggerPoint.x,p.y-hoverTriggerPoint.y)>pointerRadius){hoverTriggered=false;hoverTriggerPoint=null;}
+              hoverPoint=p;hoverTime=time;
             });
             setPointer(hoverPoint.x,hoverPoint.y);
           }
@@ -583,25 +621,26 @@ html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-
           if(Math.hypot(p.x-pressOrigin.x,p.y-pressOrigin.y)>dragThreshold)dragged=true;
           const time=sample.timeStamp||event.timeStamp||performance.now(),moved=Math.hypot(p.x-previous.x,p.y-previous.y)>.2;
           // A short stroke can already touch ink before it crosses the tap/drag threshold.
-          if(moved||dragged)gestureHit=brush(previous,p,strokeImpulse(previous,p,previousTime,time))>0||gestureHit;
+          if(mode!=='sequence'&&(moved||dragged)){if(brush(previous,p,strokeImpulse(previous,p,previousTime,time),!released)){released=true;gestureHit=true;}}
           previous=p;previousTime=time;
         });
-        setPointer(previous.x,previous.y);
+        if(mode!=='sequence')setPointer(previous.x,previous.y);
       }
       function finish(event){
         const id=event.pointerId===undefined?'mouse':event.pointerId;
         if(!down||id!==activePointer)return;
-        move(event);const tap=!dragged&&!gestureHit,p=previous;end();
+        move(event);const tap=!dragged&&!gestureHit,p=previous;end(false);
         if(tap&&p)blow(p.x,p.y);
       }
-      function cancel(event){if(!down)hoverPoint=null;else if(event.pointerId===undefined||event.pointerId===activePointer)end();}
-      function end(){
+      function cancel(event){if(!down){if(event.type==='lostpointercapture')return;hoverPoint=null;contacts.clear();hoverTriggered=false;hoverTriggerPoint=null;}else if(event.pointerId===undefined||event.pointerId===activePointer)end();}
+      function end(resetContacts=true){
         const id=activePointer;down=false;activePointer=null;previous=pressOrigin=hoverPoint=null;dragged=false;gestureHit=false;
+        hoverTriggered=false;hoverTriggerPoint=null;if(resetContacts)contacts.clear();
         pointer.classList.remove('is-pressing');
         if(canvas.releasePointerCapture&&typeof id==='number'){try{if(!canvas.hasPointerCapture||canvas.hasPointerCapture(id))canvas.releasePointerCapture(id);}catch(_){}}
         wake();
       }
-      const leavePointer=()=>{if(!down)hoverPoint=null;};
+      const leavePointer=()=>{if(!down){hoverPoint=null;contacts.clear();hoverTriggered=false;hoverTriggerPoint=null;}};
       if(window.PointerEvent){
         canvas.addEventListener('pointerdown',start);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',finish);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('lostpointercapture',cancel);canvas.addEventListener('pointerleave',leavePointer);
       }else{
