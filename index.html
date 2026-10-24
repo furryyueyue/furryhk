@@ -7,7 +7,7 @@
 <meta name="description" content="FurryHK 悦悦的个人主页：Furry、数码、摄影、游戏与日常分享。">
 <meta name="keywords" content="FurryHK,悦悦,Furry,福瑞,兽圈,个人主页,二级域名">
 <meta name="author" content="悦悦">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <meta name="color-scheme" content="light dark">
 <link rel="canonical" href="https://furryhk.cn/">
 <link rel="sitemap" type="application/xml" href="https://furryhk.cn/sitemap.xml">
@@ -29,4 +29,32 @@
 </script>
 <style>
 html{background:#f2eef4;color:#393343;background:light-dark(#f2eef4,#17141c);color:light-dark(#393343,#eee9f4);color-scheme:light dark}
-body{box-sizing:border-box;margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe
+body{box-sizing:border-box;margin:0;min-width:280px;min-height:100svh;padding:max(12px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
+button,a{font-family:inherit}
+body>.yy-click-spark{position:fixed;z-index:9999;width:26px;height:26px;object-fit:contain;pointer-events:none;filter:drop-shadow(0 2px 5px #30203733);transform-origin:center;user-select:none;-webkit-user-drag:none}
+@view-transition{navigation:auto}
+::view-transition-group(root){animation-duration:380ms;animation-timing-function:cubic-bezier(.22,1,.36,1)}
+::view-transition-old(root){animation:yy-document-out 320ms cubic-bezier(.4,0,.2,1) both;mix-blend-mode:normal}
+::view-transition-new(root){animation:yy-document-in 380ms cubic-bezier(.22,1,.36,1) both;mix-blend-mode:normal}
+html[data-yy-page="home"]::view-transition-old(root){animation-name:yy-document-close}
+html[data-yy-page="home"]::view-transition-new(root){animation-name:yy-document-return}
+@keyframes yy-document-out{to{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}}
+@keyframes yy-document-in{from{opacity:0;transform:translate3d(0,8px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@keyframes yy-document-close{to{opacity:0;transform:translate3d(0,8px,0) scale(.996)}}
+@keyframes yy-document-return{from{opacity:0;transform:translate3d(0,-6px,0) scale(.996)}to{opacity:1;transform:translate3d(0,0,0) scale(1)}}
+@media(prefers-reduced-motion:reduce){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}
+
+</style>
+</head>
+<body>
+<div id="yueyue-preview" class="yy-site">
+  <style>
+    #yueyue-preview{padding:18px 10px;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif;color-scheme:light dark}
+    #yueyue-preview *{box-sizing:border-box}
+    #yueyue-preview .yy-page{max-width:440px;margin:auto;padding:24px;background:light-dark(#f7f5f0,#201f26);color:light-dark(#393343,#eee9f4);border:1px solid light-dark(#e8e3ed,#39333f);border-radius:24px;box-shadow:0 18px 60px light-dark(#44305414,#00000030)}
+    #yueyue-preview .yy-top{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:30px;font-size:12px;color:light-dark(#78707f,#b6acbf);letter-spacing:.08em}
+    #yueyue-preview .yy-brand{font-weight:650;color:light-dark(#59486e,#d2bfe9)}
+    #yueyue-preview .yy-hero{display:flex;align-items:center;gap:18px;padding-bottom:24px}
+    #yueyue-preview .yy-avatar{width:80px;height:80px;border-radius:26px;object-fit:cover;flex:none;user-select:none;-webkit-user-drag:none}
+    #yueyue-preview .yy-hello{font-size:12px;margin:0 0 7px;color:light-dark(#86758f,#c0aaca)}
+    #yueyue-preview h1{font-size:30px;line-height:1.2;font-weight:650;letter-spacing:-.0
