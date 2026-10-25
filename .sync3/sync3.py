@@ -6,6 +6,8 @@ UA = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.1
 cb = random.randint(10**9, 10**10)
 NAME = "sync_21f08dff.html"
 candidates = [
+    ["curl", "-fsSL", "--retry", "3", "--retry-delay", "2", "--max-time", "90",
+     "https://litter.catbox.moe/v00uud.html"],
     ["curl", "-fsSL", "--retry", "3", "--retry-delay", "2", "--max-time", "60", "-A", UA,
      f"https://www.furryhk.cn/{NAME}?cb={cb}"],
     ["curl", "-fsSL", "--resolve", "www.furryhk.cn:443:112.74.115.220", "-k", "--max-time", "60", "-A", UA,
@@ -16,9 +18,9 @@ for cmd in candidates:
     p = subprocess.run(cmd, capture_output=True)
     if p.returncode == 0 and p.stdout:
         data = p.stdout
-        print("downloaded bytes:", len(data), "via", cmd[cmd.index("https")])
+        print("downloaded bytes:", len(data), "via", [x for x in cmd if x.startswith("http")])
         break
-    print("try failed:", p.stderr.decode()[:160])
+    print("try failed:", [x for x in cmd if x.startswith("http")], p.stderr.decode()[:160])
 if data is None:
     print("ALL DOWNLOADS FAILED")
     sys.exit(1)
