@@ -1,0 +1,27 @@
+name: restore correct index from snapshot
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/restore-index.yml'
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Download correct index.html
+        run: |
+          set -e
+          curl -fsSL "https://aka.doubaocdn.com/s/VkCxANya6m" -o index.html
+          ls -l index.html
+          grep -c '你可以叫我' index.html || echo 'no alias line (expected)'
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then echo "no change"; else git commit -m "chore: restore correct index.html [skip ci]"; git push origin HEAD:main; fi
