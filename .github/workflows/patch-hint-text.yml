@@ -1,0 +1,22 @@
+name: patch-hint-text
+on:
+  push:
+    paths:
+      - .github/workflows/patch-hint-text.yml
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace text
+        run: python3 -c "p='index.html';s=open(p,encoding='utf-8').read();old='好友较多时可在这里上下滑动';new='链接较多时可以上下滑动';print('命中',s.count(old));s=s.replace(old,new);open(p,'w',encoding='utf-8').write(s)"
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then echo "无需修改"; exit 0; fi
+          git add index.html
+          git commit -m "fix: 滑动提示文案改为链接较多时可以上下滑动 [skip ci]"
+          git push
